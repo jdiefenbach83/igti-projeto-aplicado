@@ -16,8 +16,11 @@
     </php>
 
     <testsuites>
-        <testsuite name="Project Test Suite">
-            <directory>tests</directory>
+        <testsuite name="Unit tests suite">
+            <directory suffix="Test.php">tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Functional tests suite">
+            <directory suffix="Test.php">tests/Functional</directory>
         </testsuite>
     </testsuites>
 
@@ -28,6 +31,18 @@
     </filter>
 
     <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
+        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
+            <arguments>
+                <array>
+                    <element key="debug-class-loader">
+                        <integer>0</integer>
+                    </element>
+                </array>
+            </arguments>
+        </listener>
     </listeners>
+
+    <extensions>
+        <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+    </extensions>
 </phpunit>

@@ -1,3 +1,29 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+brokers:
+  path: /api/brokers
+  controller: App\Controller\BrokerController::getAll
+  methods:
+    - GET
+broker:
+  path: /api/brokers/{id}
+  controller: App\Controller\BrokerController::getById
+  methods:
+    - GET
+new_broker:
+  path: /api/broker
+  controller: App\Controller\BrokerController::add
+  methods:
+    - POST
+update_broker:
+  path: /api/broker/{id}
+  controller: App\Controller\BrokerController::update
+  methods:
+    - PUT
+remove_broker:
+  path: /api/broker/{id}
+  controller: App\Controller\BrokerController::remove
+  methods:
+    - DELETE
