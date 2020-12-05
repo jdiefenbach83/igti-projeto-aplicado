@@ -26,7 +26,7 @@ abstract class BaseTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->client = static::createClient();
+        $this->client = static::createClient([], ['CONTENT_TYPE' => 'application/json']);
         $kernel = $this->client->getKernel();
 
         $this->entityManager = $kernel->getContainer()

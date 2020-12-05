@@ -130,6 +130,7 @@ class BrokerControllerTest extends BaseTest
         $this->client->request('PUT', "/api/brokers/{$broker_to_update->getId()}", [], [], [], $request_body);
 
         $response = $this->client->getResponse();
+        print_r($response);
         $response_body = json_decode($response->getContent(), true);
 
         $updated_broker = $this->entityManager
@@ -183,10 +184,11 @@ class BrokerControllerTest extends BaseTest
         $request_body = json_encode($modified_body);
 
         $this->client->request('PUT', "/api/brokers/{$broker_to_update->getId()}", [], [], [], $request_body);
-
         $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
 
         $this->assertEquals($status_code_expected, $response->getStatusCode());
+        $this->assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
     }
 
     public function testRemoveBroker_ShouldReturnSuccess()
