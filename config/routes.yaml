@@ -13,17 +13,17 @@ broker:
   methods:
     - GET
 new_broker:
-  path: /api/broker
+  path: /api/brokers
   controller: App\Controller\BrokerController::add
   methods:
     - POST
 update_broker:
-  path: /api/broker/{id}
+  path: /api/brokers/{id}
   controller: App\Controller\BrokerController::update
   methods:
     - PUT
 remove_broker:
-  path: /api/broker/{id}
+  path: /api/brokers/{id}
   controller: App\Controller\BrokerController::remove
   methods:
     - DELETE

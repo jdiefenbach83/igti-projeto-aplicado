@@ -55,7 +55,7 @@ class BrokerControllerTest extends BaseTest
 
         $request_body = json_encode($new_broker);
 
-        $this->client->request('POST', '/api/broker', [], [], [], $request_body);
+        $this->client->request('POST', '/api/brokers', [], [], [], $request_body);
 
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
@@ -103,7 +103,7 @@ class BrokerControllerTest extends BaseTest
 
         $request_body = json_encode($new_broker);
 
-        $this->client->request('POST', '/api/broker', [], [], [], $request_body);
+        $this->client->request('POST', '/api/brokers', [], [], [], $request_body);
 
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
@@ -127,7 +127,7 @@ class BrokerControllerTest extends BaseTest
 
         $request_body = json_encode($broker_to_update);
 
-        $this->client->request('PUT', "/api/broker/{$broker_to_update->getId()}", [], [], [], $request_body);
+        $this->client->request('PUT', "/api/brokers/{$broker_to_update->getId()}", [], [], [], $request_body);
 
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
@@ -149,7 +149,7 @@ class BrokerControllerTest extends BaseTest
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('PUT', "/api/broker/{$id}");
+        $this->client->request('PUT', "/api/brokers/{$id}");
 
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
@@ -182,7 +182,7 @@ class BrokerControllerTest extends BaseTest
         $modified_body[$key] = $value;
         $request_body = json_encode($modified_body);
 
-        $this->client->request('PUT', "/api/broker/{$broker_to_update->getId()}", [], [], [], $request_body);
+        $this->client->request('PUT', "/api/brokers/{$broker_to_update->getId()}", [], [], [], $request_body);
 
         $response = $this->client->getResponse();
 
@@ -197,7 +197,7 @@ class BrokerControllerTest extends BaseTest
             ->getRepository(Broker::class)
             ->findOneBy([]);
 
-        $this->client->request('DELETE', "/api/broker/{$broker->getId()}");
+        $this->client->request('DELETE', "/api/brokers/{$broker->getId()}");
         $response = $this->client->getResponse();
 
         $removed_broker = $this->entityManager
@@ -213,7 +213,7 @@ class BrokerControllerTest extends BaseTest
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('DELETE', "/api/broker/{$id}");
+        $this->client->request('DELETE', "/api/brokers/{$id}");
 
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
