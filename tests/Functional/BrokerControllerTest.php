@@ -152,8 +152,10 @@ class BrokerControllerTest extends BaseTest
         $this->client->request('PUT', "/api/broker/{$id}");
 
         $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
 
         $this->assertEquals($status_code_expected, $response->getStatusCode());
+        $this->assertArrayNotHasKey('content', $response_body);
     }
 
     /**
@@ -212,8 +214,11 @@ class BrokerControllerTest extends BaseTest
 
         $id = $this->faker->numberBetween(1000000, 2000000);
         $this->client->request('DELETE', "/api/broker/{$id}");
+
         $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
 
         $this->assertEquals($status_code_expected, $response->getStatusCode());
+        $this->assertArrayNotHasKey('content', $response_body);
     }
 }

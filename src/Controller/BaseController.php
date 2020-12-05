@@ -30,12 +30,22 @@ abstract class BaseController extends AbstractController
 
     public function getAll(): JsonResponse
     {
-       $entityList = $this->service->getAll();
+        $success = false;
+        $return = null;
+
+        try {
+            $return = $this->service->getAll();
+
+            $success = true;
+            $status = Response::HTTP_OK;
+        } catch (\Exception $e) {
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
 
         $responseFactory = new ResponseFactory(
-            true,
-            $entityList,
-            Response::HTTP_OK
+            $success,
+            $return,
+            $status
         );
 
         return $responseFactory->getResponse();
@@ -43,12 +53,22 @@ abstract class BaseController extends AbstractController
 
     public function getById(int $id): JsonResponse
     {
-        $entity = $this->service->getById($id);
-        $status = is_null($entity) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK;
+        $success = false;
+        $return = null;
+
+        try {
+            $entity = $this->service->getById($id);
+
+            $success = true;
+            $status = is_null($entity) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK;
+            $return = $entity;
+        } catch (\Exception $e) {
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
 
         $responseFactory = new ResponseFactory(
-            true,
-            $entity,
+            $success,
+            $return,
             $status
         );
 
@@ -58,6 +78,7 @@ abstract class BaseController extends AbstractController
     public function add(Request $request): Response
     {
        $success = false;
+       $return = null;
 
        try {
             $new_entity = $this->entityFactory->makeEntity($request->getContent());
@@ -76,7 +97,6 @@ abstract class BaseController extends AbstractController
 
         } catch (\Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
-            $return = null;
         }
 
         $responseFactory = new ResponseFactory(
@@ -91,6 +111,7 @@ abstract class BaseController extends AbstractController
     public function update(int $id, Request $request): Response
     {
         $success = false;
+        $return = null;
 
         try {
             $entity_to_update = $this->entityFactory->makeEntity($request->getContent());
@@ -109,11 +130,9 @@ abstract class BaseController extends AbstractController
 
         } catch (\InvalidArgumentException $e) {
             $status = Response::HTTP_NOT_FOUND;
-            $return = null;
 
         } catch (\Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
-            $return = null;
         }
 
         $responseFactory = new ResponseFactory(
