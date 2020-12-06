@@ -130,7 +130,6 @@ class BrokerControllerTest extends BaseTest
         $this->client->request('PUT', "/api/brokers/{$broker_to_update->getId()}", [], [], [], $request_body);
 
         $response = $this->client->getResponse();
-        print_r($response);
         $response_body = json_decode($response->getContent(), true);
 
         $updated_broker = $this->entityManager
