@@ -150,6 +150,9 @@
             "depfile.yaml"
         ]
     },
+    "symfony/asset": {
+        "version": "v5.2.0"
+    },
     "symfony/browser-kit": {
         "version": "v5.2.0"
     },
@@ -319,6 +322,23 @@
     "symfony/translation-contracts": {
         "version": "v2.3.0"
     },
+    "symfony/twig-bridge": {
+        "version": "v5.2.0"
+    },
+    "symfony/twig-bundle": {
+        "version": "5.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "5.0",
+            "ref": "fab9149bbaa4d5eca054ed93f9e1b66cc500895d"
+        },
+        "files": [
+            "config/packages/test/twig.yaml",
+            "config/packages/twig.yaml",
+            "templates/base.html.twig"
+        ]
+    },
     "symfony/validator": {
         "version": "4.3",
         "recipe": {
@@ -338,8 +358,33 @@
     "symfony/var-exporter": {
         "version": "v5.2.0"
     },
+    "symfony/webpack-encore-bundle": {
+        "version": "1.6",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.6",
+            "ref": "6747b34e25c836dd684d27846a452d8f8a3abb2e"
+        },
+        "files": [
+            "assets/app.js",
+            "assets/bootstrap.js",
+            "assets/controllers.json",
+            "assets/controllers/hello_controller.js",
+            "assets/styles/app.css",
+            "config/packages/assets.yaml",
+            "config/packages/prod/webpack_encore.yaml",
+            "config/packages/test/webpack_encore.yaml",
+            "config/packages/webpack_encore.yaml",
+            "package.json",
+            "webpack.config.js"
+        ]
+    },
     "symfony/yaml": {
         "version": "v5.2.0"
+    },
+    "twig/twig": {
+        "version": "v3.1.1"
     },
     "webimpress/safe-writer": {
         "version": "2.1.0"

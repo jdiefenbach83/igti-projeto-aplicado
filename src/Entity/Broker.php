@@ -80,7 +80,7 @@ class Broker implements EntityInterface, JsonSerializable
             '_links' => [
                 [
                     'rel' => 'self',
-                    'path' => '/brokers/' . $this->id
+                    'path' => 'api/brokers/' . $this->id
                 ],
             ]
         ];

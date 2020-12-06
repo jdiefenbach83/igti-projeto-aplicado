@@ -2,6 +2,18 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
+root:
+  path: /
+  controller: App\Controller\IndexController::index
+  methods:
+    - GET
+
+index:
+  path: /{vueRouting}
+  controller: App\Controller\IndexController::index
+  methods:
+    - GET
+
 brokers:
   path: /api/brokers
   controller: App\Controller\BrokerController::getAll
