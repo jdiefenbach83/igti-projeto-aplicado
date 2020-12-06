@@ -1,36 +1,22 @@
 <template>
     <div>
-        <v-simple-table>
-            <template v-slot:default>
-                <thead>
-                    <tr>
-                        <th class="text-left">
-                            C&oacute;digo
-                        </th>
-                        <th class="text-left">
-                            Nome
-                        </th>
-                        <th class="text-left">
-                            CNPJ
-                        </th>
-                        <th class="text-left">
-                            Site
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="broker in brokers"
-                        :key="broker.id"
-                    >
-                        <td>{{ broker.code }}</td>
-                        <td>{{ broker.name }}</td>
-                        <td>{{ broker.cnpj }}</td>
-                        <td>{{ broker.site }}</td>
-                    </tr>
-                </tbody>
+        <v-data-table
+            :headers="headers"
+            :items="brokers"
+            item-key="id"
+            class="elevation-1"
+            :search="search"
+            :custom-filter="filterList"
+            sear
+        >
+            <template v-slot:top>
+                <v-text-field
+                    v-model="search"
+                    label="Pesquisa"
+                    class="mx-4"
+                ></v-text-field>
             </template>
-        </v-simple-table>
+        </v-data-table>
     </div>
 </template>
 
@@ -41,7 +27,8 @@
     name: "BrokersListing",
     data() {
       return {
-        brokers: []
+        brokers: [],
+        search: ''
       };
     },
     async created() {
@@ -57,6 +44,42 @@
           console.log(error);
         }
       },
+      filterList (value, search, item) {
+        return value != null &&
+          search != null &&
+          typeof value === 'string' &&
+          value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
+      },
+    },
+    computed: {
+      headers () {
+        return [
+          {
+            text: 'Código',
+            align: 'start',
+            sortable: true,
+            value: 'code',
+          },
+          {
+            text: 'Nome',
+            align: 'start',
+            sortable: true,
+            value: 'name',
+          },
+          {
+            text: 'CNPJ',
+            align: 'start',
+            sortable: true,
+            value: 'cnpj',
+          },
+          {
+            text: 'Site',
+            align: 'start',
+            sortable: true,
+            value: 'site',
+          },
+        ]
+      }
     }
   }
 </script>
