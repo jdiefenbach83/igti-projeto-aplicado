@@ -1,36 +1,28 @@
 <?php
 
-
 namespace App\Service;
-
 
 use App\Entity\Broker;
 use App\Entity\EntityInterface;
-use App\Repository\BrokerRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\BrokerRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BrokerService implements ServiceInterface
 {
     /**
-     * @var BrokerRepository
+     * @var BrokerRepositoryInterface
      */
-    private BrokerRepository $brokerRepository;
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
+    private BrokerRepositoryInterface $brokerRepository;
     /**
      * @var ValidatorInterface
      */
     private ValidatorInterface $validator;
 
-    private $validationErrors;
+    private iterable $validationErrors;
 
-    public function __construct(BrokerRepository $brokerRepository, EntityManagerInterface $entityManager, ValidatorInterface $validator)
+    public function __construct(BrokerRepositoryInterface $brokerRepository, ValidatorInterface $validator)
     {
         $this->brokerRepository = $brokerRepository;
-        $this->entityManager = $entityManager;
         $this->validator = $validator;
     }
 
@@ -40,7 +32,7 @@ class BrokerService implements ServiceInterface
 
     public function getById(int $id): ?Broker
     {
-        return $this->brokerRepository->findOneBy(['id' => $id]);
+        return $this->brokerRepository->findById($id);
     }
 
     public function add(EntityInterface $broker): bool
@@ -52,15 +44,14 @@ class BrokerService implements ServiceInterface
             return false;
         }
 
-        $this->entityManager->persist($broker);
-        $this->entityManager->flush();
+        $this->brokerRepository->add($broker);
 
         return true;
     }
 
     public function update(int $id, EntityInterface $broker): ?Broker
     {
-        $existing_entity = $this->brokerRepository->find($id);
+        $existing_entity = $this->brokerRepository->findById($id);
 
         if (is_null($existing_entity)) {
             throw new \InvalidArgumentException();
@@ -78,26 +69,24 @@ class BrokerService implements ServiceInterface
             return null;
         }
 
-        $this->entityManager->persist($existing_entity);
-        $this->entityManager->flush();
+        $this->brokerRepository->add($existing_entity);
 
         return $existing_entity;
     }
 
     public function remove(int $id): void
     {
-        $existing_entity = $this->brokerRepository->find($id);
+        $existing_entity = $this->brokerRepository->findById($id);
 
         if (is_null($existing_entity)) {
             throw new \InvalidArgumentException();
         }
 
-        $this->entityManager->remove($existing_entity);
-        $this->entityManager->flush();
+        $this->brokerRepository->remove($existing_entity);
     }
 
     /**
-     * @return array
+     * @return iterable
      */
     public function getValidationErrors()
     {

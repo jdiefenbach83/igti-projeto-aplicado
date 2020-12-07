@@ -3,49 +3,52 @@
 namespace App\Repository;
 
 use App\Entity\Broker;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 
-/**
- * @method Broker|null find($id, $lockMode = null, $lockVersion = null)
- * @method Broker|null findOneBy(array $criteria, array $orderBy = null)
- * @method Broker[]    findAll()
- * @method Broker[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class BrokerRepository extends ServiceEntityRepository
+class BrokerRepository implements BrokerRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var EntityManagerInterface
+     */
+    private EntityManagerInterface $entityManager;
+
+    /**
+     * @var ObjectRepository
+     */
+    private ObjectRepository $objectRepository;
+
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        parent::__construct($registry, Broker::class);
+        $this->entityManager = $entityManager;
+        $this->objectRepository = $this->entityManager->getRepository(Broker::class);
     }
 
-    // /**
-    //  * @return Broker[] Returns an array of Broker objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findAll()
     {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('b.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->objectRepository->findAll();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Broker
+    public function findById(int $id)
     {
-        return $this->createQueryBuilder('b')
-            ->andWhere('b.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this->objectRepository->find($id);
     }
-    */
+
+    public function add(Broker $broker): void
+    {
+        $this->entityManager->persist($broker);
+        $this->entityManager->flush();
+    }
+
+    public function update(Broker $broker): void
+    {
+        $this->entityManager->persist($broker);
+        $this->entityManager->flush();
+    }
+
+    public function remove(Broker $broker): void
+    {
+        $this->entityManager->remove($broker);
+        $this->entityManager->flush();
+    }
 }
