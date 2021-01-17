@@ -28,8 +28,15 @@
 </template>
 
 <script>
+import store from "./store";
+
 export default {
-  name: "App"
+  name: "App",
+  created() {
+    // 'Loading prereqs in vuex store
+    store.dispatch('broker/getAll');
+    // 'End of loading prereqs in vuex store
+  }
 }
 </script>
 

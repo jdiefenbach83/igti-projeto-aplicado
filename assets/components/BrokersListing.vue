@@ -21,29 +21,14 @@
 </template>
 
 <script>
-  import BrokerService from '../services/BrokerService';
-
   export default {
     name: "BrokersListing",
     data() {
       return {
-        brokers: [],
         search: ''
       };
     },
-    async created() {
-      const brokers = await this.getBrokers();
-
-      this.brokers = brokers.content;
-    },
     methods: {
-      async getBrokers() {
-        try {
-          return await BrokerService.getAll();
-        } catch (error) {
-          console.log(error);
-        }
-      },
       filterList (value, search, item) {
         return value != null &&
           search != null &&
@@ -52,6 +37,9 @@
       },
     },
     computed: {
+      brokers() {
+        return this.$store.getters["broker/brokers"];
+      },
       headers () {
         return [
           {

@@ -9,7 +9,7 @@ export default new Vuex.Store({
     broker: BrokerModule
   },
   state: {
-    teste: 'ok',
+
   },
   mutations: {
 

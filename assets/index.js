@@ -13,7 +13,3 @@ new Vue({
   router,
   vuetify
 }).$mount("#app");
-
-console.log('Initializing vuex store...');
-console.log(store.state.teste);
-console.log('Ready!');
