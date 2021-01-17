@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use DateTime;
+use DateTimeImmutable;
 use JsonSerializable;
 
 class BrokerageNote implements EntityInterface, JsonSerializable
 {
     private ?int $id;
     private Broker $broker;
-    private DateTime $date;
+    private DateTimeImmutable $date;
     private int $number;
     private float $movimentation_total;
     private float $operational_fee;
@@ -70,18 +70,18 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     }
 
     /**
-     * @return DateTime
+     * @return DateTimeImmutable
      */
-    public function getDate(): DateTime
+    public function getDate(): DateTimeImmutable
     {
         return $this->date;
     }
 
     /**
-     * @param DateTime $date
+     * @param DateTimeImmutable $date
      * @return BrokerageNote
      */
-    public function setDate(DateTime $date): BrokerageNote
+    public function setDate(DateTimeImmutable $date): BrokerageNote
     {
         $this->date = $date;
         return $this;
