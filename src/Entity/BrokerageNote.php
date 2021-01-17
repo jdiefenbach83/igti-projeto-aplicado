@@ -274,7 +274,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return [
             'id' => $this->id,
             'broker_id' => $this->broker->getId(),
-            'date' => $this->date,
+            'date' => $this->date->format('Y-m-d'),
             'number' => $this->number,
             'movimentation_total' => $this->movimentation_total,
             'operational_fee' => $this->operational_fee,

@@ -32,7 +32,7 @@ class BrokerageNoteTest extends TestCase
     
     public function testBrokerageNote_ShouldSetAndGetSuccessfully()
     {
-        $date = $this->faker->dateTime();
+        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
         $movimentation_total = $this->faker->randomFloat(4, 1, 100_000);
         $operational_fee = $this->faker->randomFloat(4, 1, 100_000);
