@@ -19,7 +19,7 @@ class BrokerageNoteControllerTest extends BaseTest
             'broker_id' => $broker->getId(),
             'date' => $this->faker->dateTime()->format('Y-m-d'),
             'number' => $this->faker->numberBetween(1, 100_000),
-            'movimentation_total' => $this->faker->randomFloat(4, 1, 100_000),
+            'total_moviments' => $this->faker->randomFloat(4, 1, 100_000),
             'operational_fee' => $this->faker->randomFloat(4, 1, 100_000),
             'registration_fee' => $this->faker->randomFloat(4, 1, 100_000),
             'emolument_fee' => $this->faker->randomFloat(4, 1, 100_000),
@@ -42,7 +42,7 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertNotEmpty($response_body);
         $this->assertEquals($new_brokerage_note['date'], $response_body['content']['date']);
         $this->assertEquals($new_brokerage_note['number'], $response_body['content']['number']);
-        $this->assertEquals($new_brokerage_note['movimentation_total'], $response_body['content']['movimentation_total']);
+        $this->assertEquals($new_brokerage_note['total_moviments'], $response_body['content']['total_moviments']);
         $this->assertEquals($new_brokerage_note['operational_fee'], $response_body['content']['operational_fee']);
         $this->assertEquals($new_brokerage_note['registration_fee'], $response_body['content']['registration_fee']);
         $this->assertEquals($new_brokerage_note['emolument_fee'], $response_body['content']['emolument_fee']);
@@ -51,7 +51,7 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertNotNull($brokerage_note);
         $this->assertEquals($new_brokerage_note['date'], $brokerage_note->getDate()->format('Y-m-d'));
         $this->assertEquals($new_brokerage_note['number'], $brokerage_note->getNumber());
-        $this->assertEquals($new_brokerage_note['movimentation_total'], $brokerage_note->getMovimentationTotal());
+        $this->assertEquals($new_brokerage_note['total_moviments'], $brokerage_note->getTotalMoviments());
         $this->assertEquals($new_brokerage_note['operational_fee'], $brokerage_note->getOperationalFee());
         $this->assertEquals($new_brokerage_note['registration_fee'], $brokerage_note->getRegistrationFee());
         $this->assertEquals($new_brokerage_note['emolument_fee'], $brokerage_note->getEmolumentFee());

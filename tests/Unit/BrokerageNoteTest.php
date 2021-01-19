@@ -34,7 +34,7 @@ class BrokerageNoteTest extends TestCase
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
-        $movimentation_total = $this->faker->randomFloat(4, 1, 100_000);
+        $total_moviments = $this->faker->randomFloat(4, 1, 100_000);
         $operational_fee = $this->faker->randomFloat(4, 1, 100_000);
         $registration_fee = $this->faker->randomFloat(4, 1, 100_000);
         $emolument_fee = $this->faker->randomFloat(4, 1, 100_000);
@@ -46,7 +46,7 @@ class BrokerageNoteTest extends TestCase
             ->setBroker($this->broker)
             ->setDate($date)
             ->setNumber($number)
-            ->setMovimentationTotal($movimentation_total)
+            ->setTotalMoviments($total_moviments)
             ->setOperationalFee($operational_fee)
             ->setRegistrationFee($registration_fee)
             ->setEmolumentFee($emolument_fee)
@@ -56,7 +56,7 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals($this->broker, $brokerage_note->getBroker());
         $this->assertEquals($date, $brokerage_note->getDate());
         $this->assertEquals($number, $brokerage_note->getNumber());
-        $this->assertEquals($movimentation_total, $brokerage_note->getMovimentationTotal());
+        $this->assertEquals($total_moviments, $brokerage_note->getTotalMoviments());
         $this->assertEquals($operational_fee, $brokerage_note->getOperationalFee());
         $this->assertEquals($registration_fee, $brokerage_note->getRegistrationFee());
         $this->assertEquals($emolument_fee, $brokerage_note->getEmolumentFee());

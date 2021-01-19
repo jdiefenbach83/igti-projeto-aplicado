@@ -25,7 +25,7 @@ class BrokerageNoteFactory implements EntityFactoryInterface
             ->setBroker($this->broker_repository->findById($content->broker_id))
             ->setDate(\DateTimeImmutable::createFromFormat('Y-m-d', $content->date) ?? new \DateTimeImmutable())
             ->setNumber($content->number ?? 0)
-            ->setMovimentationTotal($content->movimentation_total ?? .0)
+            ->setTotalMoviments($content->total_moviments ?? .0)
             ->setOperationalFee($content->operational_fee ?? .0)
             ->setRegistrationFee($content->registration_fee ?? .0)
             ->setEmolumentFee($content->emolument_fee ?? .0)

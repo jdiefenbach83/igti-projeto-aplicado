@@ -11,16 +11,16 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private Broker $broker;
     private DateTimeImmutable $date;
     private int $number;
-    private float $movimentation_total;
+    private float $total_moviments;
     private float $operational_fee;
     private float $registration_fee;
     private float $emolument_fee;
     private float $iss_pis_cofins;
-    private float $fee_total;
+    private float $total_fees;
     private float $note_irrf_tax;
     private float $calculated_irrf_tax;
     private float $net_total;
-    private float $cost_total;
+    private float $total_costs;
     private float $result;
     private float $calculation_basis_irrf;
     private float $calculated_irrf;
@@ -28,16 +28,16 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     public function __construct()        
     {
         $this->number = 0;
-        $this->movimentation_total = .0;
+        $this->total_moviments = .0;
         $this->operational_fee = .0;
         $this->registration_fee = .0;
         $this->emolument_fee = .0;
         $this->iss_pis_cofins = .0;
-        $this->fee_total = .0;
+        $this->total_fees = .0;
         $this->note_irrf_tax = .0;
         $this->calculated_irrf_tax = .0;
         $this->net_total = .0;
-        $this->cost_total = .0;
+        $this->total_costs = .0;
         $this->result = .0;
         $this->calculation_basis_irrf = .0;
         $this->calculated_irrf = .0;
@@ -108,18 +108,18 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getMovimentationTotal(): float
+    public function getTotalMoviments(): float
     {
-        return $this->movimentation_total;
+        return $this->total_moviments;
     }
 
     /**
-     * @param float $movimentation_total
+     * @param float $total_moviments
      * @return BrokerageNote
      */
-    public function setMovimentationTotal(float $movimentation_total): BrokerageNote
+    public function setTotalMoviments(float $total_moviments): BrokerageNote
     {
-        $this->movimentation_total = $movimentation_total;
+        $this->total_moviments = $total_moviments;
         return $this;
     }
 
@@ -198,9 +198,9 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getFeeTotal(): float
+    public function getTotalFees(): float
     {
-        return $this->fee_total;
+        return $this->total_fees;
     }
 
     /**
@@ -240,9 +240,9 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getCostTotal(): float
+    public function getTotalCost(): float
     {
-        return $this->cost_total;
+        return $this->total_costs;
     }
 
     /**
@@ -276,16 +276,16 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             'broker_id' => $this->broker->getId(),
             'date' => $this->date->format('Y-m-d'),
             'number' => $this->number,
-            'movimentation_total' => $this->movimentation_total,
+            'total_moviments' => $this->total_moviments,
             'operational_fee' => $this->operational_fee,
             'registration_fee' => $this->registration_fee,
             'emolument_fee' => $this->emolument_fee,
             'iss_pis_cofins' => $this->iss_pis_cofins,
-            'fee_total' => $this->fee_total,
+            'total_fees' => $this->total_fees,
             'note_irrf_tax' => $this->note_irrf_tax,
             'calculated_irrf_tax' => $this->calculated_irrf_tax,
             'net_total' => $this->net_total,
-            'cost_total' => $this->cost_total,
+            'total_costs' => $this->total_costs,
             'result' => $this->result,
             'calculation_basis_irrf' => $this->calculation_basis_irrf,
             'calculated_irrf' => $this->calculated_irrf,
