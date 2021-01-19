@@ -107,4 +107,39 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($net_total, $brokerage_note->getNetTotal());
         $this->assertEquals($result, $brokerage_note->getResult());
     }
+
+    public function testAddBrokerageNote_ShouldCalculateBaisIrCorretly()
+    {
+        $status_code_expected = 201;
+
+        $broker = $this->entityManager
+            ->getRepository(Broker::class)
+            ->findOneBy([]);
+
+        $new_brokerage_note = [
+            'broker_id' => $broker->getId(),
+            'date' => $this->faker->dateTime()->format('Y-m-d'),
+            'number' => $this->faker->numberBetween(1, 100_000),
+            'total_moviments' => 10.0,
+            'operational_fee' => 1.0,
+            'registration_fee' => 1.0,
+            'emolument_fee' => 1.0,
+            'iss_pis_cofins' => 1.0,
+            'note_irrf_tax' => 1.0,
+        ];
+
+        $request_body = json_encode($new_brokerage_note);
+
+        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $request_body);
+
+        $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
+
+        $brokerage_note = $this->entityManager
+            ->getRepository(BrokerageNote::class)
+            ->findOneBy(['id' => $response_body['content']['id']]);
+
+        $this->assertEquals($status_code_expected, $response->getStatusCode());
+        $this->assertEquals($brokerage_note->getResult(), $brokerage_note->getCalculationBasisIr());
+    }
 }

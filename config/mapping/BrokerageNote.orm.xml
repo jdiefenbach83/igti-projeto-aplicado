@@ -22,8 +22,8 @@
         <field name="net_total" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="total_costs" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="result" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="calculation_basis_irrf" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="calculated_irrf" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="calculation_basis_ir" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="calculated_ir" type="decimal" precision="14" scale="4" nullable="false"/>
 
         <indexes>
             <index name="brokerage_note_date_idx" columns="date"/>

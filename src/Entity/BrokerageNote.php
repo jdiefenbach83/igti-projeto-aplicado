@@ -22,8 +22,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private float $net_total;
     private float $total_costs;
     private float $result;
-    private float $calculation_basis_irrf;
-    private float $calculated_irrf;
+    private float $calculation_basis_ir;
+    private float $calculated_ir;
 
     public function __construct()        
     {
@@ -39,8 +39,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->net_total = .0;
         $this->total_costs = .0;
         $this->result = .0;
-        $this->calculation_basis_irrf = .0;
-        $this->calculated_irrf = .0;
+        $this->calculation_basis_ir = .0;
+        $this->calculated_ir = .0;
     }
 
     /**
@@ -270,17 +270,17 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getCalculationBasisIrrf(): float
+    public function getCalculationBasisIr(): float
     {
-        return $this->calculation_basis_irrf;
+        return $this->calculation_basis_ir;
     }
 
     /**
      * @return float
      */
-    public function getCalculatedIrrf(): float
+    public function getCalculatedIr(): float
     {
-        return $this->calculated_irrf;
+        return $this->calculated_ir;
     }
 
     private function calculate(): void
@@ -289,6 +289,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->calculateTotalCosts();
         $this->calculateNetTotal();
         $this->calculateResult();
+        $this->calculateBasisIr();
     }
 
     private function calculateFees(): void
@@ -314,6 +315,15 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->result = bcsub($this->result, $this->iss_pis_cofins, 4);
     }
 
+    private function calculateBasisIr(): void
+    {
+        $this->calculation_basis_ir = .0;
+
+        if ($this->result > .0) {
+            $this->calculation_basis_ir = $this->result;
+        }
+    }
+
     public function jsonSerialize()
     {
         return [
@@ -332,8 +342,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             'net_total' => $this->net_total,
             'total_costs' => $this->total_costs,
             'result' => $this->result,
-            'calculation_basis_irrf' => $this->calculation_basis_irrf,
-            'calculated_irrf' => $this->calculated_irrf,
+            'calculation_basis_ir' => $this->calculation_basis_ir,
+            'calculated_ir' => $this->calculated_ir,
             '_links' => [
                 [
                     'rel' => 'self',

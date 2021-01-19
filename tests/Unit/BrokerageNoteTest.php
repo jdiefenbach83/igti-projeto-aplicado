@@ -104,4 +104,56 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals($net_total, $brokerage_note->getNetTotal());
         $this->assertEquals($result, $brokerage_note->getResult());
     }
+
+    public function testBrokerageNote_ShouldCalculareBasisIrCorrectly()
+    {
+        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
+        $number = $this->faker->numberBetween(1, 100_000);
+        $total_moviments = 10.0;
+        $operational_fee = 1.0;
+        $registration_fee = 1.0;
+        $emolument_fee = 1.0;
+        $iss_pis_cofins = 1.0;
+        $note_irrf_tax = 1.0;
+
+        $brokerage_note = new BrokerageNote();
+        $brokerage_note
+            ->setBroker($this->broker)
+            ->setDate($date)
+            ->setNumber($number)
+            ->setTotalMoviments($total_moviments)
+            ->setOperationalFee($operational_fee)
+            ->setRegistrationFee($registration_fee)
+            ->setEmolumentFee($emolument_fee)
+            ->setIssPisCofins($iss_pis_cofins)
+            ->setNoteIrrfTax($note_irrf_tax);
+
+        $this->assertEquals($brokerage_note->getResult(), $brokerage_note->getCalculationBasisIr());
+    }
+
+    public function testBrokerageNote_ShouldCalculareBasisIrZeroCorrectly()
+    {
+        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
+        $number = $this->faker->numberBetween(1, 100_000);
+        $total_moviments = -10.0;
+        $operational_fee = 1.0;
+        $registration_fee = 1.0;
+        $emolument_fee = 1.0;
+        $iss_pis_cofins = 1.0;
+        $note_irrf_tax = 1.0;
+
+        $brokerage_note = new BrokerageNote();
+        $brokerage_note
+            ->setBroker($this->broker)
+            ->setDate($date)
+            ->setNumber($number)
+            ->setTotalMoviments($total_moviments)
+            ->setOperationalFee($operational_fee)
+            ->setRegistrationFee($registration_fee)
+            ->setEmolumentFee($emolument_fee)
+            ->setIssPisCofins($iss_pis_cofins)
+            ->setNoteIrrfTax($note_irrf_tax);
+
+        $this->assertEquals(0.0, $brokerage_note->getCalculationBasisIr());
+    }
 }
