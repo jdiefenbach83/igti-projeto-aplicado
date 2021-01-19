@@ -41,6 +41,11 @@ class BrokerageNoteControllerTest extends BaseTest
         $total_fees = bcadd($new_brokerage_note['operational_fee'], $new_brokerage_note['registration_fee'], 4);
         $total_fees = bcadd($total_fees, $new_brokerage_note['emolument_fee'], 4);
 
+        $total_costs = bcadd($total_fees, $new_brokerage_note['iss_pis_cofins'], 4);
+        $total_costs = bcadd($total_costs, $new_brokerage_note['note_irrf_tax'], 4);
+
+        $net_total = bcsub($new_brokerage_note['total_moviments'], $total_costs, 4);
+
         $this->assertEquals($status_code_expected, $response->getStatusCode());
         $this->assertNotEmpty($response_body);
         $this->assertEquals($new_brokerage_note['date'], $response_body['content']['date']);
@@ -61,5 +66,7 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($new_brokerage_note['iss_pis_cofins'], $brokerage_note->getIssPisCofins());
         $this->assertEquals($new_brokerage_note['note_irrf_tax'], $brokerage_note->getNoteIrrfTax());
         $this->assertEquals($total_fees, $brokerage_note->getTotalFees());
+        $this->assertEquals($total_costs, $brokerage_note->getTotalCosts());
+        $this->assertEquals($net_total, $brokerage_note->getNetTotal());
     }
 }

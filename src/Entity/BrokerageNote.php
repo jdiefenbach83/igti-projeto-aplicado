@@ -254,7 +254,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getTotalCost(): float
+    public function getTotalCosts(): float
     {
         return $this->total_costs;
     }
@@ -286,6 +286,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private function calculate(): void
     {
         $this->calculateFees();
+        $this->calculateTotalCosts();
         $this->calculateNetTotal();
     }
 
@@ -295,11 +296,15 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->total_fees = bcadd($this->total_fees, $this->emolument_fee, 4);
     }
 
+    private function calculateTotalCosts(): void
+    {
+        $this->total_costs = bcadd($this->total_fees, $this->iss_pis_cofins, 4);
+        $this->total_costs = bcadd($this->total_costs, $this->note_irrf_tax, 4);
+    }
+
     private function calculateNetTotal(): void
     {
-        $this->net_total = bcsub($this->total_moviments, $this->total_fees, 4);
-        $this->net_total = bcsub($this->net_total, $this->iss_pis_cofins, 4);
-        $this->net_total = bcsub($this->net_total, $this->note_irrf_tax, 4);
+        $this->net_total = bcsub($this->total_moviments, $this->total_costs, 4);
     }
 
     public function jsonSerialize()
