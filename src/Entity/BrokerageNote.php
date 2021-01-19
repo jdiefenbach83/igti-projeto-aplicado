@@ -288,6 +288,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->calculateFees();
         $this->calculateTotalCosts();
         $this->calculateNetTotal();
+        $this->calculateResult();
     }
 
     private function calculateFees(): void
@@ -305,6 +306,12 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private function calculateNetTotal(): void
     {
         $this->net_total = bcsub($this->total_moviments, $this->total_costs, 4);
+    }
+
+    private function calculateResult(): void
+    {
+        $this->result = bcsub($this->total_moviments, $this->total_fees, 4);
+        $this->result = bcsub($this->result, $this->iss_pis_cofins, 4);
     }
 
     public function jsonSerialize()

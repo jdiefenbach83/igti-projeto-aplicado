@@ -61,6 +61,9 @@ class BrokerageNoteTest extends TestCase
 
         $net_total = bcsub($total_moviments, $total_costs, 4);
 
+        $result = bcsub($total_moviments, $total_fees, 4);
+        $result = bcsub($result, $iss_pis_cofins, 4);
+
         $this->assertEquals($this->broker, $brokerage_note->getBroker());
         $this->assertEquals($date, $brokerage_note->getDate());
         $this->assertEquals($number, $brokerage_note->getNumber());
@@ -73,5 +76,6 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals($total_fees, $brokerage_note->getTotalFees());
         $this->assertEquals($total_costs, $brokerage_note->getTotalCosts());
         $this->assertEquals($net_total, $brokerage_note->getNetTotal());
+        $this->assertEquals($result, $brokerage_note->getResult());
     }
 }

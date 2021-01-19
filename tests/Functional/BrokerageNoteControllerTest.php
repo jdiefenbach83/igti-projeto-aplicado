@@ -46,6 +46,9 @@ class BrokerageNoteControllerTest extends BaseTest
 
         $net_total = bcsub($new_brokerage_note['total_moviments'], $total_costs, 4);
 
+        $result = bcsub($new_brokerage_note['total_moviments'], $total_fees, 4);
+        $result = bcsub($result, $new_brokerage_note['iss_pis_cofins'], 4);
+
         $this->assertEquals($status_code_expected, $response->getStatusCode());
         $this->assertNotEmpty($response_body);
         $this->assertEquals($new_brokerage_note['date'], $response_body['content']['date']);
@@ -68,5 +71,6 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($total_fees, $brokerage_note->getTotalFees());
         $this->assertEquals($total_costs, $brokerage_note->getTotalCosts());
         $this->assertEquals($net_total, $brokerage_note->getNetTotal());
+        $this->assertEquals($result, $brokerage_note->getResult());
     }
 }
