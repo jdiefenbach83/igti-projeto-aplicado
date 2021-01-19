@@ -53,6 +53,9 @@ class BrokerageNoteTest extends TestCase
             ->setIssPisCofins($iss_pis_cofins)
             ->setNoteIrrfTax($note_irrf_tax);
 
+        $total_fees = bcadd($operational_fee, $registration_fee, 4);
+        $total_fees = bcadd($total_fees, $emolument_fee, 4);
+
         $this->assertEquals($this->broker, $brokerage_note->getBroker());
         $this->assertEquals($date, $brokerage_note->getDate());
         $this->assertEquals($number, $brokerage_note->getNumber());
@@ -62,5 +65,6 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals($emolument_fee, $brokerage_note->getEmolumentFee());
         $this->assertEquals($iss_pis_cofins, $brokerage_note->getIssPisCofins());
         $this->assertEquals($note_irrf_tax, $brokerage_note->getNoteIrrfTax());
+        $this->assertEquals($total_fees, $brokerage_note->getTotalFees());
     }
 }

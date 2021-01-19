@@ -38,6 +38,9 @@ class BrokerageNoteControllerTest extends BaseTest
             ->getRepository(BrokerageNote::class)
             ->findOneBy(['id' => $response_body['content']['id']]);
 
+        $total_fees = bcadd($new_brokerage_note['operational_fee'], $new_brokerage_note['registration_fee'], 4);
+        $total_fees = bcadd($total_fees, $new_brokerage_note['emolument_fee'], 4);
+
         $this->assertEquals($status_code_expected, $response->getStatusCode());
         $this->assertNotEmpty($response_body);
         $this->assertEquals($new_brokerage_note['date'], $response_body['content']['date']);
@@ -57,5 +60,6 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($new_brokerage_note['emolument_fee'], $brokerage_note->getEmolumentFee());
         $this->assertEquals($new_brokerage_note['iss_pis_cofins'], $brokerage_note->getIssPisCofins());
         $this->assertEquals($new_brokerage_note['note_irrf_tax'], $brokerage_note->getNoteIrrfTax());
+        $this->assertEquals($total_fees, $brokerage_note->getTotalFees());
     }
 }

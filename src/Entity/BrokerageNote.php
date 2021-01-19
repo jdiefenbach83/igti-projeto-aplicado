@@ -138,6 +138,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     public function setOperationalFee(float $operational_fee): BrokerageNote
     {
         $this->operational_fee = $operational_fee;
+        $this->calculateFees();
         return $this;
     }
 
@@ -156,6 +157,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     public function setRegistrationFee(float $registration_fee): BrokerageNote
     {
         $this->registration_fee = $registration_fee;
+        $this->calculateFees();
         return $this;
     }
 
@@ -174,6 +176,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     public function setEmolumentFee(float $emolument_fee): BrokerageNote
     {
         $this->emolument_fee = $emolument_fee;
+        $this->calculateFees();
         return $this;
     }
 
@@ -267,6 +270,12 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     public function getCalculatedIrrf(): float
     {
         return $this->calculated_irrf;
+    }
+
+    private function calculateFees(): void
+    {
+        $this->total_fees = bcadd($this->operational_fee, $this->registration_fee, 4);
+        $this->total_fees = bcadd($this->total_fees, $this->emolument_fee, 4);
     }
 
     public function jsonSerialize()
