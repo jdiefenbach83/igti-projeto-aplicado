@@ -97,6 +97,7 @@ abstract class BaseController extends AbstractController
 
         } catch (\Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            dump($e);
         }
 
         $responseFactory = new ResponseFactory(

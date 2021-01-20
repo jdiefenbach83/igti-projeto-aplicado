@@ -22,8 +22,8 @@ class BrokerageNoteFactory implements EntityFactoryInterface
         $content = json_decode($json);
 
         return (new BrokerageNote())
-            ->setBroker($this->broker_repository->findById($content->broker_id))
-            ->setDate(\DateTimeImmutable::createFromFormat('Y-m-d', $content->date) ?? new \DateTimeImmutable())
+            ->setBroker($content->broker_id ? $this->broker_repository->findById($content->broker_id) : null)
+            ->setDate($content->date ? \DateTimeImmutable::createFromFormat('Y-m-d', $content->date) : null)
             ->setNumber($content->number ?? 0)
             ->setTotalMoviments($content->total_moviments ?? .0)
             ->setOperationalFee($content->operational_fee ?? .0)

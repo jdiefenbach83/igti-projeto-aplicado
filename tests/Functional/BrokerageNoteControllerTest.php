@@ -142,4 +142,47 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($status_code_expected, $response->getStatusCode());
         $this->assertEquals($brokerage_note->getResult(), $brokerage_note->getCalculationBasisIr());
     }
+
+    public function getInvalidValuesToCreateBrokerageNote(): iterable {
+        yield 'broker_id' => [ 'broker_id', null ];
+        yield 'date' => [ 'date', null ];
+        yield 'number' => [ 'number', null ];
+    }
+
+    /**
+     * @dataProvider getInvalidValuesToCreateBrokerageNote
+     * @param string $key
+     * @param $value
+     */
+    public function testAddBrokerageNote_ShouldFailWhenCreate(string $key, $value): void
+    {
+        $status_code_expected = 400;
+
+        $broker = $this->entityManager
+            ->getRepository(Broker::class)
+            ->findOneBy([]);
+
+        $new_brokerage_note = [
+            'broker_id' => $broker->getId(),
+            'date' => $this->faker->dateTime()->format('Y-m-d'),
+            'number' => $this->faker->numberBetween(1, 100_000),
+            'total_moviments' => $this->faker->randomFloat(4, 1, 100_000),
+            'operational_fee' => $this->faker->randomFloat(4, 1, 100_000),
+            'registration_fee' => $this->faker->randomFloat(4, 1, 100_000),
+            'emolument_fee' => $this->faker->randomFloat(4, 1, 100_000),
+            'iss_pis_cofins' => $this->faker->randomFloat(4, 1, 100_000),
+            'note_irrf_tax' => $this->faker->randomFloat(4, 1, 100_000),
+        ];
+
+        $new_brokerage_note[$key] = $value;
+
+        $request_body = json_encode($new_brokerage_note);
+
+        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $request_body);
+
+        $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
+
+        $this->assertEquals($status_code_expected, $response->getStatusCode());
+    }
 }
