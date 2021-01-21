@@ -4,12 +4,6 @@ namespace App\Entity;
 
 use DateTimeImmutable;
 use JsonSerializable;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\Positive;
-use Symfony\Component\Validator\Constraints\PositiveOrZero;
-use Symfony\Component\Validator\Constraints\Type;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class BrokerageNote implements EntityInterface, JsonSerializable
 {

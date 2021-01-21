@@ -3,10 +3,6 @@
 namespace App\Entity;
 
 use JsonSerializable;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Url;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Broker implements EntityInterface, JsonSerializable
 {

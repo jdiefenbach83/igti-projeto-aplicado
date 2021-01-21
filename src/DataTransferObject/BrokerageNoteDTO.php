@@ -25,7 +25,7 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @return string
      */
-    public function getBrokerId(): string
+    public function getBrokerId(): ?string
     {
         return $this->broker_id;
     }
@@ -34,7 +34,7 @@ class BrokerageNoteDTO implements DTOInterface
      * @param string $broker_id
      * @return BrokerageNoteDTO
      */
-    public function setBrokerId(string $broker_id): BrokerageNoteDTO
+    public function setBrokerId(?string $broker_id): BrokerageNoteDTO
     {
         $this->broker_id = $broker_id;
         return $this;
@@ -43,7 +43,7 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @return string
      */
-    public function getDate(): string
+    public function getDate(): ?string
     {
         return $this->date;
     }
@@ -52,7 +52,7 @@ class BrokerageNoteDTO implements DTOInterface
      * @param string $date
      * @return BrokerageNoteDTO
      */
-    public function setDate(string $date): BrokerageNoteDTO
+    public function setDate(?string $date): BrokerageNoteDTO
     {
         $this->date = $date;
         return $this;
@@ -61,7 +61,7 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @return string
      */
-    public function getNumber(): string
+    public function getNumber(): ?string
     {
         return $this->number;
     }
@@ -70,7 +70,7 @@ class BrokerageNoteDTO implements DTOInterface
      * @param string $number
      * @return BrokerageNoteDTO
      */
-    public function setNumber(string $number): BrokerageNoteDTO
+    public function setNumber(?string $number): BrokerageNoteDTO
     {
         $this->number = $number;
         return $this;
@@ -79,7 +79,7 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @return string
      */
-    public function getTotalMoviments(): string
+    public function getTotalMoviments(): ?string
     {
         return $this->total_moviments;
     }
@@ -88,7 +88,7 @@ class BrokerageNoteDTO implements DTOInterface
      * @param string $total_moviments
      * @return BrokerageNoteDTO
      */
-    public function setTotalMoviments(string $total_moviments): BrokerageNoteDTO
+    public function setTotalMoviments(?string $total_moviments): BrokerageNoteDTO
     {
         $this->total_moviments = $total_moviments;
         return $this;
@@ -97,7 +97,7 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @return string
      */
-    public function getOperationalFee(): string
+    public function getOperationalFee(): ?string
     {
         return $this->operational_fee;
     }
@@ -106,7 +106,7 @@ class BrokerageNoteDTO implements DTOInterface
      * @param string $operational_fee
      * @return BrokerageNoteDTO
      */
-    public function setOperationalFee(string $operational_fee): BrokerageNoteDTO
+    public function setOperationalFee(?string $operational_fee): BrokerageNoteDTO
     {
         $this->operational_fee = $operational_fee;
         return $this;
@@ -115,7 +115,7 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @return string
      */
-    public function getRegistrationFee(): string
+    public function getRegistrationFee(): ?string
     {
         return $this->registration_fee;
     }
@@ -124,7 +124,7 @@ class BrokerageNoteDTO implements DTOInterface
      * @param string $registration_fee
      * @return BrokerageNoteDTO
      */
-    public function setRegistrationFee(string $registration_fee): BrokerageNoteDTO
+    public function setRegistrationFee(?string $registration_fee): BrokerageNoteDTO
     {
         $this->registration_fee = $registration_fee;
         return $this;
@@ -133,7 +133,7 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @return string
      */
-    public function getEmolumentFee(): string
+    public function getEmolumentFee(): ?string
     {
         return $this->emolument_fee;
     }
@@ -142,7 +142,7 @@ class BrokerageNoteDTO implements DTOInterface
      * @param string $emolument_fee
      * @return BrokerageNoteDTO
      */
-    public function setEmolumentFee(string $emolument_fee): BrokerageNoteDTO
+    public function setEmolumentFee(?string $emolument_fee): BrokerageNoteDTO
     {
         $this->emolument_fee = $emolument_fee;
         return $this;
@@ -151,7 +151,7 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @return string
      */
-    public function getIssPisCofins(): string
+    public function getIssPisCofins(): ?string
     {
         return $this->iss_pis_cofins;
     }
@@ -160,7 +160,7 @@ class BrokerageNoteDTO implements DTOInterface
      * @param string $iss_pis_cofins
      * @return BrokerageNoteDTO
      */
-    public function setIssPisCofins(string $iss_pis_cofins): BrokerageNoteDTO
+    public function setIssPisCofins(?string $iss_pis_cofins): BrokerageNoteDTO
     {
         $this->iss_pis_cofins = $iss_pis_cofins;
         return $this;
@@ -169,7 +169,7 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @return string
      */
-    public function getNoteIrrfTax(): string
+    public function getNoteIrrfTax(): ?string
     {
         return $this->note_irrf_tax;
     }
@@ -178,7 +178,7 @@ class BrokerageNoteDTO implements DTOInterface
      * @param string $note_irrf_tax
      * @return BrokerageNoteDTO
      */
-    public function setNoteIrrfTax(string $note_irrf_tax): BrokerageNoteDTO
+    public function setNoteIrrfTax(?string $note_irrf_tax): BrokerageNoteDTO
     {
         $this->note_irrf_tax = $note_irrf_tax;
         return $this;

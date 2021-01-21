@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\DataTransferObject\DTOInterface;
 use App\Entity\Broker;
-use App\Entity\EntityInterface;
 use App\Helper\BrokerFactory;
 use App\Repository\BrokerRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
