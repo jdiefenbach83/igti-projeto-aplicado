@@ -144,17 +144,23 @@ class BrokerageNoteControllerTest extends BaseTest
     }
 
     public function getInvalidValuesToCreateBrokerageNote(): iterable {
-        yield 'broker_id' => [ 'broker_id', null ];
-        yield 'broker_id' => [ 'broker_id', 123456 ];
-        yield 'date' => [ 'date', null ];
-        yield 'date' => [ 'date', '2020-20-20' ];
-        yield 'number' => [ 'number', null ];
-        yield 'total_moviments' => [ 'total_moviments', null ];
-        yield 'operational_fee' => [ 'operational_fee', null ];
-        yield 'registration_fee' => [ 'registration_fee', null ];
-        yield 'emolument_fee' => [ 'emolument_fee', null ];
-        yield 'iss_pis_cofins' => [ 'iss_pis_cofins', null ];
-        yield 'note_irrf_tax' => [ 'note_irrf_tax', null ];
+        yield 'broker_id - null' => [ 'broker_id', null ];
+        yield 'broker_id - invalid' => [ 'broker_id', 123456 ];
+        yield 'date - null' => [ 'date', null ];
+        yield 'date - invalid' => [ 'date', '2020-20-20' ];
+        yield 'number - null' => [ 'number', null ];
+        yield 'number - invalid' => [ 'number', -123456 ];
+        yield 'total_moviments - null' => [ 'total_moviments', null ];
+        yield 'operational_fee - null' => [ 'operational_fee', null ];
+        yield 'operational_fee - invalid' => [ 'operational_fee', -123456 ];
+        yield 'registration_fee - null' => [ 'registration_fee', null ];
+        yield 'registration_fee - invalid' => [ 'registration_fee', -123456 ];
+        yield 'emolument_fee - null' => [ 'emolument_fee', null ];
+        yield 'emolument_fee - invalid' => [ 'emolument_fee', -123456 ];
+        yield 'iss_pis_cofins - null' => [ 'iss_pis_cofins', null ];
+        yield 'iss_pis_cofins - invalid' => [ 'iss_pis_cofins', -123456 ];
+        yield 'note_irrf_tax - null' => [ 'note_irrf_tax', null ];
+        yield 'note_irrf_tax - invalid' => [ 'note_irrf_tax', -123456 ];
     }
 
     /**
