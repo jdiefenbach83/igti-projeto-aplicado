@@ -2,6 +2,7 @@
 
 namespace App\DataTransferObject;
 
+use App\Validator\Broker;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
@@ -188,6 +189,7 @@ class BrokerageNoteDTO implements DTOInterface
     {
         $metadata->addPropertyConstraint('broker_id', new NotNull());
         $metadata->addPropertyConstraint('broker_id', new NotBlank());
+        $metadata->addPropertyConstraint('broker_id', new Broker());
         $metadata->addPropertyConstraint('date', new NotBlank());
         $metadata->addPropertyConstraint('date', new Date());
         $metadata->addPropertyConstraint('number', new NotBlank());
