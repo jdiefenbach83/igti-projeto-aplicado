@@ -14,16 +14,16 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 class BrokerageNote implements EntityInterface, JsonSerializable
 {
     private ?int $id;
-    private ?Broker $broker;
-    private ?DateTimeImmutable $date;
-    private ?int $number;
-    private ?float $total_moviments;
-    private ?float $operational_fee;
-    private ?float $registration_fee;
-    private ?float $emolument_fee;
-    private ?float $iss_pis_cofins;
-    private ?float $total_fees;
-    private ?float $note_irrf_tax;
+    private Broker $broker;
+    private DateTimeImmutable $date;
+    private int $number;
+    private float $total_moviments;
+    private float $operational_fee;
+    private float $registration_fee;
+    private float $emolument_fee;
+    private float $iss_pis_cofins;
+    private float $total_fees;
+    private float $note_irrf_tax;
     private float $calculated_irrf_tax;
     private float $net_total;
     private float $total_costs;
@@ -358,30 +358,5 @@ class BrokerageNote implements EntityInterface, JsonSerializable
                 ],
             ]
         ];
-    }
-
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraint('broker', new NotNull());
-        $metadata->addPropertyConstraint('date', new NotBlank());
-        $metadata->addPropertyConstraint('date', new Type('DateTimeImmutable'));
-        $metadata->addPropertyConstraint('number', new NotBlank());
-        $metadata->addPropertyConstraint('number', new Positive());
-        //$metadata->addPropertyConstraint('total_moviments', new NotBlank());
-        $metadata->addPropertyConstraint('total_moviments', new NotNull());
-        $metadata->addPropertyConstraint('total_moviments', new Type('Float'));
-
-        $metadata->addPropertyConstraint('operational_fee', new NotBlank());
-        $metadata->addPropertyConstraint('operational_fee', new PositiveOrZero());
-        $metadata->addPropertyConstraint('registration_fee', new NotBlank());
-        $metadata->addPropertyConstraint('registration_fee', new PositiveOrZero());
-        $metadata->addPropertyConstraint('emolument_fee', new NotBlank());
-        $metadata->addPropertyConstraint('emolument_fee', new PositiveOrZero());
-        $metadata->addPropertyConstraint('iss_pis_cofins', new NotBlank());
-        $metadata->addPropertyConstraint('iss_pis_cofins', new PositiveOrZero());
-        $metadata->addPropertyConstraint('total_fees', new NotBlank());
-        $metadata->addPropertyConstraint('total_fees', new PositiveOrZero());
-        $metadata->addPropertyConstraint('note_irrf_tax', new NotBlank());
-        $metadata->addPropertyConstraint('note_irrf_tax', new PositiveOrZero());
     }
 }

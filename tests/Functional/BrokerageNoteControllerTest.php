@@ -145,8 +145,8 @@ class BrokerageNoteControllerTest extends BaseTest
 
     public function getInvalidValuesToCreateBrokerageNote(): iterable {
         yield 'broker_id' => [ 'broker_id', null ];
-        yield 'date' => [ 'date', null ];
-        yield 'number' => [ 'number', null ];
+        //yield 'date' => [ 'date', null ];
+        //yield 'number' => [ 'number', null ];
     }
 
     /**

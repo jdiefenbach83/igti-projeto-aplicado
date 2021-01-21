@@ -2,8 +2,10 @@
 
 namespace App\Helper;
 
+use App\DataTransferObject\BrokerageNoteDTO;
 use App\Entity\BrokerageNote;
 use App\Repository\BrokerRepositoryInterface;
+use DateTimeImmutable;
 
 class BrokerageNoteFactory implements EntityFactoryInterface
 {
@@ -17,19 +19,21 @@ class BrokerageNoteFactory implements EntityFactoryInterface
         $this->broker_repository = $broker_repository;
     }
 
-    public function makeEntity(string $json)
+    /**
+     * @param BrokerageNoteDTO $dto
+     * @return BrokerageNote
+     */
+    public function makeEntity($dto)
     {
-        $content = json_decode($json);
-
         return (new BrokerageNote())
-            ->setBroker($content->broker_id ? $this->broker_repository->findById($content->broker_id) : null)
-            ->setDate($content->date ? \DateTimeImmutable::createFromFormat('Y-m-d', $content->date) : null)
-            ->setNumber($content->number ?? 0)
-            ->setTotalMoviments($content->total_moviments ?? .0)
-            ->setOperationalFee($content->operational_fee ?? .0)
-            ->setRegistrationFee($content->registration_fee ?? .0)
-            ->setEmolumentFee($content->emolument_fee ?? .0)
-            ->setIssPisCofins($content->iss_pis_cofins ?? .0)
-            ->setNoteIrrfTax($content->note_irrf_tax ?? .0);
+            ->setBroker($this->broker_repository->findById($dto->getBrokerId()))
+            ->setDate(DateTimeImmutable::createFromFormat('Y-m-d', $dto->getDate()))
+            ->setNumber($dto->getNumber())
+            ->setTotalMoviments($dto->getTotalMoviments())
+            ->setOperationalFee($dto->getOperationalFee())
+            ->setRegistrationFee($dto->getRegistrationFee())
+            ->setEmolumentFee($dto->getEmolumentFee())
+            ->setIssPisCofins($dto->getIssPisCofins())
+            ->setNoteIrrfTax($dto->getNoteIrrfTax());
     }
 }

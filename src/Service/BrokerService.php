@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
+use App\DataTransferObject\DTOInterface;
 use App\Entity\Broker;
 use App\Entity\EntityInterface;
+use App\Helper\BrokerFactory;
 use App\Repository\BrokerRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -35,21 +37,22 @@ class BrokerService implements ServiceInterface
         return $this->brokerRepository->findById($id);
     }
 
-    public function add(EntityInterface $broker): bool
+    public function add(DTOInterface $broker_dto): ?Broker
     {
-        $errors = $this->validator->validate($broker);
+        $errors = $this->validator->validate($broker_dto);
 
         if (count($errors) > 0) {
             $this->validationErrors = $errors;
-            return false;
+            return null;
         }
 
-        $this->brokerRepository->add($broker);
+        $broker_entity = (new BrokerFactory())->makeEntity($broker_dto);
+        $this->brokerRepository->add($broker_entity);
 
-        return true;
+        return $broker_entity;
     }
 
-    public function update(int $id, EntityInterface $broker): ?Broker
+    public function update(int $id, DTOInterface $broker_dto): ?Broker
     {
         $existing_entity = $this->brokerRepository->findById($id);
 
@@ -57,17 +60,19 @@ class BrokerService implements ServiceInterface
             throw new \InvalidArgumentException();
         }
 
-        $existing_entity->setCode($broker->getCode());
-        $existing_entity->setName($broker->getName());
-        $existing_entity->setCnpj($broker->getCnpj());
-        $existing_entity->setSite($broker->getSite());
-
-        $errors = $this->validator->validate($existing_entity);
+        $errors = $this->validator->validate($broker_dto);
 
         if (count($errors) > 0) {
             $this->validationErrors = $errors;
             return null;
         }
+
+        $broker_entity = (new BrokerFactory())->makeEntity($broker_dto);
+
+        $existing_entity->setCode($broker_entity->getCode());
+        $existing_entity->setName($broker_entity->getName());
+        $existing_entity->setCnpj($broker_entity->getCnpj());
+        $existing_entity->setSite($broker_entity->getSite());
 
         $this->brokerRepository->add($existing_entity);
 

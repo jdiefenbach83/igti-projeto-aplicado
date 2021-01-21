@@ -1,10 +1,14 @@
 <?php
 
-
 namespace App\Helper;
 
+use App\DataTransferObject\DTOInterface;
 
 interface EntityFactoryInterface
 {
-    public function makeEntity(string $json);
+    /**
+     * @param DTOInterface $dto
+     * @return mixed
+     */
+    public function makeEntity($dto);
 }

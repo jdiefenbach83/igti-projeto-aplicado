@@ -86,15 +86,5 @@ class Broker implements EntityInterface, JsonSerializable
         ];
     }
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraint('code', new NotBlank(null, null, false, 'trim'));
-        $metadata->addPropertyConstraint('code', new Length(null, null, 10, null, 'trim'));
-        $metadata->addPropertyConstraint('name', new NotBlank(null, null, false, 'trim'));
-        $metadata->addPropertyConstraint('name', new Length(null, null, 255, null, 'trim'));
-        $metadata->addPropertyConstraint('cnpj', new NotBlank(null, null, false, 'trim'));
-        $metadata->addPropertyConstraint('cnpj', new Length(null, null, 14, null, 'trim'));
-        $metadata->addPropertyConstraint('site', new Length(null, null, 255, null, 'trim'));
-        $metadata->addPropertyConstraint('site', new Url());
-    }
+
 }

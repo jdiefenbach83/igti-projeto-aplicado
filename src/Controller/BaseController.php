@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Helper\EntityFactoryInterface;
+use App\Helper\DTOFactoryInterface;
 use App\Helper\ResponseFactory;
 use App\Helper\ValidationsErrorFactory;
 use App\Service\ServiceInterface;
@@ -18,14 +18,14 @@ abstract class BaseController extends AbstractController
      */
     private ServiceInterface $service;
     /**
-     * @var EntityFactoryInterface
+     * @var DTOFactoryInterface
      */
-    private EntityFactoryInterface $entityFactory;
+    private DTOFactoryInterface $DTOFactory;
 
-    public function __construct(ServiceInterface $service, EntityFactoryInterface $entityFactory)
+    public function __construct(ServiceInterface $service, DTOFactoryInterface $DTOFactory)
     {
         $this->service = $service;
-        $this->entityFactory = $entityFactory;
+        $this->DTOFactory = $DTOFactory;
     }
 
     public function getAll(): JsonResponse
@@ -81,13 +81,13 @@ abstract class BaseController extends AbstractController
        $return = null;
 
        try {
-            $new_entity = $this->entityFactory->makeEntity($request->getContent());
-            $saved = $this->service->add($new_entity);
+            $new_dto = $this->DTOFactory->makeDTO($request->getContent());
+            $saved = $this->service->add($new_dto);
 
             if ($saved) {
                 $success = true;
                 $status = Response::HTTP_CREATED;
-                $return = $new_entity;
+                $return = $saved;
 
             } else {
                 $status = Response::HTTP_BAD_REQUEST;
@@ -115,8 +115,8 @@ abstract class BaseController extends AbstractController
         $return = null;
 
         try {
-            $entity_to_update = $this->entityFactory->makeEntity($request->getContent());
-            $saved = $this->service->update($id, $entity_to_update);
+            $dto_to_update = $this->DTOFactory->makeDTO($request->getContent());
+            $saved = $this->service->update($id, $dto_to_update);
 
             if ($saved) {
                 $success = true;

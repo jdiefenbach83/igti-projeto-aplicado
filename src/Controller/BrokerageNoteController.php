@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
-use App\Helper\BrokerageNoteFactory;
+use App\Helper\BrokerageNoteDTOFactory;
 use App\Service\BrokerageNoteService;
 
 class BrokerageNoteController extends BaseController
 {
-    public function __construct(BrokerageNoteService $brokerageNoteService, BrokerageNoteFactory $brokerageNoteEntityFactory)
+    public function __construct(BrokerageNoteService $brokerageNoteService, BrokerageNoteDTOFactory $brokerageNoteDTOFactory)
     {
-        parent::__construct($brokerageNoteService, $brokerageNoteEntityFactory);
+        parent::__construct($brokerageNoteService, $brokerageNoteDTOFactory);
     }
 }
