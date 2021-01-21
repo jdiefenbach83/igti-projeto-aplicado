@@ -7,15 +7,12 @@ use App\Entity\BrokerageNote;
 
 class BrokerageNoteControllerTest extends BaseTest
 {
-    public function testAddBrokerageNote_ShouldReturnSuccess()
-    {
-        $status_code_expected = 201;
-
+    private function createBrokerageNote(): array {
         $broker = $this->entityManager
             ->getRepository(Broker::class)
             ->findOneBy([]);
 
-        $new_brokerage_note = [
+        return [
             'broker_id' => $broker->getId(),
             'date' => $this->faker->dateTime()->format('Y-m-d'),
             'number' => $this->faker->numberBetween(1, 100_000),
@@ -26,6 +23,13 @@ class BrokerageNoteControllerTest extends BaseTest
             'iss_pis_cofins' => $this->faker->randomFloat(4, 1, 100_000),
             'note_irrf_tax' => $this->faker->randomFloat(4, 1, 100_000),
         ];
+    }
+
+    public function testAddBrokerageNote_ShouldReturnSuccess()
+    {
+        $status_code_expected = 201;
+
+        $new_brokerage_note = $this->createBrokerageNote();
 
         $request_body = json_encode($new_brokerage_note);
 
@@ -63,21 +67,13 @@ class BrokerageNoteControllerTest extends BaseTest
     {
         $status_code_expected = 201;
 
-        $broker = $this->entityManager
-            ->getRepository(Broker::class)
-            ->findOneBy([]);
-
-        $new_brokerage_note = [
-            'broker_id' => $broker->getId(),
-            'date' => $this->faker->dateTime()->format('Y-m-d'),
-            'number' => $this->faker->numberBetween(1, 100_000),
-            'total_moviments' => $this->faker->randomFloat(4, 1, 100_000),
-            'operational_fee' => $this->faker->randomFloat(4, 1, 100_000),
-            'registration_fee' => $this->faker->randomFloat(4, 1, 100_000),
-            'emolument_fee' => $this->faker->randomFloat(4, 1, 100_000),
-            'iss_pis_cofins' => $this->faker->randomFloat(4, 1, 100_000),
-            'note_irrf_tax' => $this->faker->randomFloat(4, 1, 100_000),
-        ];
+        $new_brokerage_note = $this->createBrokerageNote();
+        $new_brokerage_note['total_moviments'] = $this->faker->randomFloat(4, 1, 100_000);
+        $new_brokerage_note['operational_fee'] = $this->faker->randomFloat(4, 1, 100_000);
+        $new_brokerage_note['registration_fee'] = $this->faker->randomFloat(4, 1, 100_000);
+        $new_brokerage_note['emolument_fee'] = $this->faker->randomFloat(4, 1, 100_000);
+        $new_brokerage_note['iss_pis_cofins'] = $this->faker->randomFloat(4, 1, 100_000);
+        $new_brokerage_note['note_irrf_tax'] = $this->faker->randomFloat(4, 1, 100_000);
 
         $request_body = json_encode($new_brokerage_note);
 
@@ -112,21 +108,13 @@ class BrokerageNoteControllerTest extends BaseTest
     {
         $status_code_expected = 201;
 
-        $broker = $this->entityManager
-            ->getRepository(Broker::class)
-            ->findOneBy([]);
-
-        $new_brokerage_note = [
-            'broker_id' => $broker->getId(),
-            'date' => $this->faker->dateTime()->format('Y-m-d'),
-            'number' => $this->faker->numberBetween(1, 100_000),
-            'total_moviments' => 10.0,
-            'operational_fee' => 1.0,
-            'registration_fee' => 1.0,
-            'emolument_fee' => 1.0,
-            'iss_pis_cofins' => 1.0,
-            'note_irrf_tax' => 1.0,
-        ];
+        $new_brokerage_note = $this->createBrokerageNote();
+        $new_brokerage_note['total_moviments'] = 10.0;
+        $new_brokerage_note['operational_fee'] = 1.0;
+        $new_brokerage_note['registration_fee'] = 1.0;
+        $new_brokerage_note['emolument_fee'] = 1.0;
+        $new_brokerage_note['iss_pis_cofins'] = 1.0;
+        $new_brokerage_note['note_irrf_tax'] = 1.0;
 
         $request_body = json_encode($new_brokerage_note);
 
@@ -172,22 +160,7 @@ class BrokerageNoteControllerTest extends BaseTest
     {
         $status_code_expected = 400;
 
-        $broker = $this->entityManager
-            ->getRepository(Broker::class)
-            ->findOneBy([]);
-
-        $new_brokerage_note = [
-            'broker_id' => $broker->getId(),
-            'date' => $this->faker->dateTime()->format('Y-m-d'),
-            'number' => $this->faker->numberBetween(1, 100_000),
-            'total_moviments' => $this->faker->randomFloat(4, 1, 100_000),
-            'operational_fee' => $this->faker->randomFloat(4, 1, 100_000),
-            'registration_fee' => $this->faker->randomFloat(4, 1, 100_000),
-            'emolument_fee' => $this->faker->randomFloat(4, 1, 100_000),
-            'iss_pis_cofins' => $this->faker->randomFloat(4, 1, 100_000),
-            'note_irrf_tax' => $this->faker->randomFloat(4, 1, 100_000),
-        ];
-
+        $new_brokerage_note = $this->createBrokerageNote();
         $new_brokerage_note[$key] = $value;
 
         $request_body = json_encode($new_brokerage_note);
