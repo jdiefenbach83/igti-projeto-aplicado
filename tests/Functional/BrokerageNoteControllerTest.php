@@ -224,6 +224,20 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($updated_brokerage_note->getNoteIrrfTax(), $update_response_body['content']['note_irrf_tax']);
     }
 
+    public function testUpdateBroker_ShouldReturnNotFound()
+    {
+        $status_code_expected = 404;
+
+        $id = $this->faker->numberBetween(1000000, 2000000);
+        $this->client->request('PUT', "/api/brokerageNotes/{$id}");
+
+        $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
+
+        $this->assertEquals($status_code_expected, $response->getStatusCode());
+        $this->assertArrayNotHasKey('content', $response_body);
+    }
+
     public function testGetAllBrokerageNotes()
     {
         $status_code_expected = 200;
