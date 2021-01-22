@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * @Annotation
  */
-class Broker extends Constraint
+class BrokerExists extends Constraint
 {
     /*
      * Any public properties become valid options for the annotation.

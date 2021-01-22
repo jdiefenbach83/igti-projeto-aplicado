@@ -6,7 +6,7 @@ use App\Repository\BrokerRepositoryInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class BrokerValidator extends ConstraintValidator
+class BrokerExistsValidator extends ConstraintValidator
 {
     /**
      * @var BrokerRepositoryInterface
