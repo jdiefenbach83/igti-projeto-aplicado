@@ -45,6 +45,11 @@ brokerage_notes:
   controller: App\Controller\BrokerageNoteController::getAll
   methods:
     - GET
+brokerage_note:
+  path: /api/brokerageNotes/{id}
+  controller: App\Controller\BrokerageNoteController::getById
+  methods:
+    - GET
 new_brokerage_note:
   path: /api/brokerageNotes
   controller: App\Controller\BrokerageNoteController::add

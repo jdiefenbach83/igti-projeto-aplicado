@@ -224,7 +224,7 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($updated_brokerage_note->getNoteIrrfTax(), $update_response_body['content']['note_irrf_tax']);
     }
 
-    public function testGetAllBrokers()
+    public function testGetAllBrokerageNotes()
     {
         $status_code_expected = 200;
 
@@ -234,5 +234,40 @@ class BrokerageNoteControllerTest extends BaseTest
 
         $this->assertEquals($status_code_expected, $response->getStatusCode());
         $this->assertNotEmpty($response_body);
+    }
+
+    public function testGetBrokerageNoteById_ShouldReturnSucess()
+    {
+        $new_status_code_expected = 201;
+        $get_by_id_status_code_expected = 200;
+
+        $new_brokerage_note = $this->createBrokerageNote();
+
+        $new_request_body = json_encode($new_brokerage_note);
+        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
+
+        $new_response = $this->client->getResponse();
+        $new_response_body = json_decode($new_response->getContent(), true);
+
+        $this->client->request('GET', "/api/brokerageNotes/{$new_response_body['content']['id']}");
+        $get_by_id_response = $this->client->getResponse();
+        $get_by_id_response_body = json_decode($get_by_id_response->getContent(), true);
+
+        $this->assertEquals($new_status_code_expected, $new_response->getStatusCode());
+        $this->assertEquals($get_by_id_status_code_expected, $get_by_id_response->getStatusCode());
+        $this->assertNotEmpty($get_by_id_response_body);
+        $this->assertEquals($get_by_id_response_body['content']['id'], $new_response_body['content']['id']);
+    }
+
+    public function testGetBrokerageNoteById_ShouldReturnNoContent()
+    {
+        $status_code_expected = 204;
+
+        $this->client->request('GET', '/api/brokerageNotes/-1');
+        $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
+
+        $this->assertEquals($status_code_expected, $response->getStatusCode());
+        $this->assertEmpty($response_body);
     }
 }
