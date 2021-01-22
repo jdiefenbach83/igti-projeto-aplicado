@@ -131,7 +131,7 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($brokerage_note->getResult(), $brokerage_note->getCalculationBasisIr());
     }
 
-    public function getInvalidValuesToCreateBrokerageNote(): iterable {
+    public function getInvalidValuesToCreateOrUpdateBrokerageNote(): iterable {
         yield 'broker_id - null' => [ 'broker_id', null ];
         yield 'broker_id - invalid' => [ 'broker_id', 123456 ];
         yield 'date - null' => [ 'date', null ];
@@ -152,7 +152,7 @@ class BrokerageNoteControllerTest extends BaseTest
     }
 
     /**
-     * @dataProvider getInvalidValuesToCreateBrokerageNote
+     * @dataProvider getInvalidValuesToCreateOrUpdateBrokerageNote
      * @param string $key
      * @param $value
      */
@@ -222,6 +222,41 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($updated_brokerage_note->getEmolumentFee(), $update_response_body['content']['emolument_fee']);
         $this->assertEquals($updated_brokerage_note->getIssPisCofins(), $update_response_body['content']['iss_pis_cofins']);
         $this->assertEquals($updated_brokerage_note->getNoteIrrfTax(), $update_response_body['content']['note_irrf_tax']);
+    }
+
+    /**
+     * @dataProvider getInvalidValuesToCreateOrUpdateBrokerageNote
+     * @param string $key
+     * @param $value
+     */
+    public function testUpdateBrokerageNote_ShouldFailWhenUpdate(string $key, $value): void
+    {
+        $new_status_code_expected = 201;
+        $update_status_code_expected = 400;
+
+        $new_brokerage_note = $this->createBrokerageNote();
+
+        $new_request_body = json_encode($new_brokerage_note);
+        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
+
+        $new_response = $this->client->getResponse();
+        $new_response_body = json_decode($new_response->getContent(), true);
+
+        $brokerage_note_to_update_entity = $this->entityManager
+            ->getRepository(BrokerageNote::class)
+            ->findOneBy([]);
+
+        $brokerage_note_to_update[$key] = $value;
+
+        $request_body = json_encode($brokerage_note_to_update);
+
+        $this->client->request('PUT', "/api/brokerageNotes/{$brokerage_note_to_update_entity->getId()}", [], [], [], $request_body);
+
+        $update_response = $this->client->getResponse();
+        $update_response_body = json_decode($update_response->getContent(), true);
+
+        $this->assertEquals($new_status_code_expected, $new_response->getStatusCode());
+        $this->assertEquals($update_status_code_expected, $update_response->getStatusCode());
     }
 
     public function testUpdateBroker_ShouldReturnNotFound()
