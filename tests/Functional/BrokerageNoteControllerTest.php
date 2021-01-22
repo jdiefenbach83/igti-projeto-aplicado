@@ -319,4 +319,43 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($status_code_expected, $response->getStatusCode());
         $this->assertEmpty($response_body);
     }
+
+    public function testRemoveBrokerageNote_ShouldReturnSuccess()
+    {
+        $new_status_code_expected = 201;
+        $remove_status_code_expected = 204;
+
+        $new_brokerage_note = $this->createBrokerageNote();
+
+        $new_request_body = json_encode($new_brokerage_note);
+        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
+
+        $new_response = $this->client->getResponse();
+        $new_response_body = json_decode($new_response->getContent(), true);
+
+        $this->client->request('DELETE', "/api/brokerageNotes/{$new_response_body['content']['id']}");
+        $remove_response = $this->client->getResponse();
+
+        $removed_brokerage_note = $this->entityManager
+            ->getRepository(BrokerageNote::class)
+            ->findOneBy(['id' => $new_response_body['content']['id']]);
+
+        $this->assertEquals($new_status_code_expected, $new_response->getStatusCode());
+        $this->assertEquals($remove_status_code_expected, $remove_response->getStatusCode());
+        $this->assertNull($removed_brokerage_note);
+    }
+
+    public function testRemoveBrokerageNote_ShouldReturnNotFound()
+    {
+        $status_code_expected = 404;
+
+        $id = $this->faker->numberBetween(1000000, 2000000);
+        $this->client->request('DELETE', "/api/brokerageNotes/{$id}");
+
+        $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
+
+        $this->assertEquals($status_code_expected, $response->getStatusCode());
+        $this->assertArrayNotHasKey('content', $response_body);
+    }
 }

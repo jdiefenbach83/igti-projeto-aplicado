@@ -60,3 +60,8 @@ update_brokerage_note:
   controller: App\Controller\BrokerageNoteController::update
   methods:
     - PUT
+remove_brokerage_note:
+  path: /api/brokerageNotes/{id}
+  controller: App\Controller\BrokerageNoteController::remove
+  methods:
+    - DELETE
