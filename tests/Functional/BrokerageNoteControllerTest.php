@@ -4,7 +4,6 @@ namespace App\Tests\Functional;
 
 use App\Entity\Broker;
 use App\Entity\BrokerageNote;
-use DateTimeImmutable;
 
 class BrokerageNoteControllerTest extends BaseTest
 {
@@ -223,5 +222,17 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($updated_brokerage_note->getEmolumentFee(), $update_response_body['content']['emolument_fee']);
         $this->assertEquals($updated_brokerage_note->getIssPisCofins(), $update_response_body['content']['iss_pis_cofins']);
         $this->assertEquals($updated_brokerage_note->getNoteIrrfTax(), $update_response_body['content']['note_irrf_tax']);
+    }
+
+    public function testGetAllBrokers()
+    {
+        $status_code_expected = 200;
+
+        $this->client->request('GET', '/api/brokerageNotes');
+        $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
+
+        $this->assertEquals($status_code_expected, $response->getStatusCode());
+        $this->assertNotEmpty($response_body);
     }
 }

@@ -6,7 +6,7 @@
         <id name="id" column="id" type="integer">
             <generator strategy="AUTO"/>
         </id>
-        <many-to-one field="broker" target-entity="broker" >
+        <many-to-one field="broker" target-entity="App\Entity\Broker" >
             <join-column name="broker_id" referenced-column-name="id" nullable="false"/>
         </many-to-one>
         <field name="date" type="datetime_immutable" nullable="false"/>

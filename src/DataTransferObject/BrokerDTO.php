@@ -9,78 +9,66 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class BrokerDTO implements DTOInterface
 {
-    private ?string $code;
-    private ?string $name;
-    private ?string $cnpj;
-    private ?string $site;
+    private $code;
+    private $name;
+    private $cnpj;
+    private $site;
 
-    /**
-     * @return string|null
-     */
-    public function getCode(): ?string
+    public function getCode()
     {
         return $this->code;
     }
 
     /**
-     * @param string|null $code
+     * @param $code
      * @return BrokerDTO
      */
-    public function setCode(?string $code): BrokerDTO
+    public function setCode($code): BrokerDTO
     {
         $this->code = $code;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getName(): ?string
+    public function getName()
     {
         return $this->name;
     }
 
     /**
-     * @param string|null $name
+     * @param $name
      * @return BrokerDTO
      */
-    public function setName(?string $name): BrokerDTO
+    public function setName($name): BrokerDTO
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getCnpj(): ?string
+    public function getCnpj()
     {
         return $this->cnpj;
     }
 
     /**
-     * @param string|null $cnpj
+     * @param $cnpj
      * @return BrokerDTO
      */
-    public function setCnpj(?string $cnpj): BrokerDTO
+    public function setCnpj($cnpj): BrokerDTO
     {
         $this->cnpj = $cnpj;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getSite(): ?string
     {
         return $this->site;
     }
 
     /**
-     * @param string|null $site
+     * @param $site
      * @return BrokerDTO
      */
-    public function setSite(?string $site): BrokerDTO
+    public function setSite($site): BrokerDTO
     {
         $this->site = $site;
         return $this;

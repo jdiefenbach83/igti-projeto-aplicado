@@ -40,12 +40,16 @@ remove_broker:
   methods:
     - DELETE
 
+brokerage_notes:
+  path: /api/brokerageNotes
+  controller: App\Controller\BrokerageNoteController::getAll
+  methods:
+    - GET
 new_brokerage_note:
   path: /api/brokerageNotes
   controller: App\Controller\BrokerageNoteController::add
   methods:
     - POST
-
 update_brokerage_note:
   path: /api/brokerageNotes/{id}
   controller: App\Controller\BrokerageNoteController::update

@@ -54,7 +54,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     /**
      * @return Broker
      */
-    public function getBroker(): ?Broker
+    public function getBroker(): Broker
     {
         return $this->broker;
     }
@@ -63,7 +63,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
      * @param Broker $broker
      * @return BrokerageNote
      */
-    public function setBroker(?Broker $broker): BrokerageNote
+    public function setBroker(Broker $broker): BrokerageNote
     {
         $this->broker = $broker;
 

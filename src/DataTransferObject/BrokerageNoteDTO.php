@@ -13,173 +13,146 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class BrokerageNoteDTO implements DTOInterface
 {
-    private ?string $broker_id;
-    private ?string $date;
-    private ?string $number;
-    private ?string $total_moviments;
-    private ?string $operational_fee;
-    private ?string $registration_fee;
-    private ?string $emolument_fee;
-    private ?string $iss_pis_cofins;
-    private ?string $note_irrf_tax;
+    private $broker_id;
+    private $date;
+    private $number;
+    private $total_moviments;
+    private $operational_fee;
+    private $registration_fee;
+    private $emolument_fee;
+    private $iss_pis_cofins;
+    private $note_irrf_tax;
 
-    /**
-     * @return string
-     */
-    public function getBrokerId(): ?string
+    public function getBrokerId()
     {
         return $this->broker_id;
     }
 
     /**
-     * @param string $broker_id
+     * @param $broker_id
      * @return BrokerageNoteDTO
      */
-    public function setBrokerId(?string $broker_id): BrokerageNoteDTO
+    public function setBrokerId($broker_id): BrokerageNoteDTO
     {
         $this->broker_id = $broker_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDate(): ?string
+    public function getDate()
     {
         return $this->date;
     }
 
     /**
-     * @param string $date
+     * @param $date
      * @return BrokerageNoteDTO
      */
-    public function setDate(?string $date): BrokerageNoteDTO
+    public function setDate($date): BrokerageNoteDTO
     {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getNumber(): ?string
+    public function getNumber()
     {
         return $this->number;
     }
 
     /**
-     * @param string $number
+     * @param $number
      * @return BrokerageNoteDTO
      */
-    public function setNumber(?string $number): BrokerageNoteDTO
+    public function setNumber($number): BrokerageNoteDTO
     {
         $this->number = $number;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTotalMoviments(): ?string
+    public function getTotalMoviments()
     {
         return $this->total_moviments;
     }
 
     /**
-     * @param string $total_moviments
+     * @param $total_moviments
      * @return BrokerageNoteDTO
      */
-    public function setTotalMoviments(?string $total_moviments): BrokerageNoteDTO
+    public function setTotalMoviments($total_moviments): BrokerageNoteDTO
     {
         $this->total_moviments = $total_moviments;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getOperationalFee(): ?string
+    public function getOperationalFee()
     {
         return $this->operational_fee;
     }
 
     /**
-     * @param string $operational_fee
+     * @param $operational_fee
      * @return BrokerageNoteDTO
      */
-    public function setOperationalFee(?string $operational_fee): BrokerageNoteDTO
+    public function setOperationalFee($operational_fee): BrokerageNoteDTO
     {
         $this->operational_fee = $operational_fee;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getRegistrationFee(): ?string
+    public function getRegistrationFee()
     {
         return $this->registration_fee;
     }
 
     /**
-     * @param string $registration_fee
+     * @param $registration_fee
      * @return BrokerageNoteDTO
      */
-    public function setRegistrationFee(?string $registration_fee): BrokerageNoteDTO
+    public function setRegistrationFee($registration_fee): BrokerageNoteDTO
     {
         $this->registration_fee = $registration_fee;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmolumentFee(): ?string
+    public function getEmolumentFee()
     {
         return $this->emolument_fee;
     }
 
     /**
-     * @param string $emolument_fee
+     * @param $emolument_fee
      * @return BrokerageNoteDTO
      */
-    public function setEmolumentFee(?string $emolument_fee): BrokerageNoteDTO
+    public function setEmolumentFee($emolument_fee): BrokerageNoteDTO
     {
         $this->emolument_fee = $emolument_fee;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getIssPisCofins(): ?string
+    public function getIssPisCofins()
     {
         return $this->iss_pis_cofins;
     }
 
     /**
-     * @param string $iss_pis_cofins
+     * @param $iss_pis_cofins
      * @return BrokerageNoteDTO
      */
-    public function setIssPisCofins(?string $iss_pis_cofins): BrokerageNoteDTO
+    public function setIssPisCofins($iss_pis_cofins): BrokerageNoteDTO
     {
         $this->iss_pis_cofins = $iss_pis_cofins;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getNoteIrrfTax(): ?string
+    public function getNoteIrrfTax()
     {
         return $this->note_irrf_tax;
     }
 
     /**
-     * @param string $note_irrf_tax
+     * @param $note_irrf_tax
      * @return BrokerageNoteDTO
      */
-    public function setNoteIrrfTax(?string $note_irrf_tax): BrokerageNoteDTO
+    public function setNoteIrrfTax($note_irrf_tax): BrokerageNoteDTO
     {
         $this->note_irrf_tax = $note_irrf_tax;
         return $this;
