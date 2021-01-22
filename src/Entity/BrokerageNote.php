@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use DateTimeImmutable;
+use Gedmo\Timestampable\Traits\Timestampable;
 use JsonSerializable;
 
 class BrokerageNote implements EntityInterface, JsonSerializable
 {
+    use Timestampable;
+
     private ?int $id;
     private Broker $broker;
     private DateTimeImmutable $date;
