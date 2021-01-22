@@ -4,6 +4,7 @@ namespace App\Tests\Functional;
 
 use App\Entity\Broker;
 use App\Entity\BrokerageNote;
+use DateTimeImmutable;
 
 class BrokerageNoteControllerTest extends BaseTest
 {
@@ -171,5 +172,56 @@ class BrokerageNoteControllerTest extends BaseTest
         $response_body = json_decode($response->getContent(), true);
 
         $this->assertEquals($status_code_expected, $response->getStatusCode());
+    }
+
+    public function testUpdateBrokerareNote_ShouldReturnSuccess()
+    {
+        $new_status_code_expected = 201;
+        $update_status_code_expected = 200;
+
+        $new_brokerage_note = $this->createBrokerageNote();
+
+        $new_request_body = json_encode($new_brokerage_note);
+        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
+
+        $new_response = $this->client->getResponse();
+        $new_response_body = json_decode($new_response->getContent(), true);
+
+        $brokerage_note_to_update_entity = $this->entityManager
+            ->getRepository(BrokerageNote::class)
+            ->findOneBy([]);
+
+        $brokerage_note_to_update['broker_id'] = $brokerage_note_to_update_entity->getBroker()->getId();
+        $brokerage_note_to_update['date'] = $this->faker->dateTime()->format('Y-m-d');
+        $brokerage_note_to_update['number'] = $this->faker->numberBetween(1, 100_000);
+        $brokerage_note_to_update['total_moviments'] = $this->faker->randomFloat(4, 1, 100_000);
+        $brokerage_note_to_update['operational_fee'] = $this->faker->randomFloat(4, 1, 100_000);
+        $brokerage_note_to_update['registration_fee'] = $this->faker->randomFloat(4, 1, 100_000);
+        $brokerage_note_to_update['emolument_fee'] = $this->faker->randomFloat(4, 1, 100_000);
+        $brokerage_note_to_update['iss_pis_cofins'] = $this->faker->randomFloat(4, 1, 100_000);
+        $brokerage_note_to_update['note_irrf_tax'] = $this->faker->randomFloat(4, 1, 100_000);
+
+        $request_body = json_encode($brokerage_note_to_update);
+
+        $this->client->request('PUT', "/api/brokerageNotes/{$brokerage_note_to_update_entity->getId()}", [], [], [], $request_body);
+
+        $update_response = $this->client->getResponse();
+        $update_response_body = json_decode($update_response->getContent(), true);
+
+        $updated_brokerage_note = $this->entityManager
+            ->getRepository(BrokerageNote::class)
+            ->findOneBy(['id' => $update_response_body['content']['id']]);
+
+        $this->assertEquals($new_status_code_expected, $new_response->getStatusCode());
+        $this->assertEquals($update_status_code_expected, $update_response->getStatusCode());
+        $this->assertNotEmpty($update_response_body);
+        $this->assertEquals($updated_brokerage_note->getDate()->format('Y-m-d'), $update_response_body['content']['date']);
+        $this->assertEquals($updated_brokerage_note->getNumber(), $update_response_body['content']['number']);
+        $this->assertEquals($updated_brokerage_note->getTotalMoviments(), $update_response_body['content']['total_moviments']);
+        $this->assertEquals($updated_brokerage_note->getOperationalFee(), $update_response_body['content']['operational_fee']);
+        $this->assertEquals($updated_brokerage_note->getRegistrationFee(), $update_response_body['content']['registration_fee']);
+        $this->assertEquals($updated_brokerage_note->getEmolumentFee(), $update_response_body['content']['emolument_fee']);
+        $this->assertEquals($updated_brokerage_note->getIssPisCofins(), $update_response_body['content']['iss_pis_cofins']);
+        $this->assertEquals($updated_brokerage_note->getNoteIrrfTax(), $update_response_body['content']['note_irrf_tax']);
     }
 }

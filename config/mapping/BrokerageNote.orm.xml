@@ -9,7 +9,7 @@
         <many-to-one field="broker" target-entity="broker" >
             <join-column name="broker_id" referenced-column-name="id" nullable="false"/>
         </many-to-one>
-        <field name="date" type="date" nullable="false"/>
+        <field name="date" type="datetime_immutable" nullable="false"/>
         <field name="number" type="integer" nullable="false"/>
         <field name="total_moviments" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="operational_fee" type="decimal" precision="14" scale="4" nullable="false"/>
