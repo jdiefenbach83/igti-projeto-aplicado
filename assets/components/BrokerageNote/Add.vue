@@ -1,0 +1,270 @@
+<template>
+  <div>
+    <v-form>
+      <v-row>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-combobox
+            v-model="broker"
+            :items="brokers"
+            item-text="name"
+            item-value="id"
+            label="Corretora"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-menu
+            ref="menu1"
+            v-model="menu1"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            offset-y
+            max-width="290px"
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="dateFormatted"
+                label="Date"
+                v-bind="attrs"
+                @blur="date = parseDate(dateFormatted)"
+                v-on="on"
+              />
+            </template>
+            <v-date-picker
+              v-model="date"
+              no-title
+              @input="menu1 = false"
+              locale="pt-br"
+            />
+          </v-menu>
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="number"
+            label="Número"
+            type="number"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="total_moviments"
+            label="Movimentação"
+            type="number"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="operational_fee"
+            label="Taxa operacional"
+            type="number"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="registration_fee"
+            label="Taxa de registro"
+            type="number"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="emolument_fee"
+            label="Emolumentos"
+            type="number"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="iss_pis_cofins"
+            label="ISS/PIS/COFINS"
+            type="number"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="note_irrf_tax"
+            label="IRRF"
+            type="number"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="getTotalFees"
+            label="Total das taxas"
+            type="number"
+            readonly
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="getNetTotal"
+            label="Total líquido"
+            type="number"
+            readonly
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="getTotalCosts"
+            label="Custo total"
+            type="number"
+            readonly
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="getResult"
+            label="Resultado"
+            type="number"
+            readonly
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <v-text-field
+            v-model="getBasisIr"
+            label="Base de cáculo para IR"
+            type="number"
+            readonly
+          />
+        </v-col>
+      </v-row>
+      <v-spacer />
+      <v-btn
+        color='primary'
+        dark
+        class='mb-2'
+        small
+      >Adicionar
+      </v-btn>
+    </v-form>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "BrokerageNotesAdd",
+    data: vm => {
+      return {
+        broker: null,
+        date: new Date().toISOString().substr(0, 10),
+        dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+        menu1: false,
+        number: null,
+        total_moviments: .0,
+        operational_fee: .0,
+        registration_fee: .0,
+        emolument_fee: .0,
+        iss_pis_cofins: .0,
+        note_irrf_tax: .0,
+      }
+    },
+    computed: {
+      brokers() {
+        return this.$store.getters["broker/brokers"];
+      },
+      getTotalFees() {
+        return (
+          parseFloat(this.registration_fee) +
+          parseFloat(this.operational_fee) +
+          parseFloat(this.emolument_fee)).toFixed(2);
+      },
+      getNetTotal() {
+        return (
+          parseFloat(this.total_moviments) -
+          (parseFloat(this.registration_fee) + parseFloat(this.operational_fee) + parseFloat(this.emolument_fee)) -
+          parseFloat(this.iss_pis_cofins) -
+          parseFloat(this.note_irrf_tax)).toFixed(2);
+      },
+      getTotalCosts() {
+        return (
+          parseFloat(this.registration_fee) +
+          parseFloat(this.operational_fee) +
+          parseFloat(this.emolument_fee) +
+          parseFloat(this.iss_pis_cofins) +
+          parseFloat(this.note_irrf_tax)).toFixed(2);
+      },
+      getResult() {
+        return (
+          parseFloat(this.total_moviments) -
+          (parseFloat(this.registration_fee) + parseFloat(this.operational_fee) + parseFloat(this.emolument_fee)) -
+          parseFloat(this.iss_pis_cofins)).toFixed(2);
+      },
+      getBasisIr() {
+        const result = (
+          parseFloat(this.total_moviments) -
+          (parseFloat(this.registration_fee) + parseFloat(this.operational_fee) + parseFloat(this.emolument_fee)) -
+          parseFloat(this.iss_pis_cofins)).toFixed(2);
+
+        return result < .0 ? 0 : result;
+      }
+    },
+    watch: {
+      date (val) {
+        this.dateFormatted = this.formatDate(this.date)
+      },
+    },
+    methods: {
+      formatDate (date) {
+        if (!date) return null;
+
+        const [year, month, day] = date.split("-");
+        return `${day}/${month}/${year}`;
+      },
+      parseDate (date) {
+        if (!date) return null;
+
+        const [day, month, year] = date.split("/");
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      },
+    }
+  }
+</script>
+
+<style scoped>
+  div.col-sm-3.col-12 {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+</style>

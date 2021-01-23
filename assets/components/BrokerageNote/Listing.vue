@@ -1,65 +1,64 @@
 <template>
-    <div>
-        <v-data-table
-            :headers="headers"
-            :items="brokerageNotes"
-            item-key="id"
-            class="elevation-1"
-            :search="search"
-            :custom-filter="filterList"
-            sear
-            :loading="isLoadingBrokerageNotes"
-            loading-text="Carregando..."
+  <div>
+    <v-data-table
+      :headers="headers"
+      :items="brokerageNotes"
+      item-key="id"
+      class="elevation-1"
+      :search="search"
+      :custom-filter="filterList"
+      sear
+      :loading="isLoadingBrokerageNotes"
+      loading-text="Carregando..."
+    >
+      <template v-slot:top>
+        <v-text-field
+          v-model="search"
+          label="Pesquisa"
+          class="mx-4"
+          append-icon="mdi-magnify"
+        />
+      </template>
+      <template v-slot:item.total_moviments="{ item }">
+        <v-chip
+          :color="getColor(item.total_moviments)"
+          dark
         >
-            <template v-slot:top>
-                <v-text-field
-                    v-model="search"
-                    label="Pesquisa"
-                    class="mx-4"
-                    append-icon="mdi-magnify"
-                />
-            </template>
-            <template v-slot:item.total_moviments="{ item }">
-                <v-chip
-                    :color="getColor(item.total_moviments)"
-                    dark
-                >
-                    {{ item.total_moviments }}
-                </v-chip>
-            </template>
-            <template v-slot:item.actions="{ item }">
-                <v-icon
-                    small
-                    class="mr-2"
-                    title="Visualizar"
-                >
-                    <!--@click="viewItem(item)"-->
-                    mdi-magnify-scan
-                </v-icon>
-                <v-icon
-                    small
-                    class="mr-2"
-                    title="Editar"
-                >
-                    <!--@click="editItem(item)"-->
-                    mdi-pencil
-                </v-icon>
-                <v-icon
-                    small
-                    title="Excluir"
-                >
-                    <!--                        @click="deleteItem(item)"-->
-                    mdi-delete
-                </v-icon>
-            </template>
-        </v-data-table>
-    </div>
+          {{ item.total_moviments }}
+        </v-chip>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-icon
+          small
+          class="mr-2"
+          title="Visualizar"
+        >
+          <!--@click="viewItem(item)"-->
+          mdi-magnify-scan
+        </v-icon>
+        <v-icon
+          small
+          class="mr-2"
+          title="Editar"
+        >
+          <!--@click="editItem(item)"-->
+          mdi-pencil
+        </v-icon>
+        <v-icon
+          small
+          title="Excluir"
+        >
+          <!--@click="deleteItem(item)"-->
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
-  import store from "../store";
-  import { format as DateFormatter } from '../helper/DateFormatter';
-  import { format as CurrencyFormatter } from '../helper/CurrencyFormatter';
+  import { format as DateFormatter } from '../../helper/DateFormatter';
+  import { format as CurrencyFormatter } from '../../helper/CurrencyFormatter';
 
   export default {
     name: 'BrokerageNotesListing',
