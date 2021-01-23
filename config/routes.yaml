@@ -2,18 +2,6 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
-root:
-  path: /
-  controller: App\Controller\IndexController::index
-  methods:
-    - GET
-
-index:
-  path: /{vueRouting}
-  controller: App\Controller\IndexController::index
-  methods:
-    - GET
-
 brokers:
   path: /api/brokers
   controller: App\Controller\BrokerController::getAll
@@ -65,3 +53,21 @@ remove_brokerage_note:
   controller: App\Controller\BrokerageNoteController::remove
   methods:
     - DELETE
+
+index1:
+  path: /
+  controller: App\Controller\IndexController::index
+  methods:
+    - GET
+
+index2:
+  path: /{vueRouting}
+  controller: App\Controller\IndexController::index
+  methods:
+    - GET
+
+index3:
+  path: /{vueRouting1}/{vueRouting2}
+  controller: App\Controller\IndexController::index
+  methods:
+    - GET
