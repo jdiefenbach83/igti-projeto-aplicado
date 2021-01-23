@@ -31,12 +31,22 @@
                 <v-icon
                     small
                     class="mr-2"
+                    title="Visualizar"
+                >
+                    <!--@click="viewItem(item)"-->
+                    mdi-magnify-scan
+                </v-icon>
+                <v-icon
+                    small
+                    class="mr-2"
+                    title="Editar"
                 >
                     <!--@click="editItem(item)"-->
                     mdi-pencil
                 </v-icon>
                 <v-icon
-                        small
+                    small
+                    title="Excluir"
                 >
                     <!--                        @click="deleteItem(item)"-->
                     mdi-delete
