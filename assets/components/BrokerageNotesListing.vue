@@ -68,9 +68,6 @@
         search: '',
       };
     },
-    created() {
-      store.dispatch('brokerageNote/getAll');
-    },
     methods: {
       filterList (value, search, item) {
         return value != null &&

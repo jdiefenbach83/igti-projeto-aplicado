@@ -36,7 +36,7 @@ export default {
   created() {
     // 'Loading prereqs in vuex store
     store.dispatch('broker/getAll');
-    //store.dispatch('brokerageNote/getAll');
+    store.dispatch('brokerageNote/getAll');
     // 'End of loading prereqs in vuex store
   }
 }
