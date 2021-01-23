@@ -92,6 +92,7 @@
           return {
             ...brokerageNote,
             date: DateFormatter(brokerageNote.date),
+            date_to_order: brokerageNote.date,
             total_moviments: CurrencyFormatter(brokerageNote.total_moviments),
             net_total: CurrencyFormatter(brokerageNote.net_total),
             result: CurrencyFormatter(brokerageNote.result),
@@ -100,7 +101,7 @@
         });
 
         return brokerageNotesForListing.sort(function(a, b){
-          return new Date(a.date) - new Date(b.date);
+          return new Date(a.date_to_order) - new Date(b.date_to_order);
         });
       },
       headers () {
