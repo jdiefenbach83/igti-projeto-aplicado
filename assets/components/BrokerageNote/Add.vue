@@ -176,6 +176,7 @@
         dark
         class='mb-2'
         small
+        @click="addBrokageNote()"
       >Adicionar
       </v-btn>
     </v-form>
@@ -258,7 +259,25 @@
         const [day, month, year] = date.split("/");
         return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
       },
-    }
+      async addBrokageNote() {
+        const payload = {
+          broker_id: this.broker.id,
+          date: this.date,
+          number: this.number,
+          total_moviments: parseFloat(this.total_moviments).toFixed(2),
+          operational_fee: parseFloat(this.operational_fee).toFixed(2),
+          registration_fee: parseFloat(this.registration_fee).toFixed(2),
+          emolument_fee: parseFloat(this.emolument_fee).toFixed(2),
+          iss_pis_cofins: parseFloat(this.iss_pis_cofins).toFixed(2),
+          note_irrf_tax: parseFloat(this.note_irrf_tax).toFixed(2),
+        }
+        const result = await this.$store.dispatch("brokerageNote/add", payload);
+
+        if (result !== null) {
+          console.log(result);
+        }
+      }
+    },
   }
 </script>
 

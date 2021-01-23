@@ -4,6 +4,10 @@ const FETCHING_BROKERAGE_NOTES = "FETCHING_BROKERAGE_NOTES";
 const FETCHING_BROKERAGE_NOTES_SUCCESS = "FETCHING_BROKERAGE_NOTES_SUCCESS";
 const FETCHING_BROKERAGE_NOTES_ERROR = "FETCHING_BROKERAGE_NOTES_ERROR";
 
+const ADDING_BROKERAGE_NOTE = "ADDING_BROKERAGE_NOTE";
+const ADDING_BROKERAGE_NOTE_SUCCESS = "ADDING_BROKERAGE_NOTE_SUCCESS";
+const ADDING_BROKERAGE_NOTE_ERROR = "ADDING_BROKERAGE_NOTE_ERROR";
+
 export default {
   namespaced: true,
   state: {
@@ -26,7 +30,21 @@ export default {
       state.isLoading = false;
       state.error = error;
       state.brokerageNotes = [];
-    }
+    },
+    [ADDING_BROKERAGE_NOTE](state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    [ADDING_BROKERAGE_NOTE_SUCCESS](state, brokerageNote) {
+      state.isLoading = false;
+      state.error = null;
+      state.brokerageNotes = [...state.brokerageNotes, brokerageNote];
+    },
+    [ADDING_BROKERAGE_NOTE_ERROR](state, error) {
+      state.isLoading = false;
+      state.error = error;
+      state.brokerageNotes = [];
+    },
   },
   getters: {
     isLoading(state) {
@@ -58,6 +76,19 @@ export default {
 
         return null;
       }
-    }
+    },
+    async add({ commit }, message) {
+      commit(ADDING_BROKERAGE_NOTE);
+      try {
+        let response = await BrokerageNoteService.add(message);
+        commit(ADDING_BROKERAGE_NOTE_SUCCESS, response.content);
+
+        return response.data;
+      } catch (error) {
+        commit(ADDING_BROKERAGE_NOTE_ERROR, error);
+
+        return null;
+      }
+    },
   }
 };
