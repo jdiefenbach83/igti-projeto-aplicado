@@ -2,30 +2,39 @@
 
 namespace App\Entity;
 
+use Gedmo\Timestampable\Traits\Timestampable;
 use JsonSerializable;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Url;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Broker implements EntityInterface, JsonSerializable
 {
+    use Timestampable;
+
     private ?int $id;
     private string $code;
     private string $name;
     private string $cnpj;
     private ?string $site;
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string
+     */
     public function getCode(): string
     {
         return $this->code;
     }
 
+    /**
+     * @param string $code
+     * @return $this
+     */
     public function setCode(string $code): self
     {
         $this->code = $code;
@@ -33,39 +42,55 @@ class Broker implements EntityInterface, JsonSerializable
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    /**
+     * @param string $name
+     * @return Broker
+     */
+    public function setName(string $name): Broker
     {
         $this->name = $name;
 
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getCnpj(): string
     {
         return $this->cnpj;
     }
 
-    public function setCnpj(string $cnpj): self
+    public function setCnpj(string $cnpj): Broker
     {
         $this->cnpj = $cnpj;
 
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getSite(): ?string
     {
         return $this->site;
     }
 
-    public function setSite(?string $site): self
+    /**
+     * @param string|null $site
+     * @return Broker
+     */
+    public function setSite(?string $site): Broker
     {
         $this->site = $site;
-
         return $this;
     }
 
@@ -84,17 +109,5 @@ class Broker implements EntityInterface, JsonSerializable
                 ],
             ]
         ];
-    }
-
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
-    {
-        $metadata->addPropertyConstraint('code', new NotBlank(null, null, false, 'trim'));
-        $metadata->addPropertyConstraint('code', new Length(null, null, 10, null, 'trim'));
-        $metadata->addPropertyConstraint('name', new NotBlank(null, null, false, 'trim'));
-        $metadata->addPropertyConstraint('name', new Length(null, null, 255, null, 'trim'));
-        $metadata->addPropertyConstraint('cnpj', new NotBlank(null, null, false, 'trim'));
-        $metadata->addPropertyConstraint('cnpj', new Length(null, null, 14, null, 'trim'));
-        $metadata->addPropertyConstraint('site', new Length(null, null, 255, null, 'trim'));
-        $metadata->addPropertyConstraint('site', new Url());
     }
 }

@@ -2,19 +2,21 @@
 
 namespace App\Helper;
 
+use App\DataTransferObject\BrokerDTO;
 use App\Entity\Broker;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BrokerFactory implements EntityFactoryInterface
 {
-    public function makeEntity(string $json)
+    /**
+     * @param BrokerDTO $dto
+     * @return Broker
+     */
+    public function makeEntity($dto)
     {
-        $content = json_decode($json);
-
         return (new Broker())
-            ->setCode($content->code ?? "")
-            ->setName($content->name ?? "")
-            ->setCnpj($content->cnpj ?? "")
-            ->setSite($content->site ?? "");
+            ->setCode($dto->getCode())
+            ->setName($dto->getName())
+            ->setCnpj($dto->getCnpj())
+            ->setSite($dto->getSite());
     }
 }

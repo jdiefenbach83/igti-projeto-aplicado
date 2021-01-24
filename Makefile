@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 tests:
 	echo "Dropping database..."
-	symfony console doctrine:database:drop --force --no-debug --env=test
+	symfony console doctrine:database:drop --force --if-exists --no-debug --env=test
 
 	echo "Creating database..."
 	symfony console doctrine:database:create --no-debug --env=test

@@ -14,8 +14,9 @@
 
       <router-link to="/home" class="white--text mx-3">Home</router-link>
 
-      <v-spacer></v-spacer>
+      <v-spacer />
 
+      <router-link to="/brokerageNotes" class="white--text mx-3">Notas de corretagem</router-link>
       <router-link to="/brokers" class="white--text mx-3">Corretoras</router-link>
     </v-app-bar>
 
@@ -35,6 +36,7 @@ export default {
   created() {
     // 'Loading prereqs in vuex store
     store.dispatch('broker/getAll');
+    store.dispatch('brokerageNote/getAll');
     // 'End of loading prereqs in vuex store
   }
 }
