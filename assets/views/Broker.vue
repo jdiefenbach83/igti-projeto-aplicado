@@ -6,7 +6,7 @@
 </template>
 
 <script>
-  import BrokersListing from "../components/BrokersListing";
+  import BrokersListing from "@/components/BrokersListing";
   export default {
     name: "Broker",
     components: {BrokersListing}

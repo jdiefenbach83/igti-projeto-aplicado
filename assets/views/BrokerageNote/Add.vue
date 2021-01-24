@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import BrokerageNotesAdd from "../../components/BrokerageNote/Add";
+  import BrokerageNotesAdd from "@/components/BrokerageNote/Add";
 
   export default {
     name: "BrokerageNoteAdd",

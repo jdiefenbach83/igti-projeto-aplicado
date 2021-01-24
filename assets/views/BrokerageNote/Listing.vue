@@ -20,7 +20,7 @@
 </template>
 
 <script>
-  import BrokerageNotesListing from '../../components/BrokerageNote/Listing';
+  import BrokerageNotesListing from '@/components/BrokerageNote/Listing';
   export default {
     name: 'BrokerageNoteListing',
     components: {BrokerageNotesListing}
