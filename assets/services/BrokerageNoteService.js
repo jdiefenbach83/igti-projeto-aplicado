@@ -12,7 +12,14 @@ async function add(brokerageNote) {
   return data;
 }
 
+async function remove(brokerageNote) {
+  const { data } = await gateway.httpClient().delete(`/brokerageNotes/${brokerageNote.id}`);
+
+  return data;
+}
+
 module.exports = {
   getAll,
   add,
+  remove,
 };

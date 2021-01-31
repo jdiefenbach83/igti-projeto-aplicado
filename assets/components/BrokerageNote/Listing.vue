@@ -45,24 +45,20 @@
           <!--@click="editItem(item)"-->
           mdi-pencil
         </v-icon>
-        <v-icon
-          small
-          title="Excluir"
-        >
-          <!--@click="deleteItem(item)"-->
-          mdi-delete
-        </v-icon>
+        <remove-modal :brokerage_note="item"/>
       </template>
     </v-data-table>
   </div>
 </template>
 
 <script>
+  import RemoveModal from "@/components/BrokerageNote/RemoveModal";
   import { formatBrazilianDate as brazilianDateFormatter } from '@/helper/DateFormatter';
   import { format as currencyFormatter } from '@/helper/CurrencyFormatter';
 
   export default {
     name: 'BrokerageNotesListing',
+    components: { RemoveModal },
     data() {
       return {
         search: '',

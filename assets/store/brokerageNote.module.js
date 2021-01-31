@@ -8,6 +8,10 @@ const ADDING_BROKERAGE_NOTE = "ADDING_BROKERAGE_NOTE";
 const ADDING_BROKERAGE_NOTE_SUCCESS = "ADDING_BROKERAGE_NOTE_SUCCESS";
 const ADDING_BROKERAGE_NOTE_ERROR = "ADDING_BROKERAGE_NOTE_ERROR";
 
+const REMOVING_BROKERAGE_NOTE = "REMOVING_BROKERAGE_NOTE";
+const REMOVING_BROKERAGE_NOTE_SUCCESS = "REMOVING_BROKERAGE_NOTE_SUCCESS";
+const REMOVING_BROKERAGE_NOTE_ERROR = "REMOVING_BROKERAGE_NOTE_ERROR";
+
 export default {
   namespaced: true,
   state: {
@@ -40,6 +44,19 @@ export default {
       state.brokerageNotes = [...state.brokerageNotes, brokerageNote];
     },
     [ADDING_BROKERAGE_NOTE_ERROR](state, error) {
+      state.isLoading = false;
+      state.error = error;
+    },
+    [REMOVING_BROKERAGE_NOTE](state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    [REMOVING_BROKERAGE_NOTE_SUCCESS](state, brokerageNote) {
+      state.isLoading = false;
+      state.error = null;
+      state.brokerageNotes = state.brokerageNotes.filter(item => item.id !== brokerageNote.id);
+    },
+    [REMOVING_BROKERAGE_NOTE_ERROR](state, error) {
       state.isLoading = false;
       state.error = error;
     },
@@ -84,6 +101,19 @@ export default {
         return response.data;
       } catch (error) {
         commit(ADDING_BROKERAGE_NOTE_ERROR, error);
+
+        return null;
+      }
+    },
+    async remove({ commit }, message) {
+      commit(REMOVING_BROKERAGE_NOTE);
+      try {
+        let response = await BrokerageNoteService.remove(message);
+        commit(REMOVING_BROKERAGE_NOTE_SUCCESS, message);
+
+        return response.data;
+      } catch (error) {
+        commit(REMOVING_BROKERAGE_NOTE_ERROR, error);
 
         return null;
       }
