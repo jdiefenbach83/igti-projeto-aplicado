@@ -1,8 +1,13 @@
 <template>
   <div>
+    <transition>
+      <v-alert type="success" v-if="flash_message.show">{{flash_message.description}}</v-alert>
+    </transition>
+
     <v-form
       v-model="isValidForm"
       @submit.prevent
+      :disabled="isDisabledForm"
     >
       <v-row>
         <v-col
@@ -241,6 +246,11 @@
         iss_pis_cofins: .0,
         note_irrf_tax: .0,
         isValidForm: false,
+        isDisabledForm: false,
+        flash_message: {
+          show: false,
+          description: '',
+        }
       }
     },
     computed: {
@@ -339,6 +349,18 @@
       },
     },
     methods: {
+      showFlashMessage(){
+        this.flash_message.show = true;
+        this.flash_message.description = 'A note de corretagem foi salva com sucesso! Você será redirecionado';
+        this.isDisabledForm = true;
+        const self = this;
+
+        setTimeout(() => {
+          self.flash_message.show = false;
+          self.flash_message.description = '';
+          this.$router.push({ name: 'BrokerageNoteListing'});
+        }, 2000);
+      },
       getRequiredColor() {
         return '#ffffbb';
       },
@@ -367,8 +389,9 @@
           note_irrf_tax: parseFloat(this.note_irrf_tax).toFixed(2),
         }
         const result = await this.$store.dispatch("brokerageNote/add", payload);
+        this.showFlashMessage();
 
-        if (result !== null) {
+        if (result !== undefined) {
           console.log(result);
         }
       }
