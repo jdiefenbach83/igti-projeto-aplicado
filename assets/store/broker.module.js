@@ -25,7 +25,6 @@ export default {
     [FETCHING_BROKERS_ERROR](state, error) {
       state.isLoading = false;
       state.error = error;
-      state.brokers = [];
     }
   },
   getters: {

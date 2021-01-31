@@ -29,7 +29,6 @@ export default {
     [FETCHING_BROKERAGE_NOTES_ERROR](state, error) {
       state.isLoading = false;
       state.error = error;
-      state.brokerageNotes = [];
     },
     [ADDING_BROKERAGE_NOTE](state) {
       state.isLoading = true;
@@ -43,7 +42,6 @@ export default {
     [ADDING_BROKERAGE_NOTE_ERROR](state, error) {
       state.isLoading = false;
       state.error = error;
-      state.brokerageNotes = [];
     },
   },
   getters: {
