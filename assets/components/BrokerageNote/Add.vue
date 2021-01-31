@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-form>
+    <v-form
+      v-model="isValidForm"
+      @submit.prevent
+    >
       <v-row>
         <v-col
           cols="12"
@@ -12,6 +15,8 @@
             item-text="name"
             item-value="id"
             label="Corretora"
+            required
+            :rules="validationRules.broker"
           />
         </v-col>
         <v-col
@@ -30,10 +35,12 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="dateFormatted"
-                label="Date"
+                label="Data"
                 v-bind="attrs"
                 @blur="date = localISODateFormatter(dateFormatted)"
                 v-on="on"
+                required
+                :rules="validationRules.date"
               />
             </template>
             <v-date-picker
@@ -52,6 +59,8 @@
             v-model="number"
             label="Número"
             type="number"
+            required
+            :rules="validationRules.number"
           />
         </v-col>
         <v-col
@@ -62,6 +71,8 @@
             v-model="total_moviments"
             label="Movimentação"
             type="number"
+            required
+            :rules="validationRules.total_moviments"
           />
         </v-col>
         <v-col
@@ -72,6 +83,8 @@
             v-model="operational_fee"
             label="Taxa operacional"
             type="number"
+            required
+            :rules="validationRules.operational_fee"
           />
         </v-col>
         <v-col
@@ -82,6 +95,8 @@
             v-model="registration_fee"
             label="Taxa de registro"
             type="number"
+            required
+            :rules="validationRules.registration_fee"
           />
         </v-col>
         <v-col
@@ -92,6 +107,8 @@
             v-model="emolument_fee"
             label="Emolumentos"
             type="number"
+            required
+            :rules="validationRules.emolument_fee"
           />
         </v-col>
         <v-col
@@ -102,6 +119,8 @@
             v-model="iss_pis_cofins"
             label="ISS/PIS/COFINS"
             type="number"
+            required
+            :rules="validationRules.iss_pis_cofins"
           />
         </v-col>
         <v-col
@@ -112,6 +131,8 @@
             v-model="note_irrf_tax"
             label="IRRF"
             type="number"
+            required
+            :rules="validationRules.note_irrf_tax"
           />
         </v-col>
         <v-col
@@ -173,10 +194,10 @@
       <v-spacer />
       <v-btn
         color='primary'
-        dark
         class='mb-2'
         small
-        @click="addBrokageNote()"
+        @click='addBrokageNote()'
+        :disabled='!isValidForm'
       >Adicionar
       </v-btn>
     </v-form>
@@ -205,6 +226,7 @@
         emolument_fee: .0,
         iss_pis_cofins: .0,
         note_irrf_tax: .0,
+        isValidForm: false,
       }
     },
     computed: {
@@ -212,39 +234,89 @@
         return this.$store.getters["broker/brokers"];
       },
       getTotalFees() {
+        const registration_fee = parseFloat(this.registration_fee);
+        const operational_fee = parseFloat(this.operational_fee);
+        const emolument_fee = parseFloat(this.emolument_fee);
+
         return (
-          parseFloat(this.registration_fee) +
-          parseFloat(this.operational_fee) +
-          parseFloat(this.emolument_fee)).toFixed(2);
+          (isNaN(registration_fee) ? .0 : registration_fee) +
+          (isNaN(operational_fee) ? .0 : operational_fee) +
+          (isNaN(emolument_fee) ? .0 : emolument_fee)
+        ).toFixed(2);
       },
       getNetTotal() {
+        const total_moviments = parseFloat(this.total_moviments);
+        const total_fees = parseFloat(this.getTotalFees);
+        const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
+        const note_irrf_tax = parseFloat(this.note_irrf_tax);
+
         return (
-          parseFloat(this.total_moviments) -
-          (parseFloat(this.registration_fee) + parseFloat(this.operational_fee) + parseFloat(this.emolument_fee)) -
-          parseFloat(this.iss_pis_cofins) -
-          parseFloat(this.note_irrf_tax)).toFixed(2);
+          (isNaN(total_moviments) ? .0 : total_moviments) -
+          (isNaN(total_fees) ? .0 : total_fees) -
+          (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins) -
+          (isNaN(note_irrf_tax) ? .0 : note_irrf_tax)
+        ).toFixed(2);
       },
       getTotalCosts() {
+        const total_fees = parseFloat(this.getTotalFees);
+        const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
+        const note_irrf_tax = parseFloat(this.note_irrf_tax);
+
         return (
-          parseFloat(this.registration_fee) +
-          parseFloat(this.operational_fee) +
-          parseFloat(this.emolument_fee) +
-          parseFloat(this.iss_pis_cofins) +
-          parseFloat(this.note_irrf_tax)).toFixed(2);
+          (isNaN(total_fees) ? .0 : total_fees) +
+          (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins) +
+          (isNaN(note_irrf_tax) ? .0 : note_irrf_tax)
+        ).toFixed(2);
       },
       getResult() {
+        const total_moviments = parseFloat(this.total_moviments);
+        const total_fees = parseFloat(this.getTotalFees);
+        const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
+
         return (
-          parseFloat(this.total_moviments) -
-          (parseFloat(this.registration_fee) + parseFloat(this.operational_fee) + parseFloat(this.emolument_fee)) -
-          parseFloat(this.iss_pis_cofins)).toFixed(2);
+          (isNaN(total_moviments) ? .0 : total_moviments) -
+          (isNaN(total_fees) ? .0 : total_fees) -
+          (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins)
+        ).toFixed(2);
       },
       getBasisIr() {
-        const result = (
-          parseFloat(this.total_moviments) -
-          (parseFloat(this.registration_fee) + parseFloat(this.operational_fee) + parseFloat(this.emolument_fee)) -
-          parseFloat(this.iss_pis_cofins)).toFixed(2);
-
-        return result < .0 ? 0 : result;
+        return this.getResult < .0 ? 0 : this.getResult;
+      },
+      validationRules() {
+        return {
+          broker: [
+            v => !!v || 'A corretora é requerida',
+          ],
+          date: [
+            v => !!v || 'A data é requerida',
+          ],
+          number: [
+            v => !!v || 'O número é requerido',
+          ],
+          total_moviments: [
+            v => !!v || 'O total da movimentação é requerido',
+          ],
+          operational_fee: [
+            v => !!v || 'A taxa operacional é requerida',
+            v => !!this.numberGreaterThanOrEqualsZero(v) || 'O valor deve ser maior ou igual a zero',
+          ],
+          registration_fee: [
+            v => !!v || 'A taxa de registro é requerida',
+            v => !!this.numberGreaterThanOrEqualsZero(v) || 'O valor deve ser maior ou igual a zero',
+          ],
+          emolument_fee: [
+            v => !!v || 'O emolumento é requerido',
+            v => !!this.numberGreaterThanOrEqualsZero(v) || 'O valor deve ser maior ou igual a zero',
+          ],
+          iss_pis_cofins: [
+            v => !!v || 'O ISS/PIS/COFINS é requerido',
+            v => !!this.numberGreaterThanOrEqualsZero(v) || 'O valor deve ser maior ou igual a zero',
+          ],
+          note_irrf_tax: [
+            v => !!v || 'O IRRF é requerido',
+            v => !!this.numberGreaterThanOrEqualsZero(v) || 'O valor deve ser maior ou igual a zero',
+          ],
+        }
       }
     },
     watch: {
@@ -255,6 +327,15 @@
     methods: {
       localISODateFormatter(date) {
         return ISODateFormatter(date);
+      },
+      numberGreaterThanOrEqualsZero(value) {
+        const parsedValue = parseFloat(value);
+
+        if (isNaN(parsedValue)) {
+          return false;
+        }
+
+        return parsedValue >= .0;
       },
       async addBrokageNote() {
         const payload = {
