@@ -1,16 +1,21 @@
-const addZero = (numero) => {
-  if (numero <= 9)
-    return '0' + numero;
+export const formatBrazilianDate = (date) => {
+  if (!date) return null;
 
-  return numero;
+  const [year, month, day] = date.split('-');
+  return `${day}/${month}/${year}`;
 }
 
-export const format = (date) => {
-  const new_date = new Date(date);
+export const formatISODate = (date) => {
+  if (!date) return null;
 
-  const year = new_date.getFullYear();
-  const month = addZero(new_date.getMonth() +1);
-  const day = addZero(new_date.getDate() +1);
+  const [day, month, year] = date.split('/');
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
 
-  return `${day}/${month}/${year}`;
+export const getNewISODate = () => {
+  return new Date().toISOString().substr(0, 10);
+}
+
+export const getNewBrazilianDate = () => {
+  return formatBrazilianDate(getNewISODate());
 }

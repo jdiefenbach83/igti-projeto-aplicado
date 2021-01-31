@@ -32,7 +32,7 @@
                 v-model="dateFormatted"
                 label="Date"
                 v-bind="attrs"
-                @blur="date = parseDate(dateFormatted)"
+                @blur="date = localISODateFormatter(dateFormatted)"
                 v-on="on"
               />
             </template>
@@ -184,13 +184,19 @@
 </template>
 
 <script>
+  import { formatBrazilianDate as brazilianDateFormatter,
+           getNewISODate as newDate,
+           getNewBrazilianDate as newBrazilianDate,
+           formatISODate as ISODateFormatter,
+  } from '@/helper/DateFormatter';
+
   export default {
     name: "BrokerageNotesAdd",
-    data: vm => {
+    data() {
       return {
         broker: null,
-        date: new Date().toISOString().substr(0, 10),
-        dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+        date: newDate(),
+        dateFormatted: newBrazilianDate(),
         menu1: false,
         number: null,
         total_moviments: .0,
@@ -243,21 +249,12 @@
     },
     watch: {
       date (val) {
-        this.dateFormatted = this.formatDate(this.date)
+        this.dateFormatted = brazilianDateFormatter(this.date)
       },
     },
     methods: {
-      formatDate (date) {
-        if (!date) return null;
-
-        const [year, month, day] = date.split("-");
-        return `${day}/${month}/${year}`;
-      },
-      parseDate (date) {
-        if (!date) return null;
-
-        const [day, month, year] = date.split("/");
-        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      localISODateFormatter(date) {
+        return ISODateFormatter(date);
       },
       async addBrokageNote() {
         const payload = {

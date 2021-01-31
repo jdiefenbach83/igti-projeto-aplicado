@@ -57,8 +57,8 @@
 </template>
 
 <script>
-  import { format as DateFormatter } from '../../helper/DateFormatter';
-  import { format as CurrencyFormatter } from '../../helper/CurrencyFormatter';
+  import { formatBrazilianDate as brazilianDateFormatter } from '@/helper/DateFormatter';
+  import { format as currencyFormatter } from '@/helper/CurrencyFormatter';
 
   export default {
     name: 'BrokerageNotesListing',
@@ -91,11 +91,11 @@
         const brokerageNotesForListing = brokerageNotes.map(brokerageNote => {
           return {
             ...brokerageNote,
-            date: DateFormatter(brokerageNote.date),
+            date: brazilianDateFormatter(brokerageNote.date),
             date_to_order: brokerageNote.date,
-            total_moviments: CurrencyFormatter(brokerageNote.total_moviments),
-            net_total: CurrencyFormatter(brokerageNote.net_total),
-            result: CurrencyFormatter(brokerageNote.result),
+            total_moviments: currencyFormatter(brokerageNote.total_moviments),
+            net_total: currencyFormatter(brokerageNote.net_total),
+            result: currencyFormatter(brokerageNote.result),
             broker: brokers.find(broker => brokerageNote.broker_id === broker.id),
           }
         });
