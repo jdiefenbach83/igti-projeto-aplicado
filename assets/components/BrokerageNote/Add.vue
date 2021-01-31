@@ -17,6 +17,7 @@
             label="Corretora"
             required
             :rules="validationRules.broker"
+            :background-color="getRequiredColor()"
           />
         </v-col>
         <v-col
@@ -41,6 +42,7 @@
                 v-on="on"
                 required
                 :rules="validationRules.date"
+                :background-color="getRequiredColor()"
               />
             </template>
             <v-date-picker
@@ -61,6 +63,7 @@
             type="number"
             required
             :rules="validationRules.number"
+            :background-color="getRequiredColor()"
           />
         </v-col>
         <v-col
@@ -73,6 +76,7 @@
             type="number"
             required
             :rules="validationRules.total_moviments"
+            :background-color="getRequiredColor()"
           />
         </v-col>
         <v-col
@@ -85,6 +89,7 @@
             type="number"
             required
             :rules="validationRules.operational_fee"
+            :background-color="getRequiredColor()"
           />
         </v-col>
         <v-col
@@ -97,6 +102,7 @@
             type="number"
             required
             :rules="validationRules.registration_fee"
+            :background-color="getRequiredColor()"
           />
         </v-col>
         <v-col
@@ -109,6 +115,7 @@
             type="number"
             required
             :rules="validationRules.emolument_fee"
+            :background-color="getRequiredColor()"
           />
         </v-col>
         <v-col
@@ -121,6 +128,7 @@
             type="number"
             required
             :rules="validationRules.iss_pis_cofins"
+            :background-color="getRequiredColor()"
           />
         </v-col>
         <v-col
@@ -133,6 +141,7 @@
             type="number"
             required
             :rules="validationRules.note_irrf_tax"
+            :background-color="getRequiredColor()"
           />
         </v-col>
         <v-col
@@ -144,6 +153,7 @@
             label="Total das taxas"
             type="number"
             readonly
+            class="calculated-field"
           />
         </v-col>
         <v-col
@@ -155,6 +165,7 @@
             label="Total líquido"
             type="number"
             readonly
+            class="calculated-field"
           />
         </v-col>
         <v-col
@@ -166,6 +177,7 @@
             label="Custo total"
             type="number"
             readonly
+            class="calculated-field"
           />
         </v-col>
         <v-col
@@ -177,6 +189,7 @@
             label="Resultado"
             type="number"
             readonly
+            class="calculated-field"
           />
         </v-col>
         <v-col
@@ -188,6 +201,7 @@
             label="Base de cáculo para IR"
             type="number"
             readonly
+            class="calculated-field"
           />
         </v-col>
       </v-row>
@@ -325,6 +339,9 @@
       },
     },
     methods: {
+      getRequiredColor() {
+        return '#ffffbb';
+      },
       localISODateFormatter(date) {
         return ISODateFormatter(date);
       },
@@ -363,5 +380,9 @@
   div.col-sm-3.col-12 {
     padding-top: 0;
     padding-bottom: 0;
+  }
+
+  .calculated-field {
+    font-weight: bold;
   }
 </style>
