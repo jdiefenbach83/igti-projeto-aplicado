@@ -3,6 +3,7 @@
         <v-data-table
             :headers="headers"
             :items="brokers"
+            :items-per-page="5"
             item-key="id"
             class="elevation-1"
             :search="search"
