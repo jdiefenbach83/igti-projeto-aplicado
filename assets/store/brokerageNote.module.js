@@ -8,6 +8,10 @@ const ADDING_BROKERAGE_NOTE = "ADDING_BROKERAGE_NOTE";
 const ADDING_BROKERAGE_NOTE_SUCCESS = "ADDING_BROKERAGE_NOTE_SUCCESS";
 const ADDING_BROKERAGE_NOTE_ERROR = "ADDING_BROKERAGE_NOTE_ERROR";
 
+const EDITING_BROKERAGE_NOTE = "EDITING_BROKERAGE_NOTE";
+const EDITING_BROKERAGE_NOTE_SUCCESS = "EDITING_BROKERAGE_NOTE_SUCCESS";
+const EDITING_BROKERAGE_NOTE_ERROR = "EDITING_BROKERAGE_NOTE_ERROR";
+
 const REMOVING_BROKERAGE_NOTE = "REMOVING_BROKERAGE_NOTE";
 const REMOVING_BROKERAGE_NOTE_SUCCESS = "REMOVING_BROKERAGE_NOTE_SUCCESS";
 const REMOVING_BROKERAGE_NOTE_ERROR = "REMOVING_BROKERAGE_NOTE_ERROR";
@@ -47,6 +51,22 @@ export default {
       state.isLoading = false;
       state.error = error;
     },
+    [EDITING_BROKERAGE_NOTE](state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    [EDITING_BROKERAGE_NOTE_SUCCESS](state, brokerageNote) {
+      state.isLoading = false;
+      state.error = null;
+      
+      const brokerageNotes = state.brokerageNotes = state.brokerageNotes.filter(item => item.id !== brokerageNote.id);
+      
+      state.brokerageNotes = [...brokerageNotes, brokerageNote];
+    },
+    [EDITING_BROKERAGE_NOTE_ERROR](state, error) {
+      state.isLoading = false;
+      state.error = error;
+    },
     [REMOVING_BROKERAGE_NOTE](state) {
       state.isLoading = true;
       state.error = null;
@@ -76,7 +96,10 @@ export default {
     },
     brokerageNotes(state) {
       return state.brokerageNotes;
-    }
+    },
+    getById: (state) => (id) => {
+      return state.brokerageNotes.find(item => item.id === id);
+    },
   },
   actions: {
     async getAll({ commit }) {
@@ -95,7 +118,9 @@ export default {
     async add({ commit }, message) {
       commit(ADDING_BROKERAGE_NOTE);
       try {
-        let response = await BrokerageNoteService.add(message);
+        delete message.id;
+
+        const response = await BrokerageNoteService.add(message);
         commit(ADDING_BROKERAGE_NOTE_SUCCESS, response.content);
 
         return response.data;
@@ -105,10 +130,26 @@ export default {
         return null;
       }
     },
+    async edit({ commit }, message) {
+      commit(EDITING_BROKERAGE_NOTE);
+      try {
+        const id = message.id;
+        delete message.id;
+
+        const response = await BrokerageNoteService.edit(id, message);
+        commit(EDITING_BROKERAGE_NOTE_SUCCESS, response.content);
+
+        return response.data;
+      } catch (error) {
+        commit(EDITING_BROKERAGE_NOTE_ERROR, error);
+
+        return null;
+      }
+    },
     async remove({ commit }, message) {
       commit(REMOVING_BROKERAGE_NOTE);
       try {
-        let response = await BrokerageNoteService.remove(message);
+        const response = await BrokerageNoteService.remove(message);
         commit(REMOVING_BROKERAGE_NOTE_SUCCESS, message);
 
         return response.data;

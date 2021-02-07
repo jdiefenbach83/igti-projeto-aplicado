@@ -41,8 +41,8 @@
           small
           class="mr-2"
           title="Editar"
+          @click="editItem(item)"
         >
-          <!--@click="editItem(item)"-->
           mdi-pencil
         </v-icon>
         <remove-modal :brokerage_note="item"/>
@@ -65,6 +65,11 @@
       };
     },
     methods: {
+      editItem(item) {
+        const brokerage_note_id = item.id;
+
+        this.$router.push({ name: 'BrokerageNoteEdit', params: { id: brokerage_note_id }});
+      },
       filterList (value, search, item) {
         return value != null &&
           search != null &&
@@ -79,7 +84,7 @@
     },
     computed: {
       isLoadingBrokerageNotes() {
-        return this.$store.getters["brokerageNote/isLoading"]
+        return this.$store.getters["brokerageNote/isLoading"];
       },
       brokerageNotes() {
         const brokerageNotes = this.$store.getters["brokerageNote/brokerageNotes"];

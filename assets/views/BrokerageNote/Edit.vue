@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1>Nova nota de corretagem</h1>
+    <h1>Editar nota de corretagem</h1>
     <hr class='mb-3'/>
-    <BrokerageNotesAddEdit />
+    <BrokerageNotesAddEdit :brokerage_note_id="this.$route.params.id"/>
   </div>
 </template>
 
@@ -10,8 +10,8 @@
   import BrokerageNotesAddEdit from "@/components/BrokerageNote/AddEdit";
 
   export default {
-    name: "BrokerageNoteAdd",
-    components: {BrokerageNotesAddEdit}
+    name: "BrokerageNoteEdit",
+    components: {BrokerageNotesAddEdit},
   }
 </script>
 

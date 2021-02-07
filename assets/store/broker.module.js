@@ -42,7 +42,10 @@ export default {
     },
     brokers(state) {
       return state.brokers;
-    }
+    },
+    getById: (state) => (id) => {
+      return state.brokers.find(item => item.id === id);
+    },
   },
   actions: {
     async getAll({ commit }) {

@@ -12,6 +12,12 @@ async function add(brokerageNote) {
   return data;
 }
 
+async function edit(id, brokerageNote) {
+  const { data } = await gateway.httpClient().put(`/brokerageNotes/${id}`, JSON.stringify(brokerageNote));
+
+  return data;
+}
+
 async function remove(brokerageNote) {
   const { data } = await gateway.httpClient().delete(`/brokerageNotes/${brokerageNote.id}`);
 
@@ -21,5 +27,6 @@ async function remove(brokerageNote) {
 module.exports = {
   getAll,
   add,
+  edit,
   remove,
 };

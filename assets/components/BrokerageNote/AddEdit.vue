@@ -5,9 +5,9 @@
     </transition>
 
     <v-form
-      v-model="isValidForm"
+      v-model="is_valid_form"
       @submit.prevent
-      :disabled="isDisabledForm"
+      :disabled="is_disabled_form"
     >
       <v-row>
         <v-col
@@ -151,7 +151,7 @@
         class='mb-2'
         small
         @click='saveBrokageNote()'
-        :disabled='!isValidForm'
+        :disabled='!is_valid_form'
       >Salvar
       </v-btn>
     </v-form>
@@ -165,27 +165,38 @@
   import InputNumeric from "@/components/BrokerageNote/InputNumeric";
 
   export default {
-    name: "BrokerageNotesAdd",
+    name: "BrokerageNotesAddEdit",
     components: {
       BrokerSelector,
       DateSelector,
       InputCalculated,
       InputNumeric
     },
+    props: {
+      brokerage_note_id: null,
+    },
+    created() {
+      this.broker_note_id = this.$props.brokerage_note_id ?? null;
+
+      if (this.broker_note_id !== null) {
+        this.loadBrokerageNoteToEdit(this.broker_note_id);
+      }
+    },
     data() {
       return {
+        broker_note_id: null,
         broker: null,
         date: null,
         number: null,
-        total_moviments: .0,
-        operational_fee: .0,
-        registration_fee: .0,
-        emolument_fee: .0,
-        iss_pis_cofins: .0,
-        note_irrf_tax: .0,
+        total_moviments: null,
+        operational_fee: null,
+        registration_fee: null,
+        emolument_fee: null,
+        iss_pis_cofins: null,
+        note_irrf_tax: null,
 
-        isValidForm: false,
-        isDisabledForm: false,
+        is_valid_form: false,
+        is_disabled_form: false,
         flash_message: {
           show: false,
           description: '',
@@ -244,10 +255,26 @@
       },
     },
     methods: {
+      isNewBrokerageNote() {
+        return !(!!this.broker_note_id);
+      },
+      loadBrokerageNoteToEdit(brokerage_note_id) {
+        const brokerageNote = this.$store.getters["brokerageNote/getById"](brokerage_note_id);
+
+        this.broker = this.$store.getters["broker/getById"](brokerageNote.broker_id);
+        this.date = brokerageNote.date;
+        this.number = brokerageNote.number;
+        this.total_moviments = brokerageNote.total_moviments;
+        this.operational_fee = brokerageNote.operational_fee;
+        this.registration_fee = brokerageNote.registration_fee;
+        this.emolument_fee = brokerageNote.emolument_fee;
+        this.iss_pis_cofins = brokerageNote.iss_pis_cofins;
+        this.note_irrf_tax = brokerageNote.note_irrf_tax;
+      },
       showFlashMessage(){
         this.flash_message.show = true;
         this.flash_message.description = 'A note de corretagem foi salva com sucesso! Você será redirecionado';
-        this.isDisabledForm = true;
+        this.is_disabled_form = true;
         const self = this;
 
         setTimeout(() => {
@@ -258,6 +285,7 @@
       },
       async saveBrokageNote() {
         const payload = {
+          id: this.broker_note_id,
           broker_id: this.broker.id,
           date: this.date,
           number: this.number,
@@ -268,7 +296,15 @@
           iss_pis_cofins: parseFloat(this.iss_pis_cofins).toFixed(2),
           note_irrf_tax: parseFloat(this.note_irrf_tax).toFixed(2),
         }
-        const result = await this.$store.dispatch("brokerageNote/add", payload);
+
+        let result = null;
+
+        if (this.isNewBrokerageNote()) {
+          result = await this.$store.dispatch("brokerageNote/add", payload);
+        } else {
+          result = await this.$store.dispatch("brokerageNote/edit", payload);
+        }
+
         this.showFlashMessage();
 
         if (result !== undefined) {
