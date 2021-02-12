@@ -1,0 +1,64 @@
+version: '3.3'
+
+services:
+  webserver:
+    container_name: pa-local-webserver
+    restart: on-failure
+    depends_on: ['php-fpm']
+    build: { dockerfile: ./docker/nginx/Dockerfile, context: ./ }
+    environment:
+      VIRTUAL_HOST: pa.jefferson.local
+    env_file: []
+    networks: ['application']
+    ports:
+      - { published: 8081, target: 80, protocol: tcp, mode: host }
+    # volumes:
+    #   - {source: './', target: '/app', type: bind, read_only: true, volume: {nocopy: false}}
+
+  php-fpm:
+    container_name: pa-local-php-fpm
+    restart: on-failure
+    depends_on: ['mysql']
+    build: { dockerfile: ./docker/php-fpm/Dockerfile, context: ./ }
+    environment: {}
+    env_file: []
+    networks: ['application', 'database']
+    ports:
+      - { published: 9000, target: 9000, protocol: tcp, mode: host }
+    volumes:
+      - {
+        source: './',
+        target: '/app',
+        type: bind,
+        read_only: false,
+        volume: { nocopy: false },
+      }
+
+  mysql:
+    container_name: pa-local-mysql
+    image: mysql:8.0
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: 'igti-pa'
+      MYSQL_USER: 'igti-pa'
+      MYSQL_PASSWORD: 'igti-pa'
+    env_file: []
+    networks: ['database']
+    ports:
+      - { published: 3307, target: 3306, protocol: tcp, mode: host }
+    volumes:
+      - {
+        source: database_data,
+        target: '/var/lib/mysql',
+        type: volume,
+        read_only: false,
+        volume: { nocopy: false },
+      }
+
+networks:
+  application: {}
+  database: {}
+
+volumes:
+  database_data: {}
