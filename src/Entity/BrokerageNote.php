@@ -86,7 +86,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
      * @return BrokerageNote
      */
 
-    public function setDate(?DateTimeImmutable $date): BrokerageNote
+    public function setDate(DateTimeImmutable $date): BrokerageNote
     {
         $this->date = $date;
 
@@ -328,7 +328,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         }
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,
