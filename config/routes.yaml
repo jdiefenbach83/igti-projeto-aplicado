@@ -2,6 +2,32 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
+assets:
+  path: /api/assets
+  controller: App\Controller\AssetController::getAll
+  methods:
+    - GET
+asset:
+  path: /api/assets/{id}
+  controller: App\Controller\AssetController::getById
+  methods:
+    - GET
+new_asset:
+  path: /api/assets
+  controller: App\Controller\AssetController::add
+  methods:
+    - POST
+update_asset:
+  path: /api/assets/{id}
+  controller: App\Controller\AssetController::update
+  methods:
+    - PUT
+remove_asset:
+  path: /api/assets/{id}
+  controller: App\Controller\AssetController::remove
+  methods:
+    - DELETE
+
 brokers:
   path: /api/brokers
   controller: App\Controller\BrokerController::getAll
