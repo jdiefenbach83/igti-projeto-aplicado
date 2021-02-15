@@ -14,7 +14,7 @@ final class Version20210119002519 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Create Brokerage Note Table';
     }
 
     public function up(Schema $schema) : void
