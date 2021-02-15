@@ -14,7 +14,7 @@ final class Version20210122153942 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Add Created_at and Updated_at timestamp columns';
     }
 
     public function up(Schema $schema) : void
