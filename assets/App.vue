@@ -35,6 +35,7 @@ export default {
   name: "App",
   created() {
     // 'Loading prereqs in vuex store
+    store.dispatch('asset/getAll');
     store.dispatch('broker/getAll');
     store.dispatch('brokerageNote/getAll');
     // 'End of loading prereqs in vuex store
