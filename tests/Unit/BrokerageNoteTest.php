@@ -2,8 +2,10 @@
 
 namespace App\Tests\Unit;
 
+use App\Entity\Asset;
 use App\Entity\Broker;
 use App\Entity\BrokerageNote;
+use App\Entity\Operation;
 use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +14,6 @@ class BrokerageNoteTest extends TestCase
 {
     private Generator $faker;
     private Broker $broker;
-    private BrokerageNote $brokerage_note;
 
     public function setUp(): void
     {
@@ -155,5 +156,26 @@ class BrokerageNoteTest extends TestCase
             ->setNoteIrrfTax($note_irrf_tax);
 
         $this->assertEquals(0.0, $brokerage_note->getCalculationBasisIr());
+    }
+
+    public function testBrokerageNote_ShouldAddOperationSuccessfully() {
+        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
+        $number = $this->faker->numberBetween(1, 100_000);
+
+        $asset = (new Asset())
+            ->setCode('ABCD1')
+            ->setType(Asset::TYPE_STOCK)
+            ->setDescription('Stock ABCD11');
+
+        $brokerage_note = new BrokerageNote();
+        $brokerage_note
+            ->setBroker($this->broker)
+            ->setDate($date)
+            ->setNumber($number);
+
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.50);
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.55);
+
+        $this->assertCount(2, $brokerage_note->getOperations());
     }
 }

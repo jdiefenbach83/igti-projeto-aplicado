@@ -32,6 +32,12 @@
         <field name="updatedAt" column="updated_at" type="datetime" nullable="false">
             <gedmo:timestampable on="update"/>
         </field>
+        <field name="version" type="integer" nullable="false"/>
+        <one-to-many field="operations" target-entity="App\Entity\Operation" mapped-by="brokerageNote" fetch="EAGER">
+            <cascade>
+                <cascade-all />
+            </cascade>
+        </one-to-many>
 
         <indexes>
             <index name="brokerage_note_date_idx" columns="date"/>

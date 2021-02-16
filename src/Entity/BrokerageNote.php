@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use JsonSerializable;
 
@@ -27,6 +29,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private float $result;
     private float $calculation_basis_ir;
     private float $calculated_ir;
+    private Collection $operations;
+    private int $version;
 
     public function __construct()
     {
@@ -44,6 +48,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->result = .0;
         $this->calculation_basis_ir = .0;
         $this->calculated_ir = .0;
+
+        $this->operations = new ArrayCollection();
     }
 
     /**
@@ -287,6 +293,11 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $this->calculated_ir;
     }
 
+    public function getOperations(): Collection
+    {
+        return $this->operations;
+    }
+
     private function calculate(): void
     {
         $this->calculateFees();
@@ -328,8 +339,48 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         }
     }
 
+    public function addOperation(string $type, Asset $asset, int $quantity, float $price): void
+    {
+        $line = $this->getLastOperationLine();
+
+        $operation = new Operation(
+            $line,
+            $type,
+            $asset,
+            $quantity,
+            $price,
+            $this
+        );
+
+        $this->operations->add($operation);
+    }
+
+    private function getLastOperationLine(): int
+    {
+        $max_line = 0;
+
+        foreach ($this->operations as $operation) {
+            if ($operation->getLine() >= $max_line) {
+                $max_line = $operation->getLine();
+            }
+        }
+
+        return $max_line + 1;
+    }
+
     public function jsonSerialize(): array
     {
+        $operations = [];
+
+        foreach ($this->operations as $operation){
+            $operations[] = [
+                'type' => $operation->getType(),
+                'asset_id' => $operation->getAsset()->getId(),
+                'quantity' => $operation->getQuantity(),
+                'price' => $operation->getPrice(),
+            ];
+        }
+
         return [
             'id' => $this->id,
             'broker_id' => $this->broker->getId(),
@@ -348,6 +399,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             'result' => $this->result,
             'calculation_basis_ir' => $this->calculation_basis_ir,
             'calculated_ir' => $this->calculated_ir,
+            'operations' => $operations,
             '_links' => [
                 [
                     'rel' => 'self',

@@ -2,14 +2,20 @@
 
 namespace App\Tests\Functional;
 
+use App\Entity\Asset;
 use App\Entity\Broker;
 use App\Entity\BrokerageNote;
+use App\Entity\Operation;
 
 class BrokerageNoteControllerTest extends BaseTest
 {
     private function createBrokerageNote(): array {
         $broker = $this->entityManager
             ->getRepository(Broker::class)
+            ->findOneBy([]);
+
+        $asset = $this->entityManager
+            ->getRepository(Asset::class)
             ->findOneBy([]);
 
         return [
@@ -22,6 +28,14 @@ class BrokerageNoteControllerTest extends BaseTest
             'emolument_fee' => $this->faker->randomFloat(4, 1, 100_000),
             'iss_pis_cofins' => $this->faker->randomFloat(4, 1, 100_000),
             'note_irrf_tax' => $this->faker->randomFloat(4, 1, 100_000),
+            'operations' => [
+                [
+                    'type' => Operation::TYPE_BUY,
+                    'asset_id' => $asset->getId(),
+                    'quantity' => $this->faker->numberBetween(1, 99),
+                    'price' => $this->faker->randomFloat(2, 1, 100),
+                ],
+            ]
         ];
     }
 
@@ -61,6 +75,11 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($new_brokerage_note['emolument_fee'], $brokerage_note->getEmolumentFee());
         $this->assertEquals($new_brokerage_note['iss_pis_cofins'], $brokerage_note->getIssPisCofins());
         $this->assertEquals($new_brokerage_note['note_irrf_tax'], $brokerage_note->getNoteIrrfTax());
+        $this->assertNotNull($new_brokerage_note['operations']);
+        $this->assertEquals($new_brokerage_note['operations'][0]['type'], $brokerage_note->getOperations()[0]->getType());
+        $this->assertEquals($new_brokerage_note['operations'][0]['asset_id'], $brokerage_note->getOperations()[0]->getAsset()->getId());
+        $this->assertEquals($new_brokerage_note['operations'][0]['quantity'], $brokerage_note->getOperations()[0]->getQuantity());
+        $this->assertEquals($new_brokerage_note['operations'][0]['price'], $brokerage_note->getOperations()[0]->getPrice());
     }
 
     public function testAddBrokerageNote_ShouldCalculateCorretly()

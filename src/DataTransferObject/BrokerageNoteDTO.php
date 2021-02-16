@@ -22,6 +22,7 @@ class BrokerageNoteDTO implements DTOInterface
     private $emolument_fee;
     private $iss_pis_cofins;
     private $note_irrf_tax;
+    private array $operations;
 
     public function getBrokerId()
     {
@@ -155,6 +156,24 @@ class BrokerageNoteDTO implements DTOInterface
     public function setNoteIrrfTax($note_irrf_tax): BrokerageNoteDTO
     {
         $this->note_irrf_tax = $note_irrf_tax;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOperations(): array
+    {
+        return $this->operations;
+    }
+
+    /**
+     * @param array $operations
+     * @return BrokerageNoteDTO
+     */
+    public function setOperations(array $operations): BrokerageNoteDTO
+    {
+        $this->operations = $operations;
         return $this;
     }
 

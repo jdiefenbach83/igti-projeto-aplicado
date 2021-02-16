@@ -5,8 +5,10 @@ namespace App\Service;
 use App\DataTransferObject\DTOInterface;
 use App\Entity\BrokerageNote;
 use App\Helper\BrokerageNoteFactory;
+use App\Repository\AssetRepositoryInterface;
 use App\Repository\BrokerageNoteRepositoryInterface;
 use App\Repository\BrokerRepositoryInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BrokerageNoteService implements ServiceInterface
@@ -20,19 +22,27 @@ class BrokerageNoteService implements ServiceInterface
      */
     private BrokerRepositoryInterface $brokerRepository;
     /**
+     * @var AssetRepositoryInterface
+     */
+    private AssetRepositoryInterface $assetRepository;
+    /**
      * @var ValidatorInterface
      */
     private ValidatorInterface $validator;
-
+    /**
+     * @var iterable
+     */
     private iterable $validationErrors;
 
     public function __construct(
         BrokerageNoteRepositoryInterface $brokerageNoteRepository,
         BrokerRepositoryInterface $brokerRepository,
+        AssetRepositoryInterface $assetRepository,
         ValidatorInterface $validator)
     {
         $this->brokerageNoteRepository = $brokerageNoteRepository;
         $this->brokerRepository = $brokerRepository;
+        $this->assetRepository = $assetRepository;
         $this->validator = $validator;
     }
 
@@ -45,16 +55,29 @@ class BrokerageNoteService implements ServiceInterface
         return $this->brokerageNoteRepository->findById($id);
     }
 
-    public function add(DTOInterface $dto): ?BrokerageNote
+    private function validateDTO(DTOInterface $dto): ConstraintViolationListInterface
     {
         $errors = $this->validator->validate($dto);
 
-        if (count($errors) > 0) {
+        foreach($dto->getOperations() as $operation){
+            $errors->addAll($this->validator->validate($operation));
+        }
+
+        return $errors;
+    }
+
+    public function add(DTOInterface $dto): ?BrokerageNote
+    {
+        $errors = $this->validateDTO($dto);
+
+        if ($errors->count() > 0) {
             $this->validationErrors = $errors;
             return null;
         }
 
-        $brokerage_note_entity = (new BrokerageNoteFactory($this->brokerRepository))->makeEntityFromDTO($dto);
+        $brokerage_note_factory = new BrokerageNoteFactory($this->brokerRepository, $this->assetRepository);
+        $brokerage_note_entity = $brokerage_note_factory->makeEntityFromDTO($dto);
+
         $this->brokerageNoteRepository->add($brokerage_note_entity);
 
         return $brokerage_note_entity;
@@ -68,14 +91,15 @@ class BrokerageNoteService implements ServiceInterface
             throw new \InvalidArgumentException();
         }
 
-        $errors = $this->validator->validate($dto);
+        $errors = $this->validateDTO($dto);
 
-        if (count($errors) > 0) {
+        if ($errors->count() > 0) {
             $this->validationErrors = $errors;
             return null;
         }
 
-        $brokerage_note_entity = (new BrokerageNoteFactory($this->brokerRepository))->makeEntityFromDTO($dto);
+        $brokerage_note_factory = new BrokerageNoteFactory($this->brokerRepository, $this->assetRepository);
+        $brokerage_note_entity = $brokerage_note_factory->makeEntityFromDTO($dto);
 
         $existing_entity->setBroker($brokerage_note_entity->getBroker());
         $existing_entity->setDate($brokerage_note_entity->getDate());

@@ -42,6 +42,10 @@ abstract class BaseController extends AbstractController
             $status = Response::HTTP_OK;
         } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
         }
 
         $responseFactory = new ResponseFactory(
@@ -66,6 +70,10 @@ abstract class BaseController extends AbstractController
             $return = $entity;
         } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
         }
 
         $responseFactory = new ResponseFactory(
@@ -99,7 +107,10 @@ abstract class BaseController extends AbstractController
 
         } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
-            dump($e);
+
+           if (getenv('APP_ENV') !== 'Prod') {
+               $return = empty($e->getMessage()) ? null : $e->getMessage();
+           }
         }
 
         $responseFactory = new ResponseFactory(
@@ -134,8 +145,16 @@ abstract class BaseController extends AbstractController
         } catch (InvalidArgumentException $e) {
             $status = Response::HTTP_NOT_FOUND;
 
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
+
         } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
         }
 
         $responseFactory = new ResponseFactory(
@@ -150,6 +169,7 @@ abstract class BaseController extends AbstractController
     public function remove(int $id): Response
     {
         $success = false;
+        $return = null;
 
         try {
             $this->service->remove($id);
@@ -159,13 +179,21 @@ abstract class BaseController extends AbstractController
         } catch (InvalidArgumentException $e) {
             $status = Response::HTTP_NOT_FOUND;
 
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
+
         } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
         }
 
         $responseFactory = new ResponseFactory(
             $success,
-            null,
+            $return,
             $status
         );
 
