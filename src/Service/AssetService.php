@@ -36,22 +36,22 @@ class AssetService implements ServiceInterface
         return $this->assetRepository->findById($id);
     }
 
-    public function add(DTOInterface $asset_dto): ?Asset
+    public function add(DTOInterface $dto): ?Asset
     {
-        $errors = $this->validator->validate($asset_dto);
+        $errors = $this->validator->validate($dto);
 
         if (count($errors) > 0) {
             $this->validationErrors = $errors;
             return null;
         }
 
-        $Asset_entity = (new AssetFactory())->makeEntity($asset_dto);
-        $this->assetRepository->add($Asset_entity);
+        $asset_entity = (new AssetFactory())->makeEntityFromDTO($dto);
+        $this->assetRepository->add($asset_entity);
 
-        return $Asset_entity;
+        return $asset_entity;
     }
 
-    public function update(int $id, DTOInterface $asset_dto): ?Asset
+    public function update(int $id, DTOInterface $dto): ?Asset
     {
         $existing_entity = $this->assetRepository->findById($id);
 
@@ -59,20 +59,20 @@ class AssetService implements ServiceInterface
             throw new \InvalidArgumentException();
         }
 
-        $errors = $this->validator->validate($asset_dto);
+        $errors = $this->validator->validate($dto);
 
         if (count($errors) > 0) {
             $this->validationErrors = $errors;
             return null;
         }
 
-        $asset_entity = (new AssetFactory())->makeEntity($asset_dto);
+        $asset_entity = (new AssetFactory())->makeEntityFromDTO($dto);
 
         $existing_entity->setCode($asset_entity->getCode());
         $existing_entity->setType($asset_entity->getType());
         $existing_entity->setDescription($asset_entity->getDescription());
 
-        $this->assetRepository->add($existing_entity);
+        $this->assetRepository->update($existing_entity);
 
         return $existing_entity;
     }

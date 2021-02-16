@@ -6,6 +6,8 @@ use App\Helper\DTOFactoryInterface;
 use App\Helper\ResponseFactory;
 use App\Helper\ValidationsErrorFactory;
 use App\Service\ServiceInterface;
+use Exception;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,7 +40,7 @@ abstract class BaseController extends AbstractController
 
             $success = true;
             $status = Response::HTTP_OK;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
@@ -62,7 +64,7 @@ abstract class BaseController extends AbstractController
             $success = true;
             $status = is_null($entity) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK;
             $return = $entity;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
@@ -95,7 +97,7 @@ abstract class BaseController extends AbstractController
                 $return = (new ValidationsErrorFactory($validation_errors))->getMessages();
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
             dump($e);
         }
@@ -129,10 +131,10 @@ abstract class BaseController extends AbstractController
                 $return = (new ValidationsErrorFactory($validation_errors))->getMessages();
             }
 
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $status = Response::HTTP_NOT_FOUND;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
@@ -154,10 +156,10 @@ abstract class BaseController extends AbstractController
 
             $success = true;
             $status = Response::HTTP_NO_CONTENT;
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $status = Response::HTTP_NOT_FOUND;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 

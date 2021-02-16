@@ -45,22 +45,22 @@ class BrokerageNoteService implements ServiceInterface
         return $this->brokerageNoteRepository->findById($id);
     }
 
-    public function add(DTOInterface $brokerage_note_dto): ?BrokerageNote
+    public function add(DTOInterface $dto): ?BrokerageNote
     {
-        $errors = $this->validator->validate($brokerage_note_dto);
+        $errors = $this->validator->validate($dto);
 
         if (count($errors) > 0) {
             $this->validationErrors = $errors;
             return null;
         }
 
-        $brokerage_note_entity = (new BrokerageNoteFactory($this->brokerRepository))->makeEntity($brokerage_note_dto);
+        $brokerage_note_entity = (new BrokerageNoteFactory($this->brokerRepository))->makeEntityFromDTO($dto);
         $this->brokerageNoteRepository->add($brokerage_note_entity);
 
         return $brokerage_note_entity;
     }
 
-    public function update(int $id, DTOInterface $brokerage_note_dto): ?BrokerageNote
+    public function update(int $id, DTOInterface $dto): ?BrokerageNote
     {
         $existing_entity = $this->brokerageNoteRepository->findById($id);
 
@@ -68,14 +68,14 @@ class BrokerageNoteService implements ServiceInterface
             throw new \InvalidArgumentException();
         }
 
-        $errors = $this->validator->validate($brokerage_note_dto);
+        $errors = $this->validator->validate($dto);
 
         if (count($errors) > 0) {
             $this->validationErrors = $errors;
             return null;
         }
 
-        $brokerage_note_entity = (new BrokerageNoteFactory($this->brokerRepository))->makeEntity($brokerage_note_dto);
+        $brokerage_note_entity = (new BrokerageNoteFactory($this->brokerRepository))->makeEntityFromDTO($dto);
 
         $existing_entity->setBroker($brokerage_note_entity->getBroker());
         $existing_entity->setDate($brokerage_note_entity->getDate());
@@ -87,7 +87,7 @@ class BrokerageNoteService implements ServiceInterface
         $existing_entity->setIssPisCofins($brokerage_note_entity->getIssPisCofins());
         $existing_entity->setNoteIrrfTax($brokerage_note_entity->getNoteIrrfTax());
 
-        $this->brokerageNoteRepository->add($existing_entity);
+        $this->brokerageNoteRepository->update($existing_entity);
 
         return $existing_entity;
     }
@@ -106,7 +106,7 @@ class BrokerageNoteService implements ServiceInterface
     /**
      * @return iterable
      */
-    public function getValidationErrors()
+    public function getValidationErrors(): iterable
     {
         return $this->validationErrors;
     }
