@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\DataTransferObject\DTOInterface;
 use App\Entity\BrokerageNote;
+use App\Entity\Operation;
 use App\Helper\BrokerageNoteFactory;
 use App\Repository\AssetRepositoryInterface;
 use App\Repository\BrokerageNoteRepositoryInterface;
@@ -85,6 +86,7 @@ class BrokerageNoteService implements ServiceInterface
 
     public function update(int $id, DTOInterface $dto): ?BrokerageNote
     {
+        /** @var BrokerageNote $existing_entity */
         $existing_entity = $this->brokerageNoteRepository->findById($id);
 
         if (is_null($existing_entity)) {
@@ -110,6 +112,17 @@ class BrokerageNoteService implements ServiceInterface
         $existing_entity->setEmolumentFee($brokerage_note_entity->getEmolumentFee());
         $existing_entity->setIssPisCofins($brokerage_note_entity->getIssPisCofins());
         $existing_entity->setNoteIrrfTax($brokerage_note_entity->getNoteIrrfTax());
+
+        /** @var Operation $operation */
+        foreach ($brokerage_note_entity->getOperations() as $operation) {
+            $existing_entity->editOperation(
+                $operation->getLine(),
+                $operation->getType(),
+                $operation->getAsset(),
+                $operation->getQuantity(),
+                $operation->getPrice()
+            );
+        }
 
         $this->brokerageNoteRepository->update($existing_entity);
 

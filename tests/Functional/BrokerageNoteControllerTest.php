@@ -35,6 +35,12 @@ class BrokerageNoteControllerTest extends BaseTest
                     'quantity' => $this->faker->numberBetween(1, 99),
                     'price' => $this->faker->randomFloat(2, 1, 100),
                 ],
+                [
+                    'type' => Operation::TYPE_BUY,
+                    'asset_id' => $asset->getId(),
+                    'quantity' => $this->faker->numberBetween(1, 99),
+                    'price' => $this->faker->randomFloat(2, 1, 100),
+                ],
             ]
         ];
     }
@@ -192,6 +198,39 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($status_code_expected, $response->getStatusCode());
     }
 
+    public function getInvalidValuesToCreateOrUpdateBrokerageNoteWithOperations(): iterable {
+        yield 'type - null' => [ 'type', null ];
+        yield 'type - invalid' => [ 'type', 'ABCD1234' ];
+        yield 'asset_id - null' => [ 'asset_id', null ];
+        yield 'asset_id - invalid' => [ 'asset_id', 123456 ];
+        yield 'quantity - null' => [ 'quantity', null ];
+        yield 'quantity - invalid' => [ 'quantity', -123456 ];
+        yield 'price - null' => [ 'price', null ];
+        yield 'price - invalid' => [ 'price', -123456 ];
+    }
+
+    /**
+     * @dataProvider getInvalidValuesToCreateOrUpdateBrokerageNoteWithOperations
+     * @param string $key
+     * @param $value
+     */
+    public function testAddBrokerageNote_ShouldFailWhenCreateWithOperation(string $key, $value): void
+    {
+        $status_code_expected = 400;
+
+        $new_brokerage_note = $this->createBrokerageNote();
+        $new_brokerage_note['operations'][0][$key] = $value;
+
+        $request_body = json_encode($new_brokerage_note);
+
+        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $request_body);
+
+        $response = $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true);
+
+        $this->assertEquals($status_code_expected, $response->getStatusCode());
+    }
+
     public function testUpdateBrokerareNote_ShouldReturnSuccess()
     {
         $new_status_code_expected = 201;
@@ -205,9 +244,13 @@ class BrokerageNoteControllerTest extends BaseTest
         $new_response = $this->client->getResponse();
         $new_response_body = json_decode($new_response->getContent(), true);
 
+        $asset = $this->entityManager
+            ->getRepository(Asset::class)
+            ->findOneBy([], ['id' => 'DESC']);
+
         $brokerage_note_to_update_entity = $this->entityManager
             ->getRepository(BrokerageNote::class)
-            ->findOneBy([]);
+            ->find($new_response_body['content']['id']);
 
         $brokerage_note_to_update['broker_id'] = $brokerage_note_to_update_entity->getBroker()->getId();
         $brokerage_note_to_update['date'] = $this->faker->dateTime()->format('Y-m-d');
@@ -218,6 +261,14 @@ class BrokerageNoteControllerTest extends BaseTest
         $brokerage_note_to_update['emolument_fee'] = $this->faker->randomFloat(4, 1, 100_000);
         $brokerage_note_to_update['iss_pis_cofins'] = $this->faker->randomFloat(4, 1, 100_000);
         $brokerage_note_to_update['note_irrf_tax'] = $this->faker->randomFloat(4, 1, 100_000);
+        $brokerage_note_to_update['operations'][0]['type'] = Operation::TYPE_SELL;
+        $brokerage_note_to_update['operations'][0]['asset_id'] = $asset->getId();
+        $brokerage_note_to_update['operations'][0]['quantity'] = $this->faker->numberBetween(1, 99);
+        $brokerage_note_to_update['operations'][0]['price'] = $this->faker->randomFloat(2, 1, 100);
+        $brokerage_note_to_update['operations'][1]['type'] = Operation::TYPE_SELL;
+        $brokerage_note_to_update['operations'][1]['asset_id'] = $asset->getId();
+        $brokerage_note_to_update['operations'][1]['quantity'] = $this->faker->numberBetween(1, 99);
+        $brokerage_note_to_update['operations'][1]['price'] = $this->faker->randomFloat(2, 1, 100);
 
         $request_body = json_encode($brokerage_note_to_update);
 
@@ -241,6 +292,16 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($updated_brokerage_note->getEmolumentFee(), $update_response_body['content']['emolument_fee']);
         $this->assertEquals($updated_brokerage_note->getIssPisCofins(), $update_response_body['content']['iss_pis_cofins']);
         $this->assertEquals($updated_brokerage_note->getNoteIrrfTax(), $update_response_body['content']['note_irrf_tax']);
+
+        $this->assertEquals($updated_brokerage_note->getOperations()[0]->getType(), $update_response_body['content']['operations'][0]['type']);
+        $this->assertEquals($updated_brokerage_note->getOperations()[0]->getAsset()->getId(), $update_response_body['content']['operations'][0]['asset_id']);
+        $this->assertEquals($updated_brokerage_note->getOperations()[0]->getQuantity(), $update_response_body['content']['operations'][0]['quantity']);
+        $this->assertEquals($updated_brokerage_note->getOperations()[0]->getPrice(), $update_response_body['content']['operations'][0]['price']);
+
+        $this->assertEquals($updated_brokerage_note->getOperations()[1]->getType(), $update_response_body['content']['operations'][1]['type']);
+        $this->assertEquals($updated_brokerage_note->getOperations()[1]->getAsset()->getId(), $update_response_body['content']['operations'][1]['asset_id']);
+        $this->assertEquals($updated_brokerage_note->getOperations()[1]->getQuantity(), $update_response_body['content']['operations'][1]['quantity']);
+        $this->assertEquals($updated_brokerage_note->getOperations()[1]->getPrice(), $update_response_body['content']['operations'][1]['price']);
     }
 
     /**

@@ -368,6 +368,29 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $max_line + 1;
     }
 
+    private function getOperation(int $line)
+    {
+        return $this->getOperations()->filter(function($item) use ($line){
+            return $item->getLine() === $line;
+        })->first();
+    }
+
+    public function editOperation(int $line, string $type, Asset $asset, int $quantity, float $price): bool
+    {
+        $operation = $this->getOperation($line);
+
+        if (empty($operation)) {
+            return false;
+        }
+
+        $operation->setType($type);
+        $operation->setAsset($asset);
+        $operation->setQuantity($quantity);
+        $operation->setPrice($price);
+
+        return true;
+    }
+
     public function jsonSerialize(): array
     {
         $operations = [];
