@@ -3,13 +3,13 @@
 namespace App\Service;
 
 use App\DataTransferObject\DTOInterface;
+use App\DataTransferObject\OperationDTO;
 use App\Entity\BrokerageNote;
 use App\Entity\Operation;
 use App\Helper\BrokerageNoteFactory;
 use App\Repository\AssetRepositoryInterface;
 use App\Repository\BrokerageNoteRepositoryInterface;
 use App\Repository\BrokerRepositoryInterface;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BrokerageNoteService implements ServiceInterface
@@ -56,27 +56,13 @@ class BrokerageNoteService implements ServiceInterface
         return $this->brokerageNoteRepository->findById($id);
     }
 
-    private function validateDTO(DTOInterface $dto): ConstraintViolationListInterface
-    {
-        $errors = $this->validator->validate($dto);
-
-        foreach($dto->getOperations() as $operation){
-            $errors->addAll($this->validator->validate($operation));
-        }
-
-        return $errors;
-    }
-
     public function add(DTOInterface $dto): ?BrokerageNote
     {
-        $errors = $this->validateDTO($dto);
-
-        if ($errors->count() > 0) {
-            $this->validationErrors = $errors;
+        if (!$this->isDTOValid($dto)) {
             return null;
         }
 
-        $brokerage_note_factory = new BrokerageNoteFactory($this->brokerRepository, $this->assetRepository);
+        $brokerage_note_factory = new BrokerageNoteFactory($this->brokerRepository);
         $brokerage_note_entity = $brokerage_note_factory->makeEntityFromDTO($dto);
 
         $this->brokerageNoteRepository->add($brokerage_note_entity);
@@ -93,14 +79,11 @@ class BrokerageNoteService implements ServiceInterface
             throw new \InvalidArgumentException();
         }
 
-        $errors = $this->validateDTO($dto);
-
-        if ($errors->count() > 0) {
-            $this->validationErrors = $errors;
+        if (!$this->isDTOValid($dto)) {
             return null;
         }
 
-        $brokerage_note_factory = new BrokerageNoteFactory($this->brokerRepository, $this->assetRepository);
+        $brokerage_note_factory = new BrokerageNoteFactory($this->brokerRepository);
         $brokerage_note_entity = $brokerage_note_factory->makeEntityFromDTO($dto);
 
         $existing_entity->setBroker($brokerage_note_entity->getBroker());
@@ -112,17 +95,6 @@ class BrokerageNoteService implements ServiceInterface
         $existing_entity->setEmolumentFee($brokerage_note_entity->getEmolumentFee());
         $existing_entity->setIssPisCofins($brokerage_note_entity->getIssPisCofins());
         $existing_entity->setNoteIrrfTax($brokerage_note_entity->getNoteIrrfTax());
-
-        /** @var Operation $operation */
-        foreach ($brokerage_note_entity->getOperations() as $operation) {
-            $existing_entity->editOperation(
-                $operation->getLine(),
-                $operation->getType(),
-                $operation->getAsset(),
-                $operation->getQuantity(),
-                $operation->getPrice()
-            );
-        }
 
         $this->brokerageNoteRepository->update($existing_entity);
 
@@ -146,5 +118,105 @@ class BrokerageNoteService implements ServiceInterface
     public function getValidationErrors(): iterable
     {
         return $this->validationErrors;
+    }
+
+    /**
+     * @param int $brokerageNoteId
+     * @param OperationDTO $dto
+     * @return Operation|null
+     */
+    public function addOperation(int $brokerageNoteId, OperationDTO $dto): ?Operation
+    {
+        /** @var BrokerageNote $existingBrokerageNote */
+        $existingBrokerageNote = $this->brokerageNoteRepository->findById($brokerageNoteId);
+
+        if (is_null($existingBrokerageNote)) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (!$this->isDTOValid($dto)) {
+            return null;
+        }
+
+        $newOperation = $existingBrokerageNote->addOperation(
+            $dto->getType(),
+            $this->assetRepository->findById($dto->getAssetId()),
+            $dto->getQuantity(),
+            $dto->getPrice()
+        );
+
+        $this->brokerageNoteRepository->update($existingBrokerageNote);
+
+        return $newOperation;
+    }
+
+    /**
+     * @param int $brokerageNoteId
+     * @param int $line
+     * @param OperationDTO $dto
+     * @return Operation|null
+     */
+    public function updateOperation(int $brokerageNoteId, int $line, OperationDTO $dto): ?Operation
+    {
+        /** @var BrokerageNote $existingBrokerageNote */
+        $existingBrokerageNote = $this->brokerageNoteRepository->findById($brokerageNoteId);
+
+        if (is_null($existingBrokerageNote)) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (!$this->isDTOValid($dto)) {
+            return null;
+        }
+
+        $updatedOperation = $existingBrokerageNote->editOperation(
+            $line,
+            $dto->getType(),
+            $this->assetRepository->findById($dto->getAssetId()),
+            $dto->getQuantity(),
+            $dto->getPrice()
+        );
+
+        if (is_null($updatedOperation)) {
+            return null;
+        }
+
+        $this->brokerageNoteRepository->update($existingBrokerageNote);
+
+        return $updatedOperation;
+    }
+
+    public function removeOperation(int $brokerageNoteId, int $line): void
+    {
+        /** @var BrokerageNote $existingBrokerageNote */
+        $existingBrokerageNote = $this->brokerageNoteRepository->findById($brokerageNoteId);
+
+        if (is_null($existingBrokerageNote)) {
+            throw new \InvalidArgumentException();
+        }
+
+        if (!$existingBrokerageNote->getOperation($line)) {
+            throw new \InvalidArgumentException();
+        }
+
+        $operationRemoved = $existingBrokerageNote->removeOperation($line);
+
+        if (!$operationRemoved) {
+            throw new \DomainException('Error to remove operation');
+        }
+
+        $this->brokerageNoteRepository->update($existingBrokerageNote);
+    }
+
+    private function isDTOValid(DTOInterface $dto): bool
+    {
+        $errors = $this->validator->validate($dto);
+
+        if ($errors->count() > 0) {
+            $this->validationErrors = $errors;
+            return false;
+        }
+
+        return true;
     }
 }

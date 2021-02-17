@@ -339,7 +339,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         }
     }
 
-    public function addOperation(string $type, Asset $asset, int $quantity, float $price): void
+    public function addOperation(string $type, Asset $asset, int $quantity, float $price): Operation
     {
         $line = $this->getLastOperationLine();
 
@@ -353,6 +353,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         );
 
         $this->operations->add($operation);
+
+        return $operation;
     }
 
     private function getLastOperationLine(): int
@@ -368,19 +370,19 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $max_line + 1;
     }
 
-    private function getOperation(int $line)
+    public function getOperation(int $line)
     {
         return $this->getOperations()->filter(function($item) use ($line){
             return $item->getLine() === $line;
         })->first();
     }
 
-    public function editOperation(int $line, string $type, Asset $asset, int $quantity, float $price): bool
+    public function editOperation(int $line, string $type, Asset $asset, int $quantity, float $price): ?Operation
     {
         $operation = $this->getOperation($line);
 
         if (empty($operation)) {
-            return false;
+            return null;
         }
 
         $operation->setType($type);
@@ -388,7 +390,18 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $operation->setQuantity($quantity);
         $operation->setPrice($price);
 
-        return true;
+        return $operation;
+    }
+
+    public function removeOperation(int $line): bool
+    {
+        $operation = $this->getOperation($line);
+
+        if (empty($operation)) {
+            return false;
+        }
+
+        return $this->operations->removeElement($operation);
     }
 
     public function jsonSerialize(): array

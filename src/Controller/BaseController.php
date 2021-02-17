@@ -18,11 +18,11 @@ abstract class BaseController extends AbstractController
     /**
      * @var ServiceInterface
      */
-    private ServiceInterface $service;
+    protected ServiceInterface $service;
     /**
      * @var DTOFactoryInterface
      */
-    private DTOFactoryInterface $DTOFactory;
+    protected DTOFactoryInterface $DTOFactory;
 
     public function __construct(ServiceInterface $service, DTOFactoryInterface $DTOFactory)
     {

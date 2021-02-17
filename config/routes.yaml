@@ -79,6 +79,21 @@ remove_brokerage_note:
   controller: App\Controller\BrokerageNoteController::remove
   methods:
     - DELETE
+new_operation_at_brokerage_note:
+  path: /api/brokerageNotes/{id}/operations
+  controller: App\Controller\BrokerageNoteController::addOperation
+  methods:
+    - POST
+update_operation_at_brokerage_note:
+  path: /api/brokerageNotes/{id}/operations/{line}
+  controller: App\Controller\BrokerageNoteController::updateOperation
+  methods:
+    - PUT
+remove_operation_at_brokerage_note:
+  path: /api/brokerageNotes/{id}/operations/{line}
+  controller: App\Controller\BrokerageNoteController::removeOperation
+  methods:
+    - DELETE
 
 index1:
   path: /

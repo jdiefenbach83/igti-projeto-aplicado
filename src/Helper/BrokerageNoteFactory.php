@@ -14,18 +14,10 @@ class BrokerageNoteFactory
      * @var BrokerRepositoryInterface
      */
     private BrokerRepositoryInterface $brokerRepository;
-    /**
-     * @var AssetRepositoryInterface
-     */
-    private AssetRepositoryInterface $assetRepository;
 
-    public function __construct(
-        BrokerRepositoryInterface $brokerRepository,
-        AssetRepositoryInterface $assetRepository
-    )
+    public function __construct(BrokerRepositoryInterface $brokerRepository)
     {
         $this->brokerRepository = $brokerRepository;
-        $this->assetRepository = $assetRepository;
     }
 
     /**
@@ -43,8 +35,7 @@ class BrokerageNoteFactory
             $dto->getRegistrationFee(),
             $dto->getEmolumentFee(),
             $dto->getIssPisCofins(),
-            $dto->getNoteIrrfTax(),
-            $dto->getOperations()
+            $dto->getNoteIrrfTax()
         );
     }
 
@@ -58,7 +49,6 @@ class BrokerageNoteFactory
      * @param string $emolument_fee
      * @param string $iss_pis_cofins
      * @param string $note_irrf_tax
-     * @param array $operations
      * @return BrokerageNote
      */
     public function makeEntity(
@@ -70,11 +60,10 @@ class BrokerageNoteFactory
         string $registration_fee,
         string $emolument_fee,
         string $iss_pis_cofins,
-        string $note_irrf_tax,
-        array $operations
+        string $note_irrf_tax
     ): BrokerageNote
     {
-        $brokerageNote = (new BrokerageNote())
+        return (new BrokerageNote())
             ->setBroker($this->brokerRepository->findById($broker_id))
             ->setDate(DateTimeImmutable::createFromFormat('Y-m-d', $date))
             ->setNumber($number)
@@ -84,16 +73,5 @@ class BrokerageNoteFactory
             ->setEmolumentFee($emolument_fee)
             ->setIssPisCofins($iss_pis_cofins)
             ->setNoteIrrfTax($note_irrf_tax);
-
-        foreach ($operations as $operation) {
-            $brokerageNote->addOperation(
-                $operation->getType(),
-                $this->assetRepository->findById($operation->getAssetId()),
-                $operation->getQuantity(),
-                $operation->getPrice()
-            );
-        }
-
-        return $brokerageNote;
     }
 }

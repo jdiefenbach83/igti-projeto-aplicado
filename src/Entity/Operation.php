@@ -30,7 +30,6 @@ class Operation implements EntityInterface, JsonSerializable
      * @param float $price
      * @param BrokerageNote $brokerageNote
      */
-
     public function __construct(int $line, string $type, Asset $asset, int $quantity, float $price, BrokerageNote $brokerageNote)
     {
         $this->line = $line;
