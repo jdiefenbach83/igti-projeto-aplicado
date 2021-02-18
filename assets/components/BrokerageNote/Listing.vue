@@ -32,10 +32,10 @@
         <v-icon
           small
           class="mr-2"
-          title="Visualizar"
+          title="Operações"
+          @click="viewOperations(item)"
         >
-          <!--@click="viewItem(item)"-->
-          mdi-magnify-scan
+          mdi-account-details-outline
         </v-icon>
         <v-icon
           small
@@ -65,12 +65,17 @@
       };
     },
     methods: {
+      viewOperations(item) {
+        const brokerage_note_id = item.id;
+
+        this.$router.push({ name: 'BrokerageNoteOperations', params: { id: brokerage_note_id }});
+      },
       editItem(item) {
         const brokerage_note_id = item.id;
 
         this.$router.push({ name: 'BrokerageNoteEdit', params: { id: brokerage_note_id }});
       },
-      filterList (value, search, item) {
+      filterList (value, search) {
         return value != null &&
           search != null &&
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1

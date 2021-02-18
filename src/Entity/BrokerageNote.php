@@ -408,12 +408,16 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     {
         $operations = [];
 
+        /** @var Operation $operation */
         foreach ($this->operations as $operation){
             $operations[] = [
+                'id' => $operation->getId(),
+                'line' => $operation->getLine(),
                 'type' => $operation->getType(),
                 'asset_id' => $operation->getAsset()->getId(),
                 'quantity' => $operation->getQuantity(),
                 'price' => $operation->getPrice(),
+                'total' => $operation->getTotal(),
             ];
         }
 
