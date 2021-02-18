@@ -9,7 +9,7 @@
       :search="search"
       :custom-filter="filterList"
       sear
-      :loading="isLoadingBrokerageNotes"
+      :loading="isLoading"
       loading-text="Carregando..."
     >
       <template v-slot:top>
@@ -41,19 +41,24 @@
       brokerage_note_id: null,
     },
     created() {
-      this.local_brokerage_note_id = this.$props.brokerage_note_id ?? null;
+      this.local_brokerage_note_id = parseInt(this.$props.brokerage_note_id) ?? null;
 
-      if (this.broker_note_id !== null) {
+      if (this.local_brokerage_note_id !== null) {
         this.loadOperations(this.local_brokerage_note_id);
       }
     },
     methods: {
       loadOperations(brokerage_note_id) {
+        const hasAssets = this.$store.getters["asset/hasAssets"];
+        const hasBrokerageNotes = this.$store.getters["brokerageNote/hasBrokerageNotes"];
+
+        if (!hasAssets) return;
+        if (!hasBrokerageNotes) return;
+
         const { operations } = this.$store.getters["brokerageNote/getById"](brokerage_note_id);
         const assets = this.$store.getters["asset/assets"];
 
         const operationsForListing = operations.map(operation => {
-          console.log(operation);
           return {
             ...operation,
             asset: assets.find(asset => operation.asset_id === asset.id),
@@ -83,11 +88,19 @@
 
         return 'green'
       },
+    },
+    watch: {
+      isLoading(newValue, oldValue) {
+        const canLoadOperations = (newValue === false && oldValue === true);
 
+        if (canLoadOperations) {
+          this.loadOperations(this.local_brokerage_note_id);
+        }
+      },
     },
     computed: {
-      isLoadingBrokerageNotes() {
-        return this.$store.getters["brokerageNote/isLoading"];
+      isLoading(){
+        return this.$store.getters["asset/isLoading"] || this.$store.getters["brokerageNote/isLoading"];
       },
       headers () {
         return [
