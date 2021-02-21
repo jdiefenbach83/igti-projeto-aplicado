@@ -5,7 +5,7 @@ import Broker from '@/views/Broker/Listing';
 import BrokerageNoteListing from '@/views/BrokerageNote/Listing';
 import BrokerageNoteAdd from '@/views/BrokerageNote/Add';
 import BrokerageNoteEdit from '@/views/BrokerageNote/Edit';
-import BrokerageNoteOperations from '@/views/Operation/Listing';
+import OperationListing from '@/views/Operation/Listing';
 
 Vue.use(VueRouter);
 
@@ -16,7 +16,7 @@ export default new VueRouter({
     { name: 'BrokerageNoteListing', path: '/brokerageNotes', component: BrokerageNoteListing },
     { name: 'BrokerageNoteAdd', path: '/brokerageNotes/add', component: BrokerageNoteAdd },
     { name: 'BrokerageNoteEdit', path: '/brokerageNotes/edit/:id', component: BrokerageNoteEdit },
-    { name: 'OperationListing', path: '/brokerageNotes/:id/operations', component: BrokerageNoteOperations },
+    { name: 'OperationListing', path: '/brokerageNotes/:id/operations', component: OperationListing },
     { path: '/home', component: Home },
     { path: '*', redirect: '/home' }
   ]

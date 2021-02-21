@@ -53,7 +53,7 @@
   import { format as numberFormatter } from '@/helper/NumberFormatter';
 
   export default {
-    name: 'OperationsListing',
+    name: 'OperationListing',
     data() {
       return {
         OPERATION_TYPE_BUY: 'BUY',

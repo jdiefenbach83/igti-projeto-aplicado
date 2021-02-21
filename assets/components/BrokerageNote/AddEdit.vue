@@ -165,7 +165,7 @@ import InputCalculated from "@/components/BrokerageNote/InputCalculated";
 import InputNumeric from "@/components/BrokerageNote/InputNumeric";
 
 export default {
-    name: "BrokerageNotesAddEdit",
+    name: "BrokerageNoteAddEdit",
     components: {
       BrokerSelector,
       DateSelector,
@@ -208,7 +208,6 @@ export default {
         const canLoadBrokerageNoteToEdit = (newValue === false && oldValue === true);
 
         if (canLoadBrokerageNoteToEdit) {
-          console.log('aqui - watch');
           this.loadBrokerageNoteToEdit(this.local_brokerage_note_id);
         }
       },

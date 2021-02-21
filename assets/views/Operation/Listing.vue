@@ -3,7 +3,7 @@
     <div class='d-flex align-center'>
       <h1>Operações</h1>
       <v-spacer />
-      <router-link to='/brokerageNotes/add'>
+      <router-link :to="`/brokerageNotes/${this.$route.params.id}/operations/add`">
         <v-btn
           color='primary'
           dark

@@ -48,7 +48,9 @@
 <script>
   export default {
     name: "RemoveModal",
-    props: [ 'brokerage_note' ],
+    props: {
+      brokerage_note: null
+    },
     data () {
       return {
         dialog: false,

@@ -57,7 +57,7 @@
   import { format as currencyFormatter } from '@/helper/CurrencyFormatter';
 
   export default {
-    name: 'BrokerageNotesListing',
+    name: 'BrokerageNoteListing',
     components: { RemoveModal },
     data() {
       return {

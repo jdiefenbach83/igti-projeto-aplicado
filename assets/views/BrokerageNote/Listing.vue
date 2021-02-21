@@ -15,15 +15,15 @@
       </router-link>
     </div>
     <hr class='mb-3'/>
-    <brokerage-notes-listing />
+    <brokerage-note-listing />
   </div>
 </template>
 
 <script>
-  import BrokerageNotesListing from '@/components/BrokerageNote/Listing';
+  import BrokerageNoteListing from '@/components/BrokerageNote/Listing';
   export default {
     name: 'BrokerageNoteListingView',
-    components: {BrokerageNotesListing}
+    components: {BrokerageNoteListing}
   }
 </script>
 
