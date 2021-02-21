@@ -66,9 +66,9 @@
       brokerage_note_id: null,
     },
     created() {
-      this.local_brokerage_note_id = parseInt(this.$props.brokerage_note_id) ?? null;
+      this.local_brokerage_note_id = parseInt(this.$props.brokerage_note_id);
 
-      if (this.local_brokerage_note_id !== null) {
+      if (!!this.local_brokerage_note_id) {
         this.loadOperations(this.local_brokerage_note_id);
       }
     },

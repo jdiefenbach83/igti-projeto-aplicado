@@ -176,9 +176,9 @@ export default {
       brokerage_note_id: null,
     },
     created() {
-      this.local_brokerage_note_id = parseInt(this.$props.brokerage_note_id) ?? null;
+      this.local_brokerage_note_id = parseInt(this.$props.brokerage_note_id);
 
-      if (this.local_brokerage_note_id !== null) {
+      if (!!this.local_brokerage_note_id) {
         this.loadBrokerageNoteToEdit(this.local_brokerage_note_id);
       }
     },
@@ -208,6 +208,7 @@ export default {
         const canLoadBrokerageNoteToEdit = (newValue === false && oldValue === true);
 
         if (canLoadBrokerageNoteToEdit) {
+          console.log('aqui - watch');
           this.loadBrokerageNoteToEdit(this.local_brokerage_note_id);
         }
       },
