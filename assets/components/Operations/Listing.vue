@@ -20,6 +20,30 @@
           append-icon="mdi-magnify"
         />
       </template>
+      <template v-slot:item.type="{ item }">
+        <v-chip
+            :color="getColorToBuySellColumn(item.original_type)"
+            dark
+        >
+          {{ item.type }}
+        </v-chip>
+      </template>
+      <template v-slot:body.append>
+        <tr>
+          <td colspan="2">
+            <strong>Total:</strong>
+          </td>
+          <td>
+            <strong>{{ getTotalDistinctAssets }}</strong>
+          </td>
+          <td class="text-end">
+            <strong>{{ getQuantityTotal }}</strong>
+          </td>
+          <td class="text-end" colspan="2">
+            <strong>{{ getValueTotal }}</strong>
+          </td>
+        </tr>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -32,6 +56,7 @@
     name: 'OperationsListing',
     data() {
       return {
+        OPERATION_TYPE_BUY: 'BUY',
         search: '',
         local_brokerage_note_id: null,
         operations: [],
@@ -61,10 +86,14 @@
         const operationsForListing = operations.map(operation => {
           return {
             ...operation,
+            type: operation.type === this.$data.OPERATION_TYPE_BUY ? 'Compra' : 'Venda',
             asset: assets.find(asset => operation.asset_id === asset.id),
             quantity: numberFormatter(operation.quantity),
             price: currencyFormatter(operation.price),
             total: currencyFormatter(operation.total),
+            original_type: operation.type,
+            original_quantity: operation.quantity,
+            original_total: operation.total
           }
         });
 
@@ -82,8 +111,8 @@
           search != null &&
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
       },
-      getColor (total_movimentacao) {
-        if (total_movimentacao.indexOf('-') >= 0 )
+      getColorToBuySellColumn (type) {
+        if (type === this.$data.OPERATION_TYPE_BUY)
           return 'red'
 
         return 'green'
@@ -99,6 +128,48 @@
       },
     },
     computed: {
+      getTotalDistinctAssets(){
+        if (!(!!this.$data.operations)) {
+          return;
+        }
+
+        const assets = this.$data.operations.map(operation => operation.asset.code);
+        const distincAssets = [...new Set(assets)];
+
+        return numberFormatter(distincAssets.length);
+      },
+      getQuantityTotal(){
+        if (!(!!this.$data.operations)) {
+          return;
+        }
+
+        const total = this.$data.operations.reduce((accumulator, current) => {
+          const value = (
+              current.original_type === this.$data.OPERATION_TYPE_BUY
+                  ? current.original_quantity * -1
+                  : current.original_quantity);
+
+          return accumulator += value;
+        }, 0);
+
+        return numberFormatter(total);
+      },
+      getValueTotal(){
+        if (!(!!this.$data.operations)) {
+          return;
+        }
+
+        const total = this.$data.operations.reduce((accumulator, current) => {
+          const value = (
+              current.original_type === this.$data.OPERATION_TYPE_BUY
+                  ? current.original_total * -1
+                  : current.original_total);
+
+          return accumulator += value
+        }, 0);
+
+        return currencyFormatter(total);
+      },
       isLoading(){
         return this.$store.getters["asset/isLoading"] || this.$store.getters["brokerageNote/isLoading"];
       },
