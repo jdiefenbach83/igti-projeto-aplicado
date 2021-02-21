@@ -15,14 +15,14 @@
       </router-link>
     </div>
     <hr class='mb-3'/>
-    <Operations :brokerage_note_id="this.$route.params.id"/>
+    <operations-listing :brokerage_note_id="this.$route.params.id"/>
   </div>
 </template>
 
 <script>
-  import Operations from "@/components/BrokerageNote/Operations";
+  import OperationsListing from "@/components/Operations/Listing";
   export default {
     name: 'BrokerageNoteOperations',
-    components: {Operations}
+    components: {OperationsListing}
   }
 </script>

@@ -5,7 +5,7 @@ import Broker from '@/views/Broker';
 import BrokerageNoteListing from '@/views/BrokerageNote/Listing';
 import BrokerageNoteAdd from '@/views/BrokerageNote/Add';
 import BrokerageNoteEdit from '@/views/BrokerageNote/Edit';
-import BrokerageNoteOperations from '@/views/BrokerageNote/Operations';
+import BrokerageNoteOperations from '@/views/Operations/Operations';
 
 Vue.use(VueRouter);
 

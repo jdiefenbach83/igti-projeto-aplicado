@@ -29,7 +29,7 @@
   import { format as numberFormatter } from '@/helper/NumberFormatter';
 
   export default {
-    name: 'Operations',
+    name: 'OperationsListing',
     data() {
       return {
         search: '',
