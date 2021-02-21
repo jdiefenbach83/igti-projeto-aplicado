@@ -68,7 +68,7 @@
       viewOperations(item) {
         const brokerage_note_id = item.id;
 
-        this.$router.push({ name: 'BrokerageNoteOperations', params: { id: brokerage_note_id }});
+        this.$router.push({ name: 'OperationListing', params: { id: brokerage_note_id }});
       },
       editItem(item) {
         const brokerage_note_id = item.id;

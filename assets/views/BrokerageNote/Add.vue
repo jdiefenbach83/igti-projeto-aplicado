@@ -2,7 +2,7 @@
   <div>
     <h1>Nova nota de corretagem</h1>
     <hr class='mb-3'/>
-    <BrokerageNotesAddEdit />
+    <brokerage-notes-add-edit />
   </div>
 </template>
 
@@ -10,7 +10,7 @@
   import BrokerageNotesAddEdit from "@/components/BrokerageNote/AddEdit";
 
   export default {
-    name: "BrokerageNoteAdd",
+    name: "BrokerageNoteAddView",
     components: {BrokerageNotesAddEdit}
   }
 </script>
