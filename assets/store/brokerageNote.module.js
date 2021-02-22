@@ -16,6 +16,10 @@ const REMOVING_BROKERAGE_NOTE = "REMOVING_BROKERAGE_NOTE";
 const REMOVING_BROKERAGE_NOTE_SUCCESS = "REMOVING_BROKERAGE_NOTE_SUCCESS";
 const REMOVING_BROKERAGE_NOTE_ERROR = "REMOVING_BROKERAGE_NOTE_ERROR";
 
+const ADDING_OPERATION = "ADDING_OPERATION";
+const ADDING_OPERATION_SUCCESS = "ADDING_OPERATION_SUCCESS";
+const ADDING_OPERATION_ERROR = "ADDING_OPERATION_ERROR";
+
 export default {
   namespaced: true,
   state: {
@@ -59,7 +63,7 @@ export default {
       state.isLoading = false;
       state.error = null;
       
-      const brokerageNotes = state.brokerageNotes = state.brokerageNotes.filter(item => item.id !== brokerageNote.id);
+      const brokerageNotes = state.brokerageNotes.filter(item => item.id !== brokerageNote.id);
       
       state.brokerageNotes = [...brokerageNotes, brokerageNote];
     },
@@ -77,6 +81,22 @@ export default {
       state.brokerageNotes = state.brokerageNotes.filter(item => item.id !== brokerageNote.id);
     },
     [REMOVING_BROKERAGE_NOTE_ERROR](state, error) {
+      state.isLoading = false;
+      state.error = error;
+    },
+    [ADDING_OPERATION](state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    [ADDING_OPERATION_SUCCESS](state, operation) {
+      state.isLoading = false;
+      state.error = null;
+
+      const brokerageNoteIndex = state.brokerageNotes.findIndex(item => item.id === operation.brokerage_note_id);
+      const operations = state.brokerageNotes[brokerageNoteIndex].operations;
+      state.brokerageNotes[brokerageNoteIndex].operations = [...operations, operation];
+    },
+    [ADDING_OPERATION_ERROR](state, error) {
       state.isLoading = false;
       state.error = error;
     },
@@ -99,6 +119,11 @@ export default {
     },
     getById: (state) => (id) => {
       return state.brokerageNotes.find(item => item.id === id);
+    },
+    getOperationById: (state) => (brokerage_note_id, operation_id) => {
+      const brokerageNote = state.brokerageNotes.find(item => item.id === brokerage_note_id);
+
+      return brokerageNote.operations.find(item => item.id === operation_id);
     },
   },
   actions: {
@@ -155,6 +180,21 @@ export default {
         return response.data;
       } catch (error) {
         commit(REMOVING_BROKERAGE_NOTE_ERROR, error);
+
+        return null;
+      }
+    },
+    async addOperation({ commit }, message) {
+      commit(ADDING_OPERATION);
+      try {
+        delete message.id;
+
+        const response = await BrokerageNoteService.addOperation(message);
+        commit(ADDING_OPERATION_SUCCESS, response.content);
+
+        return response.data;
+      } catch (error) {
+        commit(ADDING_OPERATION_ERROR, error);
 
         return null;
       }

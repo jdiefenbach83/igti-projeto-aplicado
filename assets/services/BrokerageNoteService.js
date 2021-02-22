@@ -24,9 +24,16 @@ async function remove(brokerageNote) {
   return data;
 }
 
+async function addOperation(operation) {
+  const { data } = await gateway.httpClient().post(`/brokerageNotes/${operation.brokerage_note_id}/operations`, JSON.stringify(operation));
+
+  return data;
+}
+
 module.exports = {
   getAll,
   add,
   edit,
   remove,
+  addOperation,
 };

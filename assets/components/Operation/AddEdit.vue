@@ -14,28 +14,18 @@
           cols="12"
           sm="3"
         >
-          <BrokerSelector
-            :broker="broker"
-            @changeValue="broker = $event"
+          <operation-type-selector
+            :type="type"
+            @changeValue="type = $event.code"
           />
         </v-col>
         <v-col
           cols="12"
           sm="3"
         >
-          <DateSelector
-            :value="date"
-            @changeValue="date = $event"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-numeric
-            :value="number"
-            label="Número"
-            @changeValue="number = $event"
+          <asset-selector
+            :asset="asset"
+            @changeValue="asset = $event"
           />
         </v-col>
         <v-col
@@ -43,10 +33,9 @@
           sm="3"
         >
           <input-numeric
-            :value="total_moviments"
-            label="Movimentação"
-            @changeValue="total_moviments = $event"
-            only-positives="false"
+            :value="quantity"
+            label="Quantidade"
+            @changeValue="quantity = $event"
           />
         </v-col>
         <v-col
@@ -54,49 +43,9 @@
           sm="3"
         >
           <input-numeric
-            :value="operational_fee"
-            label="Taxa operacional"
-            @changeValue="operational_fee = $event"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-numeric
-            :value="registration_fee"
-            label="Taxa de registro"
-            @changeValue="registration_fee = $event"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-numeric
-            :value="emolument_fee"
-            label="Emolumentos"
-            @changeValue="emolument_fee = $event"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-numeric
-            :value="iss_pis_cofins"
-            label="ISS/PIS/COFINS"
-            @changeValue="iss_pis_cofins = $event"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-numeric
-            :value="note_irrf_tax"
-            label="IRRF"
-            @changeValue="note_irrf_tax = $event"
+            :value="price"
+            label="Preço"
+            @changeValue="price = $event"
           />
         </v-col>
         <v-col
@@ -104,44 +53,8 @@
           sm="3"
         >
           <input-calculated
-            :value="getTotalFees"
-            label="Total das taxas"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-calculated
-            :value="getNetTotal"
-            label="Total líquido"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-calculated
-            :value="getTotalCosts"
-            label="Custo total"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-calculated
-            :value="getResult"
-            label="Resultado"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-calculated
-            :value="getBasisIr"
-            label="Base de cáculo para IR"
+            :value="getTotal"
+            label="Total"
           />
         </v-col>
       </v-row>
@@ -150,7 +63,7 @@
         color='primary'
         class='mb-2'
         small
-        @click='saveBrokageNote()'
+        @click='saveOperation()'
         :disabled='!is_valid_form'
       >Salvar
       </v-btn>
@@ -159,41 +72,43 @@
 </template>
 
 <script>
-import BrokerSelector from "@/components/BrokerageNote/BrokerSelector";
-import DateSelector from "@/components/BrokerageNote/DateSelector";
-import InputCalculated from "@/components/BrokerageNote/InputCalculated";
-import InputNumeric from "@/components/BrokerageNote/InputNumeric";
+import OperationTypeSelector from "@/components/Operation/OperationTypeSelector";
+import AssetSelector from "@/components/Operation/AssetSelector";
+import InputCalculated from "@/components/Common/InputCalculated";
+import InputNumeric from "@/components/Common/InputNumeric";
 
 export default {
-    name: "BrokerageNotesAddEdit",
+    name: "OperationAddEdit",
     components: {
-      BrokerSelector,
-      DateSelector,
+      OperationTypeSelector,
+      AssetSelector,
       InputCalculated,
       InputNumeric
     },
     props: {
       brokerage_note_id: null,
+      operation_id: null,
     },
     created() {
       this.local_brokerage_note_id = parseInt(this.$props.brokerage_note_id);
+      this.local_operation_id = parseInt(this.$props.operation_id);
 
-      if (!!this.local_brokerage_note_id) {
-        this.loadBrokerageNoteToEdit(this.local_brokerage_note_id);
+      const hasBrokerageNoteId = !!this.local_brokerage_note_id;
+      const hasOperationId = !!this.local_operation_id;
+
+      if (hasBrokerageNoteId && hasOperationId) {
+        this.loadOperationToEdit(this.local_brokerage_note_id, this.local_operation_id);
       }
     },
     data() {
       return {
         local_brokerage_note_id: null,
-        broker: null,
-        date: null,
-        number: null,
-        total_moviments: null,
-        operational_fee: null,
-        registration_fee: null,
-        emolument_fee: null,
-        iss_pis_cofins: null,
-        note_irrf_tax: null,
+        local_operation_id: null,
+        type: null,
+        asset: null,
+        quantity: null,
+        price: null,
+        total: null,
 
         is_valid_form: false,
         is_disabled_form: false,
@@ -205,127 +120,76 @@ export default {
     },
     watch: {
       isLoading(newValue, oldValue) {
-        const canLoadBrokerageNoteToEdit = (newValue === false && oldValue === true);
+        const canLoadOperationToEdit = (newValue === false && oldValue === true);
 
-        if (canLoadBrokerageNoteToEdit) {
-          this.loadBrokerageNoteToEdit(this.local_brokerage_note_id);
+        if (canLoadOperationToEdit) {
+          this.loadOperationToEdit(this.local_brokerage_note_id);
         }
       },
     },
     computed: {
       isLoading(){
-        return this.$store.getters["broker/isLoading"] || this.$store.getters["brokerageNote/isLoading"];
+        return this.$store.getters["asset/assets"] || this.$store.getters["brokerageNote/isLoading"];
       },
-      getTotalFees() {
-        const registration_fee = parseFloat(this.registration_fee);
-        const operational_fee = parseFloat(this.operational_fee);
-        const emolument_fee = parseFloat(this.emolument_fee);
+      getTotal() {
+        const quantity = parseFloat(this.quantity);
+        const price = parseFloat(this.price);
 
         return (
-          (isNaN(registration_fee) ? .0 : registration_fee) +
-          (isNaN(operational_fee) ? .0 : operational_fee) +
-          (isNaN(emolument_fee) ? .0 : emolument_fee)
+          (isNaN(quantity) ? .0 : quantity) *
+          (isNaN(price) ? .0 : price)
         ).toFixed(2);
-      },
-      getNetTotal() {
-        const total_moviments = parseFloat(this.total_moviments);
-        const total_fees = parseFloat(this.getTotalFees);
-        const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
-        const note_irrf_tax = parseFloat(this.note_irrf_tax);
-
-        return (
-          (isNaN(total_moviments) ? .0 : total_moviments) -
-          (isNaN(total_fees) ? .0 : total_fees) -
-          (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins) -
-          (isNaN(note_irrf_tax) ? .0 : note_irrf_tax)
-        ).toFixed(2);
-      },
-      getTotalCosts() {
-        const total_fees = parseFloat(this.getTotalFees);
-        const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
-        const note_irrf_tax = parseFloat(this.note_irrf_tax);
-
-        return (
-          (isNaN(total_fees) ? .0 : total_fees) +
-          (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins) +
-          (isNaN(note_irrf_tax) ? .0 : note_irrf_tax)
-        ).toFixed(2);
-      },
-      getResult() {
-        const total_moviments = parseFloat(this.total_moviments);
-        const total_fees = parseFloat(this.getTotalFees);
-        const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
-
-        return (
-          (isNaN(total_moviments) ? .0 : total_moviments) -
-          (isNaN(total_fees) ? .0 : total_fees) -
-          (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins)
-        ).toFixed(2);
-      },
-      getBasisIr() {
-        return this.getResult < .0 ? 0 : this.getResult;
       },
     },
     methods: {
-      isNewBrokerageNote() {
-        return !(!!this.local_brokerage_note_id);
+      isNewOperation() {
+        return !(!!this.local_operation_id);
       },
-      loadBrokerageNoteToEdit(brokerage_note_id) {
-        const hasBrokers = this.$store.getters["broker/hasBrokers"];
+      loadOperationToEdit(brokerage_note_id, operation_id) {
+        const hasAssets = this.$store.getters["asset/hasAssets"];
         const hasBrokerageNotes = this.$store.getters["brokerageNote/hasBrokerageNotes"];
 
-        if (!hasBrokers) return;
+        if (!hasAssets) return;
         if (!hasBrokerageNotes) return;
 
-        const brokerageNote = this.$store.getters["brokerageNote/getById"](brokerage_note_id);
+        const operation = this.$store.getters["brokerageNote/getOperationById"](brokerage_note_id, operation_id);
 
-        this.broker = this.$store.getters["broker/getById"](brokerageNote.broker_id);
-        this.date = brokerageNote.date;
-        this.number = brokerageNote.number;
-        this.total_moviments = brokerageNote.total_moviments;
-        this.operational_fee = brokerageNote.operational_fee;
-        this.registration_fee = brokerageNote.registration_fee;
-        this.emolument_fee = brokerageNote.emolument_fee;
-        this.iss_pis_cofins = brokerageNote.iss_pis_cofins;
-        this.note_irrf_tax = brokerageNote.note_irrf_tax;
+        this.type = operation.type;
+        this.asset = this.$store.getters["asset/getById"](operation.asset_id);
+        this.quantity = operation.quantity;
+        this.price = operation.price;
       },
       showFlashMessage(){
         this.flash_message.show = true;
-        this.flash_message.description = 'A note de corretagem foi salva com sucesso! Você será redirecionado';
+        this.flash_message.description = 'A operação foi salva com sucesso! Você será redirecionado';
         this.is_disabled_form = true;
         const self = this;
 
         setTimeout(() => {
           self.flash_message.show = false;
           self.flash_message.description = '';
-          this.$router.push({ name: 'BrokerageNoteListing'});
+          this.$router.push({ name: 'OperationListing', params: { id: this.brokerage_note_id }});
         }, 2000);
       },
-      async saveBrokageNote() {
+      async saveOperation() {
         const payload = {
-          id: this.local_brokerage_note_id,
-          broker_id: this.broker.id,
-          date: this.date,
-          number: this.number,
-          total_moviments: parseFloat(this.total_moviments).toFixed(2),
-          operational_fee: parseFloat(this.operational_fee).toFixed(2),
-          registration_fee: parseFloat(this.registration_fee).toFixed(2),
-          emolument_fee: parseFloat(this.emolument_fee).toFixed(2),
-          iss_pis_cofins: parseFloat(this.iss_pis_cofins).toFixed(2),
-          note_irrf_tax: parseFloat(this.note_irrf_tax).toFixed(2),
+          id: this.local_operation_id,
+          brokerage_note_id: this.local_brokerage_note_id,
+          type: this.type,
+          asset_id: this.asset.id,
+          quantity: parseInt(this.quantity),
+          price: parseFloat(this.price).toFixed(2),
         }
 
         let result = null;
 
-        if (this.isNewBrokerageNote()) {
-          result = await this.$store.dispatch("brokerageNote/add", payload);
-        } else {
-          result = await this.$store.dispatch("brokerageNote/edit", payload);
+        if (this.isNewOperation()) {
+          result = await this.$store.dispatch("brokerageNote/addOperation", payload);
         }
 
         this.showFlashMessage();
 
-        if (result !== undefined) {
+        if (!!result) {
           console.log(result);
         }
       }

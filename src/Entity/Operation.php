@@ -198,11 +198,13 @@ class Operation implements EntityInterface, JsonSerializable
     {
         return [
             'id' => $this->id,
+            'brokerage_note_id' => $this->brokerageNote->getId(),
             'line' => $this->line,
             'type' => $this->type,
             'asset_id' => $this->asset->getId(),
             'quantity' => $this->quantity,
             'price' => $this->price,
+            'total' => $this->getTotal(),
             '_links' => [
                 [
                     'rel' => 'self',

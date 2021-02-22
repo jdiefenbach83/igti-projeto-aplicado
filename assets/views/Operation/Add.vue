@@ -2,17 +2,19 @@
   <div>
     <h1>Nova operação para nota de corretagem {{ !!brokerage_note ? brokerage_note.number : '' }}</h1>
     <hr class='mb-3'/>
+    <operation-add-edit :brokerage_note_id="local_brokerage_note_id" />
   </div>
 </template>
 
 <script>
+  import OperationAddEdit from "@/components/Operation/AddEdit";
   export default {
     name: "OperationAddView",
+    components: {OperationAddEdit},
     data () {
       return {
         local_brokerage_note_id: null,
         brokerage_note: null,
-        brokerage_note_number: null,
       };
     },
     created() {

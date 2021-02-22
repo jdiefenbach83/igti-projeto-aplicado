@@ -52,11 +52,15 @@
   import { format as currencyFormatter } from '@/helper/CurrencyFormatter';
   import { format as numberFormatter } from '@/helper/NumberFormatter';
 
+  const OPERATION_TYPES = {
+    OPERATION_TYPE_BUY: "BUY",
+    OPERATION_TYPE_SELL: "SELL"
+  };
+
   export default {
     name: 'OperationListing',
     data() {
       return {
-        OPERATION_TYPE_BUY: 'BUY',
         search: '',
         local_brokerage_note_id: null,
         operations: [],
@@ -86,7 +90,7 @@
         const operationsForListing = operations.map(operation => {
           return {
             ...operation,
-            type: operation.type === this.$data.OPERATION_TYPE_BUY ? 'Compra' : 'Venda',
+            type: operation.type === OPERATION_TYPES.OPERATION_TYPE_BUY ? 'Compra' : 'Venda',
             asset: assets.find(asset => operation.asset_id === asset.id),
             quantity: numberFormatter(operation.quantity),
             price: currencyFormatter(operation.price),
@@ -112,7 +116,7 @@
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
       },
       getColorToBuySellColumn (type) {
-        if (type === this.$data.OPERATION_TYPE_BUY)
+        if (type === OPERATION_TYPES.OPERATION_TYPE_BUY)
           return 'red'
 
         return 'green'
@@ -145,7 +149,7 @@
 
         const total = this.$data.operations.reduce((accumulator, current) => {
           const value = (
-              current.original_type === this.$data.OPERATION_TYPE_BUY
+              current.original_type === OPERATION_TYPES.OPERATION_TYPE_BUY
                   ? current.original_quantity * -1
                   : current.original_quantity);
 
@@ -161,7 +165,7 @@
 
         const total = this.$data.operations.reduce((accumulator, current) => {
           const value = (
-              current.original_type === this.$data.OPERATION_TYPE_BUY
+              current.original_type === OPERATION_TYPES.OPERATION_TYPE_BUY
                   ? current.original_total * -1
                   : current.original_total);
 
