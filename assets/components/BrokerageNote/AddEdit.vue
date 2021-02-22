@@ -160,9 +160,9 @@
 
 <script>
 import BrokerSelector from "@/components/BrokerageNote/BrokerSelector";
-import DateSelector from "@/components/BrokerageNote/DateSelector";
-import InputCalculated from "@/components/BrokerageNote/InputCalculated";
-import InputNumeric from "@/components/BrokerageNote/InputNumeric";
+import DateSelector from "@/components/Common/DateSelector";
+import InputCalculated from "@/components/Common/InputCalculated";
+import InputNumeric from "@/components/Common/InputNumeric";
 
 export default {
     name: "BrokerageNoteAddEdit",
