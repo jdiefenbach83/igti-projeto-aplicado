@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1>Nova operação para nota de corretagem {{ !!brokerage_note ? brokerage_note.number : '' }}</h1>
+    <h1>Nova operação para nota de corretagem {{ !!brokerageNote ? brokerageNote.number : '' }}</h1>
     <hr class='mb-3'/>
-    <operation-add-edit :brokerage_note_id="local_brokerage_note_id" />
+    <operation-add-edit :brokerage_note_id="localBrokerageNoteId" />
   </div>
 </template>
 
@@ -13,15 +13,15 @@
     components: {OperationAddEdit},
     data () {
       return {
-        local_brokerage_note_id: null,
-        brokerage_note: null,
+        localBrokerageNoteId: null,
+        brokerageNote: null,
       };
     },
     created() {
-      this.local_brokerage_note_id = parseInt(this.$route.params.brokerage_note_id);
+      this.localBrokerageNoteId = parseInt(this.$route.params.brokerageNoteId);
 
-      if (!!this.local_brokerage_note_id) {
-        this.loadBrokerageNoteToAddOperation(this.local_brokerage_note_id);
+      if (!!this.localBrokerageNoteId) {
+        this.loadBrokerageNoteToAddOperation(this.localBrokerageNoteId);
       }
     },
     watch: {
@@ -29,22 +29,22 @@
         const canLoadBrokerageNoteToAddOperation = (newValue === false && oldValue === true);
 
         if (canLoadBrokerageNoteToAddOperation) {
-          this.loadBrokerageNoteToAddOperation(this.local_brokerage_note_id);
+          this.loadBrokerageNoteToAddOperation(this.localBrokerageNoteId);
         }
       },
     },
     computed: {
       isLoading() {
-        return this.$store.getters["brokerageNote/isLoading"];
+        return this.$store.getters['brokerageNote/isLoading'];
       },
     },
     methods: {
-      loadBrokerageNoteToAddOperation(brokerage_note_id) {
-        const hasBrokerageNotes = this.$store.getters["brokerageNote/hasBrokerageNotes"];
+      loadBrokerageNoteToAddOperation(brokerageNoteId) {
+        const hasBrokerageNotes = this.$store.getters['brokerageNote/hasBrokerageNotes'];
 
         if (!hasBrokerageNotes) return;
 
-        this.brokerage_note = this.$store.getters["brokerageNote/getById"](brokerage_note_id);
+        this.brokerageNote = this.$store.getters['brokerageNote/getById'](brokerageNoteId);
       },
     }
   }
