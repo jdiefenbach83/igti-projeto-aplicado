@@ -6,6 +6,12 @@ async function getAll() {
   return data;
 }
 
+async function getById(id) {
+  const { data } = await gateway.httpClient().get(`/brokerageNotes/${id}`);
+
+  return data;
+}
+
 async function add(brokerageNote) {
   const { data } = await gateway.httpClient().post('/brokerageNotes', JSON.stringify(brokerageNote));
 
@@ -32,6 +38,7 @@ async function addOperation(operation) {
 
 module.exports = {
   getAll,
+  getById,
   add,
   edit,
   remove,

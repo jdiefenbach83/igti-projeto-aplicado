@@ -4,6 +4,10 @@ const FETCHING_BROKERAGE_NOTES = "FETCHING_BROKERAGE_NOTES";
 const FETCHING_BROKERAGE_NOTES_SUCCESS = "FETCHING_BROKERAGE_NOTES_SUCCESS";
 const FETCHING_BROKERAGE_NOTES_ERROR = "FETCHING_BROKERAGE_NOTES_ERROR";
 
+const FETCHING_BROKERAGE_NOTE = "FETCHING_BROKERAGE_NOTE";
+const FETCHING_BROKERAGE_NOTE_SUCCESS = "FETCHING_BROKERAGE_NOTE_SUCCESS";
+const FETCHING_BROKERAGE_NOTE_ERROR = "FETCHING_BROKERAGE_NOTE_ERROR";
+
 const ADDING_BROKERAGE_NOTE = "ADDING_BROKERAGE_NOTE";
 const ADDING_BROKERAGE_NOTE_SUCCESS = "ADDING_BROKERAGE_NOTE_SUCCESS";
 const ADDING_BROKERAGE_NOTE_ERROR = "ADDING_BROKERAGE_NOTE_ERROR";
@@ -39,6 +43,21 @@ export default {
       state.brokerageNotes = brokers;
     },
     [FETCHING_BROKERAGE_NOTES_ERROR](state, error) {
+      state.isLoading = false;
+      state.error = error;
+    },
+    [FETCHING_BROKERAGE_NOTE](state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    [FETCHING_BROKERAGE_NOTE_SUCCESS](state, brokerageNote) {
+      state.isLoading = false;
+      state.error = null;
+
+      const brokerageNotes = state.brokerageNotes.filter(item => item.id !== brokerageNote.id);
+      state.brokerageNotes = [...brokerageNotes, brokerageNote];
+    },
+    [FETCHING_BROKERAGE_NOTE_ERROR](state, error) {
       state.isLoading = false;
       state.error = error;
     },
@@ -88,13 +107,9 @@ export default {
       state.isLoading = true;
       state.error = null;
     },
-    [ADDING_OPERATION_SUCCESS](state, operation) {
+    [ADDING_OPERATION_SUCCESS](state) {
       state.isLoading = false;
       state.error = null;
-
-      const brokerageNoteIndex = state.brokerageNotes.findIndex(item => item.id === operation.brokerage_note_id);
-      const operations = state.brokerageNotes[brokerageNoteIndex].operations;
-      state.brokerageNotes[brokerageNoteIndex].operations = [...operations, operation];
     },
     [ADDING_OPERATION_ERROR](state, error) {
       state.isLoading = false;
@@ -136,6 +151,21 @@ export default {
         return response.content;
       } catch (error) {
         commit(FETCHING_BROKERAGE_NOTES_ERROR, error);
+
+        return null;
+      }
+    },
+    async getAllById({ commit }, message) {
+      commit(FETCHING_BROKERAGE_NOTE);
+      try {
+        const id = message.id;
+
+        const response = await BrokerageNoteService.getById(id);
+        commit(FETCHING_BROKERAGE_NOTE_SUCCESS, response.content);
+
+        return response.content;
+      } catch (error) {
+        commit(FETCHING_BROKERAGE_NOTE_ERROR, error);
 
         return null;
       }
@@ -184,13 +214,16 @@ export default {
         return null;
       }
     },
-    async addOperation({ commit }, message) {
+    async addOperation({ commit, dispatch }, message) {
       commit(ADDING_OPERATION);
       try {
         delete message.id;
 
         const response = await BrokerageNoteService.addOperation(message);
-        commit(ADDING_OPERATION_SUCCESS, response.content);
+        commit(ADDING_OPERATION_SUCCESS);
+
+        const payload = { id: message.brokerage_note_id };
+        await dispatch('getAllById', payload);
 
         return response.data;
       } catch (error) {
