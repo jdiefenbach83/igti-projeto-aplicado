@@ -24,6 +24,10 @@ const ADDING_OPERATION = "ADDING_OPERATION";
 const ADDING_OPERATION_SUCCESS = "ADDING_OPERATION_SUCCESS";
 const ADDING_OPERATION_ERROR = "ADDING_OPERATION_ERROR";
 
+const EDITING_OPERATION = "EDITING_OPERATION";
+const EDITING_OPERATION_SUCCESS = "EDITING_OPERATION_SUCCESS";
+const EDITING_OPERATION_ERROR = "EDITING_OPERATION_ERROR";
+
 export default {
   namespaced: true,
   state: {
@@ -115,6 +119,18 @@ export default {
       state.isLoading = false;
       state.error = error;
     },
+    [EDITING_OPERATION](state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    [EDITING_OPERATION_SUCCESS](state) {
+      state.isLoading = false;
+      state.error = null;
+    },
+    [EDITING_OPERATION_ERROR](state, error) {
+      state.isLoading = false;
+      state.error = error;
+    },
   },
   getters: {
     isLoading(state) {
@@ -155,7 +171,7 @@ export default {
         return null;
       }
     },
-    async getAllById({ commit }, message) {
+    async getById({ commit }, message) {
       commit(FETCHING_BROKERAGE_NOTE);
       try {
         const id = message.id;
@@ -223,11 +239,29 @@ export default {
         commit(ADDING_OPERATION_SUCCESS);
 
         const payload = { id: message.brokerage_note_id };
-        await dispatch('getAllById', payload);
+        await dispatch('getById', payload);
 
         return response.data;
       } catch (error) {
         commit(ADDING_OPERATION_ERROR, error);
+
+        return null;
+      }
+    },
+    async editOperation({ commit, dispatch }, message) {
+      commit(EDITING_OPERATION);
+      try {
+        delete message.id;
+
+        const response = await BrokerageNoteService.editOperation(message);
+        commit(EDITING_OPERATION_SUCCESS);
+
+        const payload = { id: message.brokerage_note_id };
+        await dispatch('getById', payload);
+
+        return response.data;
+      } catch (error) {
+        commit(EDITING_OPERATION_ERROR, error);
 
         return null;
       }

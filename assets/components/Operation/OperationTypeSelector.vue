@@ -1,7 +1,7 @@
 <template>
   <v-combobox
-    :value="local_type"
-    :items="operation_types"
+    v-model="localType"
+    :items="operationTypes"
     item-text="description"
     item-value="code"
     label="Tipo"
@@ -20,14 +20,19 @@
     },
     data() {
       return {
-        local_type: null
+        localType: null
       }
     },
     created() {
-      this.type = this.$props.type ?? null;
+      this.localType = this.getOperationValue(this.$props.type);
+    },
+    watch: {
+      type(newValue) {
+        this.localType = this.getOperationValue(newValue);
+      }
     },
     computed: {
-      operation_types() {
+      operationTypes() {
         return [
           { code: "BUY", description: "Compra" },
           { code: "SELL", description: "Venda" },
@@ -40,6 +45,9 @@
       }
     },
     methods: {
+      getOperationValue(operation) {
+        return this.operationTypes.find(item => item.code === operation);
+      },
       changeInputValue(value){
         this.$emit("changeValue", value);
       },

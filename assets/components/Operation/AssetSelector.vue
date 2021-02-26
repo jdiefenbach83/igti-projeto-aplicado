@@ -18,9 +18,6 @@
     props: {
       asset: null,
     },
-    created() {
-      this.asset = this.$props.asset ?? null;
-    },
     computed: {
       assets() {
         return this.$store.getters["asset/assets"];

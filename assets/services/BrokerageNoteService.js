@@ -36,6 +36,12 @@ async function addOperation(operation) {
   return data;
 }
 
+async function editOperation(operation) {
+  const { data } = await gateway.httpClient().put(`/brokerageNotes/${operation.brokerage_note_id}/operations/${operation.line}`, JSON.stringify(operation));
+
+  return data;
+}
+
 module.exports = {
   getAll,
   getById,
@@ -43,4 +49,5 @@ module.exports = {
   edit,
   remove,
   addOperation,
+  editOperation,
 };

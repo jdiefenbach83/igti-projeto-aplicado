@@ -44,6 +44,16 @@
           </td>
         </tr>
       </template>
+      <template v-slot:item.actions="{ item }">
+        <v-icon
+            small
+            class="mr-2"
+            title="Editar"
+            @click="editItem(item)"
+        >
+          mdi-pencil
+        </v-icon>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -62,7 +72,7 @@
     data() {
       return {
         search: '',
-        local_brokerage_note_id: null,
+        localBrokerageNoteId: null,
         operations: [],
       };
     },
@@ -70,10 +80,10 @@
       brokerage_note_id: null,
     },
     created() {
-      this.local_brokerage_note_id = parseInt(this.$props.brokerage_note_id);
+      this.localBrokerageNoteId = parseInt(this.$props.brokerage_note_id);
 
-      if (!!this.local_brokerage_note_id) {
-        this.loadOperations(this.local_brokerage_note_id);
+      if (!!this.localBrokerageNoteId) {
+        this.loadOperations(this.localBrokerageNoteId);
       }
     },
     methods: {
@@ -106,9 +116,9 @@
         });
       },
       editItem(item) {
-        const brokerage_note_id = item.id;
+        const operationId = item.id;
 
-        this.$router.push({ name: 'BrokerageNoteEdit', params: { id: brokerage_note_id }});
+        this.$router.push({ name: 'OperationEdit', params: { brokerageNoteId: this.localBrokerageNoteId, operationId: operationId }});
       },
       filterList (value, search) {
         return value != null &&
@@ -127,7 +137,7 @@
         const canLoadOperations = (newValue === false && oldValue === true);
 
         if (canLoadOperations) {
-          this.loadOperations(this.local_brokerage_note_id);
+          this.loadOperations(this.localBrokerageNoteId);
         }
       },
     },

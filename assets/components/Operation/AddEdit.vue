@@ -1,13 +1,13 @@
 <template>
   <div>
     <transition>
-      <v-alert type="success" v-if="flash_message.show">{{ flash_message.description }}</v-alert>
+      <v-alert type="success" v-if="flashMessage.show">{{ flashMessage.description }}</v-alert>
     </transition>
 
     <v-form
-      v-model="is_valid_form"
+      v-model="isValidForm"
       @submit.prevent
-      :disabled="is_disabled_form"
+      :disabled="isDisabledForm"
     >
       <v-row>
         <v-col
@@ -64,7 +64,7 @@
         class='mb-2'
         small
         @click='saveOperation()'
-        :disabled='!is_valid_form'
+        :disabled='!isValidForm'
       >Salvar
       </v-btn>
     </v-form>
@@ -90,29 +90,30 @@ export default {
       operation_id: null,
     },
     created() {
-      this.local_brokerage_note_id = parseInt(this.$props.brokerage_note_id);
-      this.local_operation_id = parseInt(this.$props.operation_id);
+      this.localBrokerageNoteId = parseInt(this.$props.brokerage_note_id);
+      this.localOperationId = parseInt(this.$props.operation_id);
 
-      const hasBrokerageNoteId = !!this.local_brokerage_note_id;
-      const hasOperationId = !!this.local_operation_id;
+      const hasBrokerageNoteId = !!this.localBrokerageNoteId;
+      const hasOperationId = !!this.localOperationId;
 
       if (hasBrokerageNoteId && hasOperationId) {
-        this.loadOperationToEdit(this.local_brokerage_note_id, this.local_operation_id);
+        this.loadOperationToEdit(this.localBrokerageNoteId, this.localOperationId);
       }
     },
     data() {
       return {
-        local_brokerage_note_id: null,
-        local_operation_id: null,
+        localBrokerageNoteId: null,
+        localOperationId: null,
+        line: null,
         type: null,
         asset: null,
         quantity: null,
         price: null,
         total: null,
 
-        is_valid_form: false,
-        is_disabled_form: false,
-        flash_message: {
+        isValidForm: false,
+        isDisabledForm: false,
+        flashMessage: {
           show: false,
           description: '',
         }
@@ -123,13 +124,13 @@ export default {
         const canLoadOperationToEdit = (newValue === false && oldValue === true);
 
         if (canLoadOperationToEdit) {
-          this.loadOperationToEdit(this.local_brokerage_note_id);
+          this.loadOperationToEdit(this.localBrokerageNoteId, this.localOperationId);
         }
       },
     },
     computed: {
       isLoading(){
-        return this.$store.getters["asset/assets"] || this.$store.getters["brokerageNote/isLoading"];
+        return this.$store.getters["asset/isLoading"] || this.$store.getters["brokerageNote/isLoading"];
       },
       getTotal() {
         const quantity = parseFloat(this.quantity);
@@ -143,7 +144,7 @@ export default {
     },
     methods: {
       isNewOperation() {
-        return !(!!this.local_operation_id);
+        return !(!!this.localOperationId);
       },
       loadOperationToEdit(brokerage_note_id, operation_id) {
         const hasAssets = this.$store.getters["asset/hasAssets"];
@@ -154,37 +155,43 @@ export default {
 
         const operation = this.$store.getters["brokerageNote/getOperationById"](brokerage_note_id, operation_id);
 
+        this.line = operation.line;
         this.type = operation.type;
         this.asset = this.$store.getters["asset/getById"](operation.asset_id);
         this.quantity = operation.quantity;
         this.price = operation.price;
+        this.total = operation.total;
       },
       showFlashMessage(){
-        this.flash_message.show = true;
-        this.flash_message.description = 'A operação foi salva com sucesso! Você será redirecionado';
-        this.is_disabled_form = true;
+        this.flashMessage.show = true;
+        this.flashMessage.description = 'A operação foi salva com sucesso! Você será redirecionado';
+        this.isDisabledForm = true;
         const self = this;
 
         setTimeout(() => {
-          self.flash_message.show = false;
-          self.flash_message.description = '';
-          this.$router.push({ name: 'OperationListing', params: { id: this.brokerage_note_id }});
+          self.flashMessage.show = false;
+          self.flashMessage.description = '';
+          this.$router.push({ name: 'OperationListing', params: { id: this.localBrokerageNoteId }});
         }, 2000);
       },
       async saveOperation() {
         const payload = {
-          id: this.local_operation_id,
-          brokerage_note_id: this.local_brokerage_note_id,
+          id: this.localOperationId,
+          brokerage_note_id: this.localBrokerageNoteId,
+          line: this.line,
           type: this.type,
           asset_id: this.asset.id,
           quantity: parseInt(this.quantity),
           price: parseFloat(this.price).toFixed(2),
+          total: parseFloat(this.total).toFixed(2)
         }
 
         let result = null;
 
         if (this.isNewOperation()) {
           result = await this.$store.dispatch("brokerageNote/addOperation", payload);
+        } else {
+          result = await this.$store.dispatch("brokerageNote/editOperation", payload);
         }
 
         this.showFlashMessage();
