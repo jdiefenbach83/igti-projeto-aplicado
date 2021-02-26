@@ -42,6 +42,12 @@ async function editOperation(operation) {
   return data;
 }
 
+async function removeOperation(operation) {
+  const { data } = await gateway.httpClient().delete(`/brokerageNotes/${operation.brokerage_note_id}/operations/${operation.line}`);
+
+  return data;
+}
+
 module.exports = {
   getAll,
   getById,
@@ -50,4 +56,5 @@ module.exports = {
   remove,
   addOperation,
   editOperation,
+  removeOperation,
 };

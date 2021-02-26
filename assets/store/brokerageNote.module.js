@@ -28,6 +28,10 @@ const EDITING_OPERATION = "EDITING_OPERATION";
 const EDITING_OPERATION_SUCCESS = "EDITING_OPERATION_SUCCESS";
 const EDITING_OPERATION_ERROR = "EDITING_OPERATION_ERROR";
 
+const REMOVING_OPERATION = "REMOVING_OPERATION";
+const REMOVING_OPERATION_SUCCESS = "REMOVING_OPERATION_SUCCESS";
+const REMOVING_OPERATION_ERROR = "REMOVING_OPERATION_ERROR";
+
 export default {
   namespaced: true,
   state: {
@@ -128,6 +132,18 @@ export default {
       state.error = null;
     },
     [EDITING_OPERATION_ERROR](state, error) {
+      state.isLoading = false;
+      state.error = error;
+    },
+    [REMOVING_OPERATION](state) {
+      state.isLoading = true;
+      state.error = null;
+    },
+    [REMOVING_OPERATION_SUCCESS](state) {
+      state.isLoading = false;
+      state.error = null;
+    },
+    [REMOVING_OPERATION_ERROR](state, error) {
       state.isLoading = false;
       state.error = error;
     },
@@ -262,6 +278,23 @@ export default {
         return response.data;
       } catch (error) {
         commit(EDITING_OPERATION_ERROR, error);
+
+        return null;
+      }
+    },
+    async removeOperation({ commit, dispatch }, message) {
+      commit(REMOVING_OPERATION);
+      try {
+
+        const response = await BrokerageNoteService.removeOperation(message);
+        commit(REMOVING_OPERATION_SUCCESS);
+
+        const payload = { id: message.brokerage_note_id };
+        await dispatch('getById', payload);
+
+        return response.data;
+      } catch (error) {
+        commit(REMOVING_OPERATION_ERROR, error);
 
         return null;
       }

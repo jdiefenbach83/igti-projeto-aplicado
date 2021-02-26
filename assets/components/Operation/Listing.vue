@@ -53,12 +53,14 @@
         >
           mdi-pencil
         </v-icon>
+        <remove-modal :operation="item"/>
       </template>
     </v-data-table>
   </div>
 </template>
 
 <script>
+  import RemoveModal from "@/components/Operation/RemoveModal";
   import { format as currencyFormatter } from '@/helper/CurrencyFormatter';
   import { format as numberFormatter } from '@/helper/NumberFormatter';
 
@@ -69,6 +71,7 @@
 
   export default {
     name: 'OperationListing',
+    components: { RemoveModal },
     data() {
       return {
         search: '',
@@ -107,7 +110,8 @@
             total: currencyFormatter(operation.total),
             original_type: operation.type,
             original_quantity: operation.quantity,
-            original_total: operation.total
+            original_total: operation.total,
+            brokerage_note_id
           }
         });
 
