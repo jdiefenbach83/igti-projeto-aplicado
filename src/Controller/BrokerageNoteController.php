@@ -11,6 +11,7 @@ use Exception;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 class BrokerageNoteController extends BaseController
 {
@@ -49,6 +50,10 @@ class BrokerageNoteController extends BaseController
                 $validation_errors = $this->service->getValidationErrors();
                 $return = (new ValidationsErrorFactory($validation_errors))->getMessages();
             }
+
+        } catch (ValidatorException $e) {
+            $status = Response::HTTP_BAD_REQUEST;
+            $return = $e->getMessage();
 
         } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
@@ -93,6 +98,10 @@ class BrokerageNoteController extends BaseController
             if (getenv('APP_ENV') !== 'Prod') {
                 $return = empty($e->getMessage()) ? null : $e->getMessage();
             }
+
+        } catch (ValidatorException $e) {
+            $status = Response::HTTP_BAD_REQUEST;
+            $return = $e->getMessage();
 
         } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;

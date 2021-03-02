@@ -43,5 +43,9 @@
         <indexes>
             <index name="brokerage_note_date_idx" columns="date"/>
         </indexes>
+        <lifecycle-callbacks>
+            <lifecycle-callback type="prePersist" method="validate"/>
+            <lifecycle-callback type="preUpdate" method="validate"/>
+        </lifecycle-callbacks>
     </entity>
 </doctrine-mapping>

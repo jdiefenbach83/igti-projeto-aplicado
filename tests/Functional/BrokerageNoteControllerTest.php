@@ -18,7 +18,7 @@ class BrokerageNoteControllerTest extends BaseTest
             'broker_id' => $broker->getId(),
             'date' => $this->faker->dateTime()->format('Y-m-d'),
             'number' => $this->faker->numberBetween(1, 100_000),
-            'total_moviments' => $this->faker->randomFloat(4, 1, 100_000),
+            'total_moviments' => $this->faker->randomFloat(4, 50_000, 100_000),
             'operational_fee' => $this->faker->randomFloat(4, 1, 100_000),
             'registration_fee' => $this->faker->randomFloat(4, 1, 100_000),
             'emolument_fee' => $this->faker->randomFloat(4, 1, 100_000),
@@ -36,7 +36,7 @@ class BrokerageNoteControllerTest extends BaseTest
         return [
             'type' => Operation::TYPE_BUY,
             'asset_id' => $asset->getId(),
-            'quantity' => $this->faker->numberBetween(1, 99),
+            'quantity' => $this->faker->numberBetween(2, 99),
             'price' => $this->faker->randomFloat(2, 1, 100),
         ];
     }
@@ -383,6 +383,28 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($status_code_expected, $operation_response->getStatusCode());
     }
 
+    public function testAddOperationIntoBrokerageNote_ShouldFailWhenCreateWithTotalOperationsGreaterThanTotalMoviments(): void
+    {
+        $status_code_expected = 400;
+
+        $new_brokerage_note = $this->createBrokerageNote();
+        $brokerage_note_request_body = json_encode($new_brokerage_note);
+        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $brokerage_note_request_body);
+        $brokerage_note_response = $this->client->getResponse();
+        $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true);
+        $brokerage_note_id = $brokerage_note_response_body['content']['id'];
+
+        $new_operation = $this->createOperation();
+        $new_operation['price'] = $new_brokerage_note["total_moviments"];
+
+        $operation_request_body = json_encode($new_operation);
+        $this->client->request('POST', "/api/brokerageNotes/$brokerage_note_id/operations", [], [], [], $operation_request_body);
+        $operation_response = $this->client->getResponse();
+        $operation_response_body = json_decode($operation_response->getContent(), true);
+
+        $this->assertEquals($status_code_expected, $operation_response->getStatusCode());
+    }
+
     public function testUpdateOperationIntoBrokerareNote_ShouldReturnSuccess()
     {
         $new_status_code_expected = 201;
@@ -460,6 +482,37 @@ class BrokerageNoteControllerTest extends BaseTest
 
         $update_operation = $this->createOperation();
         $update_operation[$key] = $value;
+        $update_operation_request_body = json_encode($update_operation);
+        $this->client->request('PUT', "/api/brokerageNotes/$new_brokerage_note_id/operations/$new_operation_line", [], [], [], $update_operation_request_body);
+        $update_operation_response = $this->client->getResponse();
+        $update_operation_response_body = json_decode($update_operation_response->getContent(), true);
+
+        $this->assertEquals($new_status_code_expected, $new_brokerage_note_response->getStatusCode());
+        $this->assertEquals($new_status_code_expected, $new_operation_response->getStatusCode());
+        $this->assertEquals($update_status_code_expected, $update_operation_response->getStatusCode());
+    }
+
+    public function testUpdateOperationIntoBrokerageNote_ShouldFailWhenUpdateWithTotalOperationsGreaterThanTotalMoviments(): void
+    {
+        $new_status_code_expected = 201;
+        $update_status_code_expected = 400;
+
+        $new_brokerage_note = $this->createBrokerageNote();
+        $new_request_body = json_encode($new_brokerage_note);
+        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
+        $new_brokerage_note_response = $this->client->getResponse();
+        $new_brokegare_note_response_body = json_decode($new_brokerage_note_response->getContent(), true);
+        $new_brokerage_note_id = $new_brokegare_note_response_body['content']['id'];
+
+        $new_operation = $this->createOperation();
+        $new_operation_request_body = json_encode($new_operation);
+        $this->client->request('POST', "/api/brokerageNotes/$new_brokerage_note_id/operations", [], [], [], $new_operation_request_body);
+        $new_operation_response = $this->client->getResponse();
+        $new_operation_response_body = json_decode($new_operation_response->getContent(), true);
+        $new_operation_line = $new_operation_response_body['content']['line'];
+
+        $update_operation = $this->createOperation();
+        $update_operation['price'] = $new_brokerage_note["total_moviments"];
         $update_operation_request_body = json_encode($update_operation);
         $this->client->request('PUT', "/api/brokerageNotes/$new_brokerage_note_id/operations/$new_operation_line", [], [], [], $update_operation_request_body);
         $update_operation_response = $this->client->getResponse();

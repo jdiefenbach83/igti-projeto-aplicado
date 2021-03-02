@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use JsonSerializable;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 class BrokerageNote implements EntityInterface, JsonSerializable
 {
@@ -430,6 +431,16 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->total_operations = bcsub($this->total_operations, $operation->getTotalForCalculations(), 2);
 
         return $this->operations->removeElement($operation);
+    }
+
+    public function validate(): void
+    {
+        $total_moviments = abs($this->total_moviments);
+        $total_operations = abs($this->total_operations);
+
+        if ($total_operations > $total_moviments) {
+            throw new ValidatorException('The total of operations is greater than total of moviments');
+        }
     }
 
     public function jsonSerialize(): array
