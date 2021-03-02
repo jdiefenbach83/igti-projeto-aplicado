@@ -30,6 +30,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private float $calculation_basis_ir;
     private float $calculated_ir;
     private Collection $operations;
+    private float $total_operations;
     private int $version;
 
     public function __construct()
@@ -48,6 +49,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->result = .0;
         $this->calculation_basis_ir = .0;
         $this->calculated_ir = .0;
+        $this->total_operations = .0;
 
         $this->operations = new ArrayCollection();
     }
@@ -293,6 +295,17 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $this->calculated_ir;
     }
 
+    /**
+     * @return float
+     */
+    public function getTotalOperations(): float
+    {
+        return $this->total_operations;
+    }
+
+    /**
+     * @return Collection
+     */
     public function getOperations(): Collection
     {
         return $this->operations;
@@ -354,6 +367,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
         $this->operations->add($operation);
 
+        $this->total_operations = bcadd($this->total_operations, $operation->getTotal(), 2);
+
         return $operation;
     }
 
@@ -370,11 +385,17 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $max_line + 1;
     }
 
-    public function getOperation(int $line)
+    public function getOperation(int $line): ?Operation
     {
-        return $this->getOperations()->filter(function($item) use ($line){
+        $operation = $this->getOperations()->filter(function($item) use ($line){
             return $item->getLine() === $line;
         })->first();
+
+        if (!$operation){
+            return null;
+        }
+
+        return $operation;
     }
 
     public function editOperation(int $line, string $type, Asset $asset, int $quantity, float $price): ?Operation
@@ -385,10 +406,15 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             return null;
         }
 
+        $old_total = $operation->getTotal();
+
         $operation->setType($type);
         $operation->setAsset($asset);
         $operation->setQuantity($quantity);
         $operation->setPrice($price);
+
+        $this->total_operations = bcsub($this->total_operations, $old_total, 2);
+        $this->total_operations = bcadd($this->total_operations, $operation->getTotal(), 2);
 
         return $operation;
     }
@@ -400,6 +426,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         if (empty($operation)) {
             return false;
         }
+
+        $this->total_operations = bcsub($this->total_operations, $operation->getTotal(), 2);
 
         return $this->operations->removeElement($operation);
     }
@@ -440,6 +468,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             'calculation_basis_ir' => $this->calculation_basis_ir,
             'calculated_ir' => $this->calculated_ir,
             'operations' => $operations,
+            'total_operations' => $this->total_operations,
             '_links' => [
                 [
                     'rel' => 'self',

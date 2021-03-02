@@ -342,6 +342,8 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($new_operation['asset_id'], $brokerage_note->getOperations()[0]->getAsset()->getId());
         $this->assertEquals($new_operation['quantity'], $brokerage_note->getOperations()[0]->getQuantity());
         $this->assertEquals($new_operation['price'], $brokerage_note->getOperations()[0]->getPrice());
+
+        //$this->assertEquals($brokerage_note->getTotalOperations(), $brokerage_note->getOperations()[0]->getTotal());
     }
 
     public function getInvalidValuesToCreateOrUpdateOperationsIntoBrokerageNote(): iterable {

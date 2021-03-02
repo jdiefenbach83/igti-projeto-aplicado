@@ -177,6 +177,7 @@ class BrokerageNoteTest extends TestCase
         $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.55);
 
         $this->assertCount(2, $brokerage_note->getOperations());
+        $this->assertEquals(3.05, $brokerage_note->getTotalOperations());
     }
 
     public function testBrokerageNote_ShouldEditOperationSuccessfully() {
@@ -200,11 +201,41 @@ class BrokerageNoteTest extends TestCase
             ->setDescription('Stock ABCD22');
 
         $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.50);
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 2.0);
+        $totalBeforeEdit = $brokerage_note->getTotalOperations();
         $brokerage_note->editOperation(1, Operation::TYPE_SELL, $new_asset, 2, 1.55);
+        $totalAfterEdit = $brokerage_note->getTotalOperations();
 
         $this->assertEquals(Operation::TYPE_SELL, $brokerage_note->getOperations()[0]->getType());
         $this->assertEquals($new_asset, $brokerage_note->getOperations()[0]->getAsset());
         $this->assertEquals(2, $brokerage_note->getOperations()[0]->getQuantity());
         $this->assertEquals(1.55, $brokerage_note->getOperations()[0]->getPrice());
+        $this->assertEquals(3.5, $totalBeforeEdit);
+        $this->assertEquals(5.1, $totalAfterEdit);
+    }
+
+    public function testBrokerageNote_ShouldRemoveOperationSuccessfully() {
+        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
+        $number = $this->faker->numberBetween(1, 100_000);
+
+        $asset = (new Asset())
+            ->setCode('ABCD1')
+            ->setType(Asset::TYPE_STOCK)
+            ->setDescription('Stock ABCD11');
+
+        $brokerage_note = new BrokerageNote();
+        $brokerage_note
+            ->setBroker($this->broker)
+            ->setDate($date)
+            ->setNumber($number);
+
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 10, 1.50);
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 20, 2.0);
+        $totalBeforeRemove = $brokerage_note->getTotalOperations();
+        $brokerage_note->removeOperation(1);
+        $totalAfterRemove = $brokerage_note->getTotalOperations();
+
+        $this->assertEquals(55, $totalBeforeRemove);
+        $this->assertEquals(40, $totalAfterRemove);
     }
 }

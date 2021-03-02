@@ -26,6 +26,7 @@
         <field name="result" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="calculation_basis_ir" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="calculated_ir" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="total_operations" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>
         </field>
