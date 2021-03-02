@@ -367,7 +367,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
         $this->operations->add($operation);
 
-        $this->total_operations = bcadd($this->total_operations, $operation->getTotal(), 2);
+        $this->total_operations = bcadd($this->total_operations, $operation->getTotalForCalculations(), 2);
 
         return $operation;
     }
@@ -406,7 +406,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             return null;
         }
 
-        $old_total = $operation->getTotal();
+        $old_total = $operation->getTotalForCalculations();
 
         $operation->setType($type);
         $operation->setAsset($asset);
@@ -414,7 +414,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $operation->setPrice($price);
 
         $this->total_operations = bcsub($this->total_operations, $old_total, 2);
-        $this->total_operations = bcadd($this->total_operations, $operation->getTotal(), 2);
+        $this->total_operations = bcadd($this->total_operations, $operation->getTotalForCalculations(), 2);
 
         return $operation;
     }
@@ -427,7 +427,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             return false;
         }
 
-        $this->total_operations = bcsub($this->total_operations, $operation->getTotal(), 2);
+        $this->total_operations = bcsub($this->total_operations, $operation->getTotalForCalculations(), 2);
 
         return $this->operations->removeElement($operation);
     }

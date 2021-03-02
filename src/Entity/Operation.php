@@ -160,11 +160,19 @@ class Operation implements EntityInterface, JsonSerializable
     }
 
     /**
-     * @return float
+     * @return void
      */
     private function calculateTotal(): void
     {
         $this->total = (float)bcmul($this->quantity, $this->price, 4);
+    }
+
+    public function getTotalForCalculations(): float
+    {
+        $total = $this->total;
+        $operation = $this->type === self::TYPE_BUY ? -1 : 1;
+
+        return bcmul($total, $operation, 4);
     }
 
     /**

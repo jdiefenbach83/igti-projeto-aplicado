@@ -177,7 +177,7 @@ class BrokerageNoteTest extends TestCase
         $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.55);
 
         $this->assertCount(2, $brokerage_note->getOperations());
-        $this->assertEquals(3.05, $brokerage_note->getTotalOperations());
+        $this->assertEquals(-3.05, $brokerage_note->getTotalOperations());
     }
 
     public function testBrokerageNote_ShouldEditOperationSuccessfully() {
@@ -210,8 +210,8 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals($new_asset, $brokerage_note->getOperations()[0]->getAsset());
         $this->assertEquals(2, $brokerage_note->getOperations()[0]->getQuantity());
         $this->assertEquals(1.55, $brokerage_note->getOperations()[0]->getPrice());
-        $this->assertEquals(3.5, $totalBeforeEdit);
-        $this->assertEquals(5.1, $totalAfterEdit);
+        $this->assertEquals(-3.5, $totalBeforeEdit);
+        $this->assertEquals(1.1, $totalAfterEdit);
     }
 
     public function testBrokerageNote_ShouldRemoveOperationSuccessfully() {
@@ -235,7 +235,7 @@ class BrokerageNoteTest extends TestCase
         $brokerage_note->removeOperation(1);
         $totalAfterRemove = $brokerage_note->getTotalOperations();
 
-        $this->assertEquals(55, $totalBeforeRemove);
-        $this->assertEquals(40, $totalAfterRemove);
+        $this->assertEquals(-55, $totalBeforeRemove);
+        $this->assertEquals(-40, $totalAfterRemove);
     }
 }
