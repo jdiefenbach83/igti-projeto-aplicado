@@ -2,6 +2,32 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
+companys:
+  path: /api/companies
+  controller: App\Controller\CompanyController::getAll
+  methods:
+    - GET
+company:
+  path: /api/companies/{id}
+  controller: App\Controller\CompanyController::getById
+  methods:
+    - GET
+new_company:
+  path: /api/companies
+  controller: App\Controller\CompanyController::add
+  methods:
+    - POST
+update_company:
+  path: /api/companies/{id}
+  controller: App\Controller\CompanyController::update
+  methods:
+    - PUT
+remove_company:
+  path: /api/companies/{id}
+  controller: App\Controller\CompanyController::remove
+  methods:
+    - DELETE
+
 assets:
   path: /api/assets
   controller: App\Controller\AssetController::getAll

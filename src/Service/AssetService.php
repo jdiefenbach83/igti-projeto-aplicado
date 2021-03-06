@@ -6,6 +6,7 @@ use App\DataTransferObject\DTOInterface;
 use App\Entity\Asset;
 use App\Helper\AssetFactory;
 use App\Repository\AssetRepositoryInterface;
+use App\Repository\CompanyRepositoryInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AssetService implements ServiceInterface
@@ -15,15 +16,24 @@ class AssetService implements ServiceInterface
      */
     private AssetRepositoryInterface $assetRepository;
     /**
+     * @var CompanyRepositoryInterface
+     */
+    private CompanyRepositoryInterface $companyRepository;
+    /**
      * @var ValidatorInterface
      */
     private ValidatorInterface $validator;
 
     private iterable $validationErrors;
 
-    public function __construct(AssetRepositoryInterface $assetRepository, ValidatorInterface $validator)
+    public function __construct(
+        AssetRepositoryInterface $assetRepository,
+        CompanyRepositoryInterface $companyRepository,
+        ValidatorInterface $validator
+    )
     {
         $this->assetRepository = $assetRepository;
+        $this->companyRepository = $companyRepository;
         $this->validator = $validator;
     }
 
@@ -45,7 +55,7 @@ class AssetService implements ServiceInterface
             return null;
         }
 
-        $asset_entity = (new AssetFactory())->makeEntityFromDTO($dto);
+        $asset_entity = (new AssetFactory($this->companyRepository))->makeEntityFromDTO($dto);
         $this->assetRepository->add($asset_entity);
 
         return $asset_entity;
@@ -66,11 +76,11 @@ class AssetService implements ServiceInterface
             return null;
         }
 
-        $asset_entity = (new AssetFactory())->makeEntityFromDTO($dto);
+        $asset_entity = (new AssetFactory($this->companyRepository))->makeEntityFromDTO($dto);
 
         $existing_entity->setCode($asset_entity->getCode());
         $existing_entity->setType($asset_entity->getType());
-        $existing_entity->setDescription($asset_entity->getDescription());
+        $existing_entity->setCompany($asset_entity->getCompany());
 
         $this->assetRepository->update($existing_entity);
 

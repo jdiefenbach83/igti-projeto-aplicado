@@ -4,15 +4,12 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                    https://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
 
-    <entity name="App\Entity\Asset" table="asset">
+    <entity name="App\Entity\Company" table="company">
         <id name="id" column="id" type="integer">
             <generator strategy="AUTO"/>
         </id>
-        <many-to-one field="company" target-entity="App\Entity\Company" >
-            <join-column name="company_id" referenced-column-name="id" nullable="true"/>
-        </many-to-one>
-        <field name="code" type="string" length="10" nullable="false"/>
-        <field name="type" column-definition="ENUM('STOCK', 'FUTURE_CONTRACT')" nullable="false"/>
+        <field name="cnpj" type="string" length="18" nullable="false"/>
+        <field name="name" type="string" length="255" nullable="false"/>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>
         </field>
@@ -21,11 +18,13 @@
         </field>
 
         <indexes>
-            <index name="asset_code_idx" columns="code"/>
+            <index name="company_cnpj_idx" columns="cnpj"/>
         </indexes>
 
         <unique-constraints>
-            <unique-constraint columns="code" name="code_uk" />
+            <unique-constraint columns="cnpj" name="cnpj_uk" />
         </unique-constraints>
+
+        <one-to-many field="assets" target-entity="App\Entity\Asset" mapped-by="company" fetch="EAGER" orphan-removal="true" />
     </entity>
 </doctrine-mapping>

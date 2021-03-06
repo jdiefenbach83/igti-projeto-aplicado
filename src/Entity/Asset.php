@@ -15,8 +15,7 @@ class Asset implements EntityInterface, JsonSerializable
     private ?int $id;
     private string $code;
     private string $type;
-    private string $descripton;
-
+    private ?Company $company;
     /**
      * @return int|null
      */
@@ -67,25 +66,6 @@ class Asset implements EntityInterface, JsonSerializable
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getDescription(): string
-    {
-        return $this->descripton;
-    }
-
-    /**
-     * @param string $descripton
-     * @return Asset
-     */
-    public function setDescription(string $descripton): self
-    {
-        $this->descripton = $descripton;
-
-        return $this;
-    }
-
     public static function getTypes(): array
     {
         return [
@@ -94,17 +74,36 @@ class Asset implements EntityInterface, JsonSerializable
         ];
     }
 
+    /**
+     * @return Company
+     */
+    public function getCompany(): Company
+    {
+        return $this->company;
+    }
+
+    /**
+     * @param Company|null $company
+     * @return Asset
+     */
+    public function setCompany(?Company $company): Asset
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,
             'code' => $this->code,
             'type' => $this->type,
-            'description' => $this->descripton,
+            'company_id' => is_null($this->company) ? null : $this->company->getId(),
             '_links' => [
                 [
                     'rel' => 'self',
-                    'path' => 'api/Assets/' . $this->id
+                    'path' => 'api/assets/' . $this->id
                 ],
             ]
         ];

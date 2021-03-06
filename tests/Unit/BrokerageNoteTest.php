@@ -5,6 +5,7 @@ namespace App\Tests\Unit;
 use App\Entity\Asset;
 use App\Entity\Broker;
 use App\Entity\BrokerageNote;
+use App\Entity\Company;
 use App\Entity\Operation;
 use Faker\Factory;
 use Faker\Generator;
@@ -162,10 +163,18 @@ class BrokerageNoteTest extends TestCase
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
 
+        $cnpj = $this->faker->text(18);
+        $name = $this->faker->text(255);
+
+        $company = new Company();
+        $company
+            ->setCnpj($cnpj)
+            ->setName($name);
+
         $asset = (new Asset())
             ->setCode('ABCD1')
             ->setType(Asset::TYPE_STOCK)
-            ->setDescription('Stock ABCD11');
+            ->setCompany($company);
 
         $brokerage_note = new BrokerageNote();
         $brokerage_note
@@ -184,10 +193,18 @@ class BrokerageNoteTest extends TestCase
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
 
+        $cnpj = $this->faker->text(18);
+        $name = $this->faker->text(255);
+
+        $company = new Company();
+        $company
+            ->setCnpj($cnpj)
+            ->setName($name);
+
         $asset = (new Asset())
             ->setCode('ABCD1')
             ->setType(Asset::TYPE_STOCK)
-            ->setDescription('Stock ABCD11');
+            ->setCompany($company);
 
         $brokerage_note = new BrokerageNote();
         $brokerage_note
@@ -198,7 +215,7 @@ class BrokerageNoteTest extends TestCase
         $new_asset = (new Asset())
             ->setCode('ABCD2')
             ->setType(Asset::TYPE_STOCK)
-            ->setDescription('Stock ABCD22');
+            ->setCompany($company);
 
         $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.50);
         $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 2.0);
@@ -218,10 +235,18 @@ class BrokerageNoteTest extends TestCase
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
 
+        $cnpj = $this->faker->text(18);
+        $name = $this->faker->text(255);
+
+        $company = new Company();
+        $company
+            ->setCnpj($cnpj)
+            ->setName($name);
+
         $asset = (new Asset())
             ->setCode('ABCD1')
             ->setType(Asset::TYPE_STOCK)
-            ->setDescription('Stock ABCD11');
+            ->setCompany($company);
 
         $brokerage_note = new BrokerageNote();
         $brokerage_note

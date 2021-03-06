@@ -4,9 +4,20 @@ namespace App\Helper;
 
 use App\DataTransferObject\AssetDTO;
 use App\Entity\Asset;
+use App\Repository\CompanyRepositoryInterface;
 
 class AssetFactory
 {
+    /**
+     * @var CompanyRepositoryInterface
+     */
+    private CompanyRepositoryInterface $companyRepository;
+
+    public function __construct(CompanyRepositoryInterface $companyRepository)
+    {
+        $this->companyRepository = $companyRepository;
+    }
+
     /**
      * @param AssetDTO $dto
      * @return Asset
@@ -16,21 +27,27 @@ class AssetFactory
         return $this->makeEntity(
             $dto->getCode(),
             $dto->getType(),
-            $dto->getDescription()
+            $dto->getCompanyId()
         );
     }
 
     /**
      * @param string $code
      * @param string $type
-     * @param string $description
+     * @param int|null $companyId
      * @return Asset
      */
-    public function makeEntity(string $code, string $type, string $description): Asset
+    public function makeEntity(string $code, string $type, ?int $companyId = null): Asset
     {
+        $company = null;
+
+        if (!is_null($companyId)) {
+            $company = $this->companyRepository->findById($companyId);
+        }
+
         return (new Asset())
             ->setCode($code)
             ->setType($type)
-            ->setDescription($description);
+            ->setCompany($company);
     }
 }

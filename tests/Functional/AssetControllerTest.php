@@ -3,6 +3,7 @@
 namespace App\Tests\Functional;
 
 use App\Entity\Asset;
+use App\Entity\Company;
 
 class AssetControllerTest extends BaseTest
 {
@@ -47,10 +48,14 @@ class AssetControllerTest extends BaseTest
     {
         $status_code_expected = 201;
 
+        $company = $this->entityManager
+            ->getRepository(Company::class)
+            ->findOneBy([]);
+
         $new_asset = [
             'code' => $this->faker->text(10),
             'type' => $this->faker->randomElement(Asset::getTypes()),
-            'description' => $this->faker->text(255),
+            'company_id' => $company->getId(),
         ];
 
         $request_body = json_encode($new_asset);
@@ -76,8 +81,7 @@ class AssetControllerTest extends BaseTest
             'Code - Invalid length' => ['code', 'ABCDEF123456',  'This value is too long. It should have 10 characters or less.'],
             'Type - Empty' => ['type', '',  'This value should not be blank.'],
             'Type - Invalid length' => ['type', 'ABCDEF', 'The value you selected is not a valid choice.'],
-            'Description - Empty' => ['description', '',  'This value should not be blank.'],
-            'Description - Invalid length' => ['description', $this->faker->text(500),  'This value is too long. It should have 255 characters or less.'],
+            'Company Id - Empty' => ['company_id', '',  'This value should not be blank.'],
         ];
     }
 
@@ -91,10 +95,14 @@ class AssetControllerTest extends BaseTest
     {
         $status_code_expected = 400;
 
+        $company = $this->entityManager
+            ->getRepository(Company::class)
+            ->findOneBy([]);
+
         $new_asset = [
             'code' => $this->faker->text(10),
             'type' => $this->faker->randomElement(Asset::getTypes()),
-            'description' => $this->faker->text(255),
+            'company_id' => $company->getId(),
         ];
 
         $new_asset[$key] = $value;
@@ -114,13 +122,17 @@ class AssetControllerTest extends BaseTest
     {
         $status_code_expected = 200;
 
+        $company = $this->entityManager
+            ->getRepository(Company::class)
+            ->findOneBy([]);
+
         $asset_to_update = $this->entityManager
             ->getRepository(Asset::class)
             ->findOneBy([]);
 
         $asset_to_update->setCode($this->faker->text(10));
         $asset_to_update->setType($this->faker->randomElement(Asset::getTypes()));
-        $asset_to_update->setDescription($this->faker->text(255));
+        $asset_to_update->setCompany($company);
 
         $request_body = json_encode($asset_to_update);
 
@@ -137,7 +149,7 @@ class AssetControllerTest extends BaseTest
         $this->assertNotEmpty($response_body);
         $this->assertEquals($updated_asset->getCode(), $response_body['content']['code']);
         $this->assertEquals($updated_asset->getType(), $response_body['content']['type']);
-        $this->assertEquals($updated_asset->getDescription(), $response_body['content']['description']);
+        $this->assertEquals($updated_asset->getCompany()->getId(), $response_body['content']['company_id']);
     }
 
     public function testUpdateAsset_ShouldReturnNotFound()
@@ -164,13 +176,17 @@ class AssetControllerTest extends BaseTest
     {
         $status_code_expected = 400;
 
+        $company = $this->entityManager
+            ->getRepository(Company::class)
+            ->findOneBy([]);
+
         $asset_to_update = $this->entityManager
             ->getRepository(Asset::class)
             ->findOneBy([]);
 
         $asset_to_update->setCode($this->faker->text(10));
         $asset_to_update->setType($this->faker->randomElement(Asset::getTypes()));
-        $asset_to_update->setDescription($this->faker->text(255));
+        $asset_to_update->setCompany($company);
 
         $request_body = json_encode($asset_to_update);
         $modified_body = json_decode($request_body, true);

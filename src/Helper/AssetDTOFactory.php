@@ -13,6 +13,6 @@ class AssetDTOFactory implements DTOFactoryInterface
         return (new AssetDTO())
             ->setCode($content->code ?? null)
             ->setType($content->type ?? null)
-            ->setDescription($content->description ?? null);
+            ->setCompanyId($content->company_id ?? null);
     }
 }
