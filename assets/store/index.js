@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import AssetModule from './asset.module';
 import BrokerModule from './broker.module';
 import BrokerageNoteModule from './brokerageNote.module';
+import CompanyModule from './company.module';
 
 Vue.use(Vuex);
 
@@ -11,6 +12,7 @@ export default new Vuex.Store({
     asset: AssetModule,
     broker: BrokerModule,
     brokerageNote: BrokerageNoteModule,
+    company: CompanyModule,
   },
   state: {
 
