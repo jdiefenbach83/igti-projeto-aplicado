@@ -2,8 +2,11 @@
 
 namespace App\Tests\Unit;
 
+use App\Entity\Asset;
 use App\Entity\Broker;
 use App\Entity\BrokerageNote;
+use App\Entity\Company;
+use App\Entity\Operation;
 use Faker\Factory;
 use Faker\Generator;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +15,6 @@ class BrokerageNoteTest extends TestCase
 {
     private Generator $faker;
     private Broker $broker;
-    private BrokerageNote $brokerage_note;
 
     public function setUp(): void
     {
@@ -155,5 +157,110 @@ class BrokerageNoteTest extends TestCase
             ->setNoteIrrfTax($note_irrf_tax);
 
         $this->assertEquals(0.0, $brokerage_note->getCalculationBasisIr());
+    }
+
+    public function testBrokerageNote_ShouldAddOperationSuccessfully() {
+        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
+        $number = $this->faker->numberBetween(1, 100_000);
+
+        $cnpj = $this->faker->text(18);
+        $name = $this->faker->text(255);
+
+        $company = new Company();
+        $company
+            ->setCnpj($cnpj)
+            ->setName($name);
+
+        $asset = (new Asset())
+            ->setCode('ABCD1')
+            ->setType(Asset::TYPE_STOCK)
+            ->setCompany($company);
+
+        $brokerage_note = new BrokerageNote();
+        $brokerage_note
+            ->setBroker($this->broker)
+            ->setDate($date)
+            ->setNumber($number);
+
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.50);
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.55);
+
+        $this->assertCount(2, $brokerage_note->getOperations());
+        $this->assertEquals(-3.05, $brokerage_note->getTotalOperations());
+    }
+
+    public function testBrokerageNote_ShouldEditOperationSuccessfully() {
+        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
+        $number = $this->faker->numberBetween(1, 100_000);
+
+        $cnpj = $this->faker->text(18);
+        $name = $this->faker->text(255);
+
+        $company = new Company();
+        $company
+            ->setCnpj($cnpj)
+            ->setName($name);
+
+        $asset = (new Asset())
+            ->setCode('ABCD1')
+            ->setType(Asset::TYPE_STOCK)
+            ->setCompany($company);
+
+        $brokerage_note = new BrokerageNote();
+        $brokerage_note
+            ->setBroker($this->broker)
+            ->setDate($date)
+            ->setNumber($number);
+
+        $new_asset = (new Asset())
+            ->setCode('ABCD2')
+            ->setType(Asset::TYPE_STOCK)
+            ->setCompany($company);
+
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.50);
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 2.0);
+        $totalBeforeEdit = $brokerage_note->getTotalOperations();
+        $brokerage_note->editOperation(1, Operation::TYPE_SELL, $new_asset, 2, 1.55);
+        $totalAfterEdit = $brokerage_note->getTotalOperations();
+
+        $this->assertEquals(Operation::TYPE_SELL, $brokerage_note->getOperations()[0]->getType());
+        $this->assertEquals($new_asset, $brokerage_note->getOperations()[0]->getAsset());
+        $this->assertEquals(2, $brokerage_note->getOperations()[0]->getQuantity());
+        $this->assertEquals(1.55, $brokerage_note->getOperations()[0]->getPrice());
+        $this->assertEquals(-3.5, $totalBeforeEdit);
+        $this->assertEquals(1.1, $totalAfterEdit);
+    }
+
+    public function testBrokerageNote_ShouldRemoveOperationSuccessfully() {
+        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
+        $number = $this->faker->numberBetween(1, 100_000);
+
+        $cnpj = $this->faker->text(18);
+        $name = $this->faker->text(255);
+
+        $company = new Company();
+        $company
+            ->setCnpj($cnpj)
+            ->setName($name);
+
+        $asset = (new Asset())
+            ->setCode('ABCD1')
+            ->setType(Asset::TYPE_STOCK)
+            ->setCompany($company);
+
+        $brokerage_note = new BrokerageNote();
+        $brokerage_note
+            ->setBroker($this->broker)
+            ->setDate($date)
+            ->setNumber($number);
+
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 10, 1.50);
+        $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 20, 2.0);
+        $totalBeforeRemove = $brokerage_note->getTotalOperations();
+        $brokerage_note->removeOperation(1);
+        $totalAfterRemove = $brokerage_note->getTotalOperations();
+
+        $this->assertEquals(-55, $totalBeforeRemove);
+        $this->assertEquals(-40, $totalAfterRemove);
     }
 }

@@ -26,15 +26,26 @@
         <field name="result" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="calculation_basis_ir" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="calculated_ir" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="total_operations" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>
         </field>
         <field name="updatedAt" column="updated_at" type="datetime" nullable="false">
             <gedmo:timestampable on="update"/>
         </field>
+        <field name="version" type="integer" nullable="false"/>
+        <one-to-many field="operations" target-entity="App\Entity\Operation" mapped-by="brokerageNote" fetch="EAGER" orphan-removal="true">
+            <cascade>
+                <cascade-all />
+            </cascade>
+        </one-to-many>
 
         <indexes>
             <index name="brokerage_note_date_idx" columns="date"/>
         </indexes>
+        <lifecycle-callbacks>
+            <lifecycle-callback type="prePersist" method="validate"/>
+            <lifecycle-callback type="preUpdate" method="validate"/>
+        </lifecycle-callbacks>
     </entity>
 </doctrine-mapping>

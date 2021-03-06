@@ -36,22 +36,22 @@ class BrokerService implements ServiceInterface
         return $this->brokerRepository->findById($id);
     }
 
-    public function add(DTOInterface $broker_dto): ?Broker
+    public function add(DTOInterface $dto): ?Broker
     {
-        $errors = $this->validator->validate($broker_dto);
+        $errors = $this->validator->validate($dto);
 
         if (count($errors) > 0) {
             $this->validationErrors = $errors;
             return null;
         }
 
-        $broker_entity = (new BrokerFactory())->makeEntity($broker_dto);
+        $broker_entity = (new BrokerFactory())->makeEntityFromDTO($dto);
         $this->brokerRepository->add($broker_entity);
 
         return $broker_entity;
     }
 
-    public function update(int $id, DTOInterface $broker_dto): ?Broker
+    public function update(int $id, DTOInterface $dto): ?Broker
     {
         $existing_entity = $this->brokerRepository->findById($id);
 
@@ -59,21 +59,21 @@ class BrokerService implements ServiceInterface
             throw new \InvalidArgumentException();
         }
 
-        $errors = $this->validator->validate($broker_dto);
+        $errors = $this->validator->validate($dto);
 
         if (count($errors) > 0) {
             $this->validationErrors = $errors;
             return null;
         }
 
-        $broker_entity = (new BrokerFactory())->makeEntity($broker_dto);
+        $broker_entity = (new BrokerFactory())->makeEntityFromDTO($dto);
 
         $existing_entity->setCode($broker_entity->getCode());
         $existing_entity->setName($broker_entity->getName());
         $existing_entity->setCnpj($broker_entity->getCnpj());
         $existing_entity->setSite($broker_entity->getSite());
 
-        $this->brokerRepository->add($existing_entity);
+        $this->brokerRepository->update($existing_entity);
 
         return $existing_entity;
     }
@@ -92,7 +92,7 @@ class BrokerService implements ServiceInterface
     /**
      * @return iterable
      */
-    public function getValidationErrors()
+    public function getValidationErrors(): iterable
     {
         return $this->validationErrors;
     }

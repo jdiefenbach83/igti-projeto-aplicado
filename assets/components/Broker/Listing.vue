@@ -23,7 +23,7 @@
 
 <script>
   export default {
-    name: "BrokersListing",
+    name: "BrokerListing",
     data() {
       return {
         search: ''

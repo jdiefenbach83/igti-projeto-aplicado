@@ -13,15 +13,50 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class BrokerageNoteDTO implements DTOInterface
 {
+    /**
+     * @var mixed
+     */
     private $broker_id;
+    /**
+     * @var mixed
+     */
     private $date;
+    /**
+     * @var mixed
+     */
     private $number;
+    /**
+     * @var mixed
+     */
     private $total_moviments;
+    /**
+     * @var mixed
+     */
     private $operational_fee;
+    /**
+     * @var mixed
+     */
     private $registration_fee;
+    /**
+     * @var mixed
+     */
     private $emolument_fee;
+    /**
+     * @var mixed
+     */
     private $iss_pis_cofins;
+    /**
+     * @var mixed
+     */
     private $note_irrf_tax;
+    /**
+     * @var array
+     */
+    private array $operations;
+    /**
+     * @var mixed
+     */
+    private $total_operations;
 
     public function getBrokerId()
     {
@@ -155,6 +190,24 @@ class BrokerageNoteDTO implements DTOInterface
     public function setNoteIrrfTax($note_irrf_tax): BrokerageNoteDTO
     {
         $this->note_irrf_tax = $note_irrf_tax;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOperations(): array
+    {
+        return $this->operations;
+    }
+
+    /**
+     * @param array $operations
+     * @return BrokerageNoteDTO
+     */
+    public function setOperations(array $operations): BrokerageNoteDTO
+    {
+        $this->operations = $operations;
         return $this;
     }
 

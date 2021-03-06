@@ -4,36 +4,74 @@ namespace App\Helper;
 
 use App\DataTransferObject\BrokerageNoteDTO;
 use App\Entity\BrokerageNote;
+use App\Repository\AssetRepositoryInterface;
 use App\Repository\BrokerRepositoryInterface;
 use DateTimeImmutable;
 
-class BrokerageNoteFactory implements EntityFactoryInterface
+class BrokerageNoteFactory
 {
     /**
      * @var BrokerRepositoryInterface
      */
-    private BrokerRepositoryInterface $broker_repository;
+    private BrokerRepositoryInterface $brokerRepository;
 
-    public function __construct(BrokerRepositoryInterface $broker_repository)
+    public function __construct(BrokerRepositoryInterface $brokerRepository)
     {
-        $this->broker_repository = $broker_repository;
+        $this->brokerRepository = $brokerRepository;
     }
 
     /**
      * @param BrokerageNoteDTO $dto
      * @return BrokerageNote
      */
-    public function makeEntity($dto)
+    public function makeEntityFromDTO(BrokerageNoteDTO $dto): BrokerageNote
+    {
+        return $this->makeEntity(
+            $dto->getBrokerId(),
+            $dto->getDate(),
+            $dto->getNumber(),
+            $dto->getTotalMoviments(),
+            $dto->getOperationalFee(),
+            $dto->getRegistrationFee(),
+            $dto->getEmolumentFee(),
+            $dto->getIssPisCofins(),
+            $dto->getNoteIrrfTax()
+        );
+    }
+
+    /**
+     * @param string $broker_id
+     * @param string $date
+     * @param string $number
+     * @param string $total_moviments
+     * @param string $operational_fee
+     * @param string $registration_fee
+     * @param string $emolument_fee
+     * @param string $iss_pis_cofins
+     * @param string $note_irrf_tax
+     * @return BrokerageNote
+     */
+    public function makeEntity(
+        string $broker_id,
+        string $date,
+        string $number,
+        string $total_moviments,
+        string $operational_fee,
+        string $registration_fee,
+        string $emolument_fee,
+        string $iss_pis_cofins,
+        string $note_irrf_tax
+    ): BrokerageNote
     {
         return (new BrokerageNote())
-            ->setBroker($this->broker_repository->findById($dto->getBrokerId()))
-            ->setDate(DateTimeImmutable::createFromFormat('Y-m-d', $dto->getDate()))
-            ->setNumber($dto->getNumber())
-            ->setTotalMoviments($dto->getTotalMoviments())
-            ->setOperationalFee($dto->getOperationalFee())
-            ->setRegistrationFee($dto->getRegistrationFee())
-            ->setEmolumentFee($dto->getEmolumentFee())
-            ->setIssPisCofins($dto->getIssPisCofins())
-            ->setNoteIrrfTax($dto->getNoteIrrfTax());
+            ->setBroker($this->brokerRepository->findById($broker_id))
+            ->setDate(DateTimeImmutable::createFromFormat('Y-m-d', $date))
+            ->setNumber($number)
+            ->setTotalMoviments($total_moviments)
+            ->setOperationalFee($operational_fee)
+            ->setRegistrationFee($registration_fee)
+            ->setEmolumentFee($emolument_fee)
+            ->setIssPisCofins($iss_pis_cofins)
+            ->setNoteIrrfTax($note_irrf_tax);
     }
 }

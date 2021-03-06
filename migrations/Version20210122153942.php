@@ -14,7 +14,7 @@ final class Version20210122153942 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Add Created_at and Updated_at timestamp columns';
     }
 
     public function up(Schema $schema) : void
@@ -26,6 +26,7 @@ final class Version20210122153942 extends AbstractMigration
         $this->addSql('ALTER TABLE broker ADD updated_at DATETIME NOT NULL');
         $this->addSql('ALTER TABLE brokerage_note ADD created_at DATETIME NOT NULL');
         $this->addSql('ALTER TABLE brokerage_note ADD updated_at DATETIME NOT NULL');
+        $this->addSql('ALTER TABLE brokerage_note CHANGE date date DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
     }
 
     public function down(Schema $schema) : void

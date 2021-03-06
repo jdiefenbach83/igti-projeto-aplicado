@@ -2,6 +2,58 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
+companys:
+  path: /api/companies
+  controller: App\Controller\CompanyController::getAll
+  methods:
+    - GET
+company:
+  path: /api/companies/{id}
+  controller: App\Controller\CompanyController::getById
+  methods:
+    - GET
+new_company:
+  path: /api/companies
+  controller: App\Controller\CompanyController::add
+  methods:
+    - POST
+update_company:
+  path: /api/companies/{id}
+  controller: App\Controller\CompanyController::update
+  methods:
+    - PUT
+remove_company:
+  path: /api/companies/{id}
+  controller: App\Controller\CompanyController::remove
+  methods:
+    - DELETE
+
+assets:
+  path: /api/assets
+  controller: App\Controller\AssetController::getAll
+  methods:
+    - GET
+asset:
+  path: /api/assets/{id}
+  controller: App\Controller\AssetController::getById
+  methods:
+    - GET
+new_asset:
+  path: /api/assets
+  controller: App\Controller\AssetController::add
+  methods:
+    - POST
+update_asset:
+  path: /api/assets/{id}
+  controller: App\Controller\AssetController::update
+  methods:
+    - PUT
+remove_asset:
+  path: /api/assets/{id}
+  controller: App\Controller\AssetController::remove
+  methods:
+    - DELETE
+
 brokers:
   path: /api/brokers
   controller: App\Controller\BrokerController::getAll
@@ -53,21 +105,26 @@ remove_brokerage_note:
   controller: App\Controller\BrokerageNoteController::remove
   methods:
     - DELETE
-
-index1:
-  path: /
-  controller: App\Controller\IndexController::index
+new_operation_at_brokerage_note:
+  path: /api/brokerageNotes/{id}/operations
+  controller: App\Controller\BrokerageNoteController::addOperation
   methods:
-    - GET
-
-index2:
-  path: /{vueRouting}
-  controller: App\Controller\IndexController::index
+    - POST
+update_operation_at_brokerage_note:
+  path: /api/brokerageNotes/{id}/operations/{line}
+  controller: App\Controller\BrokerageNoteController::updateOperation
   methods:
-    - GET
+    - PUT
+remove_operation_at_brokerage_note:
+  path: /api/brokerageNotes/{id}/operations/{line}
+  controller: App\Controller\BrokerageNoteController::removeOperation
+  methods:
+    - DELETE
 
-index3:
-  path: /{vueRouting1}/{vueRouting2}
+index:
+  path: /{resource?}
+  requirements:
+    resource: .+
   controller: App\Controller\IndexController::index
   methods:
     - GET

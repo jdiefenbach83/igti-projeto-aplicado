@@ -6,6 +6,8 @@ use App\Helper\DTOFactoryInterface;
 use App\Helper\ResponseFactory;
 use App\Helper\ValidationsErrorFactory;
 use App\Service\ServiceInterface;
+use Exception;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,11 +18,11 @@ abstract class BaseController extends AbstractController
     /**
      * @var ServiceInterface
      */
-    private ServiceInterface $service;
+    protected ServiceInterface $service;
     /**
      * @var DTOFactoryInterface
      */
-    private DTOFactoryInterface $DTOFactory;
+    protected DTOFactoryInterface $DTOFactory;
 
     public function __construct(ServiceInterface $service, DTOFactoryInterface $DTOFactory)
     {
@@ -38,8 +40,12 @@ abstract class BaseController extends AbstractController
 
             $success = true;
             $status = Response::HTTP_OK;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
         }
 
         $responseFactory = new ResponseFactory(
@@ -62,8 +68,12 @@ abstract class BaseController extends AbstractController
             $success = true;
             $status = is_null($entity) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK;
             $return = $entity;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
         }
 
         $responseFactory = new ResponseFactory(
@@ -95,9 +105,12 @@ abstract class BaseController extends AbstractController
                 $return = (new ValidationsErrorFactory($validation_errors))->getMessages();
             }
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
-            dump($e);
+
+           if (getenv('APP_ENV') !== 'Prod') {
+               $return = empty($e->getMessage()) ? null : $e->getMessage();
+           }
         }
 
         $responseFactory = new ResponseFactory(
@@ -129,11 +142,19 @@ abstract class BaseController extends AbstractController
                 $return = (new ValidationsErrorFactory($validation_errors))->getMessages();
             }
 
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $status = Response::HTTP_NOT_FOUND;
 
-        } catch (\Exception $e) {
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
+
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
         }
 
         $responseFactory = new ResponseFactory(
@@ -148,22 +169,31 @@ abstract class BaseController extends AbstractController
     public function remove(int $id): Response
     {
         $success = false;
+        $return = null;
 
         try {
             $this->service->remove($id);
 
             $success = true;
             $status = Response::HTTP_NO_CONTENT;
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $status = Response::HTTP_NOT_FOUND;
 
-        } catch (\Exception $e) {
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
+
+        } catch (Exception $e) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            if (getenv('APP_ENV') !== 'Prod') {
+                $return = empty($e->getMessage()) ? null : $e->getMessage();
+            }
         }
 
         $responseFactory = new ResponseFactory(
             $success,
-            null,
+            $return,
             $status
         );
 

@@ -1,0 +1,30 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                   https://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
+
+    <entity name="App\Entity\Company" table="company">
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="cnpj" type="string" length="18" nullable="false"/>
+        <field name="name" type="string" length="255" nullable="false"/>
+        <field name="createdAt" column="created_at" type="datetime" nullable="false">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="false">
+            <gedmo:timestampable on="update"/>
+        </field>
+
+        <indexes>
+            <index name="company_cnpj_idx" columns="cnpj"/>
+        </indexes>
+
+        <unique-constraints>
+            <unique-constraint columns="cnpj" name="cnpj_uk" />
+        </unique-constraints>
+
+        <one-to-many field="assets" target-entity="App\Entity\Asset" mapped-by="company" fetch="EAGER" orphan-removal="true" />
+    </entity>
+</doctrine-mapping>

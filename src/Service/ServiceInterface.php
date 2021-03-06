@@ -13,5 +13,5 @@ interface ServiceInterface
     public function update(int $id, DTOInterface $dto): ?EntityInterface;
     public function remove(int $id): void;
 
-    public function getValidationErrors();
+    public function getValidationErrors(): iterable;
 }

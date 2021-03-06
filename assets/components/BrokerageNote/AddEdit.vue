@@ -159,13 +159,13 @@
 </template>
 
 <script>
-  import BrokerSelector from "@/components/BrokerageNote/BrokerSelector";
-  import DateSelector from "@/components/BrokerageNote/DateSelector";
-  import InputCalculated from "@/components/BrokerageNote/InputCalculated";
-  import InputNumeric from "@/components/BrokerageNote/InputNumeric";
+import BrokerSelector from "@/components/BrokerageNote/BrokerSelector";
+import DateSelector from "@/components/Common/DateSelector";
+import InputCalculated from "@/components/Common/InputCalculated";
+import InputNumeric from "@/components/Common/InputNumeric";
 
-  export default {
-    name: "BrokerageNotesAddEdit",
+export default {
+    name: "BrokerageNoteAddEdit",
     components: {
       BrokerSelector,
       DateSelector,
@@ -176,15 +176,15 @@
       brokerage_note_id: null,
     },
     created() {
-      this.broker_note_id = this.$props.brokerage_note_id ?? null;
+      this.local_brokerage_note_id = parseInt(this.$props.brokerage_note_id);
 
-      if (this.broker_note_id !== null) {
-        this.loadBrokerageNoteToEdit(this.broker_note_id);
+      if (!!this.local_brokerage_note_id) {
+        this.loadBrokerageNoteToEdit(this.local_brokerage_note_id);
       }
     },
     data() {
       return {
-        broker_note_id: null,
+        local_brokerage_note_id: null,
         broker: null,
         date: null,
         number: null,
@@ -203,7 +203,19 @@
         }
       }
     },
+    watch: {
+      isLoading(newValue, oldValue) {
+        const canLoadBrokerageNoteToEdit = (newValue === false && oldValue === true);
+
+        if (canLoadBrokerageNoteToEdit) {
+          this.loadBrokerageNoteToEdit(this.local_brokerage_note_id);
+        }
+      },
+    },
     computed: {
+      isLoading(){
+        return this.$store.getters["broker/isLoading"] || this.$store.getters["brokerageNote/isLoading"];
+      },
       getTotalFees() {
         const registration_fee = parseFloat(this.registration_fee);
         const operational_fee = parseFloat(this.operational_fee);
@@ -256,9 +268,15 @@
     },
     methods: {
       isNewBrokerageNote() {
-        return !(!!this.broker_note_id);
+        return !(!!this.local_brokerage_note_id);
       },
       loadBrokerageNoteToEdit(brokerage_note_id) {
+        const hasBrokers = this.$store.getters["broker/hasBrokers"];
+        const hasBrokerageNotes = this.$store.getters["brokerageNote/hasBrokerageNotes"];
+
+        if (!hasBrokers) return;
+        if (!hasBrokerageNotes) return;
+
         const brokerageNote = this.$store.getters["brokerageNote/getById"](brokerage_note_id);
 
         this.broker = this.$store.getters["broker/getById"](brokerageNote.broker_id);
@@ -285,7 +303,7 @@
       },
       async saveBrokageNote() {
         const payload = {
-          id: this.broker_note_id,
+          id: this.local_brokerage_note_id,
           broker_id: this.broker.id,
           date: this.date,
           number: this.number,

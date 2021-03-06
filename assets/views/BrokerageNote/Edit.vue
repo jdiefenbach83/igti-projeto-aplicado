@@ -2,16 +2,16 @@
   <div>
     <h1>Editar nota de corretagem</h1>
     <hr class='mb-3'/>
-    <BrokerageNotesAddEdit :brokerage_note_id="this.$route.params.id"/>
+    <brokerage-note-add-edit :brokerage_note_id="this.$route.params.id"/>
   </div>
 </template>
 
 <script>
-  import BrokerageNotesAddEdit from "@/components/BrokerageNote/AddEdit";
+  import BrokerageNoteAddEdit from "@/components/BrokerageNote/AddEdit";
 
   export default {
-    name: "BrokerageNoteEdit",
-    components: {BrokerageNotesAddEdit},
+    name: "BrokerageNoteEditView",
+    components: {BrokerageNoteAddEdit},
   }
 </script>
 

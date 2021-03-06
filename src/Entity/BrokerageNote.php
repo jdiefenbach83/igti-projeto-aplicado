@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use JsonSerializable;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 class BrokerageNote implements EntityInterface, JsonSerializable
 {
@@ -27,6 +30,9 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private float $result;
     private float $calculation_basis_ir;
     private float $calculated_ir;
+    private Collection $operations;
+    private float $total_operations;
+    private int $version;
 
     public function __construct()
     {
@@ -44,6 +50,9 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->result = .0;
         $this->calculation_basis_ir = .0;
         $this->calculated_ir = .0;
+        $this->total_operations = .0;
+
+        $this->operations = new ArrayCollection();
     }
 
     /**
@@ -86,7 +95,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
      * @return BrokerageNote
      */
 
-    public function setDate(?DateTimeImmutable $date): BrokerageNote
+    public function setDate(DateTimeImmutable $date): BrokerageNote
     {
         $this->date = $date;
 
@@ -287,6 +296,22 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $this->calculated_ir;
     }
 
+    /**
+     * @return float
+     */
+    public function getTotalOperations(): float
+    {
+        return $this->total_operations;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getOperations(): Collection
+    {
+        return $this->operations;
+    }
+
     private function calculate(): void
     {
         $this->calculateFees();
@@ -328,8 +353,113 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         }
     }
 
-    public function jsonSerialize()
+    public function addOperation(string $type, Asset $asset, int $quantity, float $price): Operation
     {
+        $line = $this->getLastOperationLine();
+
+        $operation = new Operation(
+            $line,
+            $type,
+            $asset,
+            $quantity,
+            $price,
+            $this
+        );
+
+        $this->operations->add($operation);
+
+        $this->total_operations = bcadd($this->total_operations, $operation->getTotalForCalculations(), 2);
+
+        return $operation;
+    }
+
+    private function getLastOperationLine(): int
+    {
+        $max_line = 0;
+
+        foreach ($this->operations as $operation) {
+            if ($operation->getLine() >= $max_line) {
+                $max_line = $operation->getLine();
+            }
+        }
+
+        return $max_line + 1;
+    }
+
+    public function getOperation(int $line): ?Operation
+    {
+        $operation = $this->getOperations()->filter(function($item) use ($line){
+            return $item->getLine() === $line;
+        })->first();
+
+        if (!$operation){
+            return null;
+        }
+
+        return $operation;
+    }
+
+    public function editOperation(int $line, string $type, Asset $asset, int $quantity, float $price): ?Operation
+    {
+        $operation = $this->getOperation($line);
+
+        if (empty($operation)) {
+            return null;
+        }
+
+        $old_total = $operation->getTotalForCalculations();
+
+        $operation->setType($type);
+        $operation->setAsset($asset);
+        $operation->setQuantity($quantity);
+        $operation->setPrice($price);
+
+        $this->total_operations = bcsub($this->total_operations, $old_total, 2);
+        $this->total_operations = bcadd($this->total_operations, $operation->getTotalForCalculations(), 2);
+
+        return $operation;
+    }
+
+    public function removeOperation(int $line): bool
+    {
+        $operation = $this->getOperation($line);
+
+        if (empty($operation)) {
+            return false;
+        }
+
+        $this->total_operations = bcsub($this->total_operations, $operation->getTotalForCalculations(), 2);
+
+        return $this->operations->removeElement($operation);
+    }
+
+    public function validate(): void
+    {
+        $total_moviments = abs($this->total_moviments);
+        $total_operations = abs($this->total_operations);
+
+        if ($total_operations > $total_moviments) {
+            throw new ValidatorException('The total of operations is greater than total of moviments');
+        }
+    }
+
+    public function jsonSerialize(): array
+    {
+        $operations = [];
+
+        /** @var Operation $operation */
+        foreach ($this->operations as $operation){
+            $operations[] = [
+                'id' => $operation->getId(),
+                'line' => $operation->getLine(),
+                'type' => $operation->getType(),
+                'asset_id' => $operation->getAsset()->getId(),
+                'quantity' => $operation->getQuantity(),
+                'price' => $operation->getPrice(),
+                'total' => $operation->getTotal(),
+            ];
+        }
+
         return [
             'id' => $this->id,
             'broker_id' => $this->broker->getId(),
@@ -348,6 +478,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             'result' => $this->result,
             'calculation_basis_ir' => $this->calculation_basis_ir,
             'calculated_ir' => $this->calculated_ir,
+            'operations' => $operations,
+            'total_operations' => $this->total_operations,
             '_links' => [
                 [
                     'rel' => 'self',
