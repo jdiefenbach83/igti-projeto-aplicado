@@ -77,7 +77,7 @@ class BrokerControllerTest extends BaseTest
             'Name - Empty' => ['name', '',  'This value should not be blank.'],
             'Name - Invalid length' => ['name', $this->faker->text(500),  'This value is too long. It should have 255 characters or less.'],
             'CNPJ - Empty' => ['cnpj', '',  'This value should not be blank.'],
-            'CNPJ - Invalid length' => ['cnpj', $this->faker->numberBetween(999_999_999_000_000, 999_999_999_999_999),  'This value is too long. It should have 14 characters or less.'],
+            'CNPJ - Invalid length' => ['cnpj', $this->faker->numerify('####################'),  'This value is too long. It should have 18 characters or less.'],
             'URL - Invalid url' => ['site', $this->faker->text(50),  'This value is not a valid URL.'],
             'URL - Invalid length' => ['site', $this->faker->text(500),  'This value is too long. It should have 255 characters or less.'],
         ];
@@ -95,7 +95,7 @@ class BrokerControllerTest extends BaseTest
         $new_broker = [
             'code' => $this->faker->numberBetween(1_000_000_000, 2_000_000_000),
             'name' => $this->faker->name(),
-            'cnpj' => $this->faker->numberBetween(99_999_999_000_000, 99_999_999_999_999),
+            'cnpj' => $this->faker->numerify('##################'),
             'site' => $this->faker->url(),
         ];
 
