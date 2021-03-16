@@ -34,7 +34,7 @@
         <field name="updatedAt" column="updated_at" type="datetime" nullable="false">
             <gedmo:timestampable on="update"/>
         </field>
-        <field name="version" type="integer" nullable="false"/>
+        <field name="version" type="integer" nullable="true"/>
         <one-to-many field="operations" target-entity="App\Entity\Operation" mapped-by="brokerageNote" fetch="EAGER" orphan-removal="true">
             <cascade>
                 <cascade-all />
