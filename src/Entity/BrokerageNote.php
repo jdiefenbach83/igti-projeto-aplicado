@@ -21,6 +21,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private float $operational_fee;
     private float $registration_fee;
     private float $emolument_fee;
+    private float $brokerage;
     private float $iss_pis_cofins;
     private float $total_fees;
     private float $note_irrf_tax;
@@ -41,6 +42,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->operational_fee = .0;
         $this->registration_fee = .0;
         $this->emolument_fee = .0;
+        $this->brokerage = .0;
         $this->iss_pis_cofins = .0;
         $this->total_fees = .0;
         $this->note_irrf_tax = .0;
@@ -200,6 +202,26 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $this;
     }
 
+
+    /**
+     * @return float
+     */
+    public function getBrokerage(): float
+    {
+        return $this->brokerage;
+    }
+
+    /**
+     * @param float $brokerage
+     * @return BrokerageNote
+     */
+    public function setBrokerage(float $brokerage): BrokerageNote
+    {
+        $this->brokerage = $brokerage;
+
+        return $this;
+    }
+
     /**
      * @return float
      */
@@ -329,7 +351,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
     private function calculateTotalCosts(): void
     {
-        $this->total_costs = bcadd($this->total_fees, $this->iss_pis_cofins, 4);
+        $this->total_costs = bcadd($this->total_fees, $this->brokerage, 4);
+        $this->total_costs = bcadd($this->total_costs, $this->iss_pis_cofins, 4);
         $this->total_costs = bcadd($this->total_costs, $this->note_irrf_tax, 4);
     }
 
@@ -341,6 +364,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private function calculateResult(): void
     {
         $this->result = bcsub($this->total_moviments, $this->total_fees, 4);
+        $this->result = bcsub($this->result, $this->brokerage, 4);
         $this->result = bcsub($this->result, $this->iss_pis_cofins, 4);
     }
 
@@ -469,6 +493,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             'operational_fee' => $this->operational_fee,
             'registration_fee' => $this->registration_fee,
             'emolument_fee' => $this->emolument_fee,
+            'brokerage' => $this->brokerage,
             'iss_pis_cofins' => $this->iss_pis_cofins,
             'total_fees' => $this->total_fees,
             'note_irrf_tax' => $this->note_irrf_tax,
