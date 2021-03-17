@@ -20,6 +20,13 @@ class Operation implements EntityInterface, JsonSerializable
     private float $price;
     private float $total;
     private BrokerageNote $brokerageNote;
+    private float $operational_fee;
+    private float $registration_fee;
+    private float $emolument_fee;
+    private float $total_fees;
+    private float $brokerage;
+    private float $iss_pis_cofins;
+    private float $total_costs;
 
     /**
      * Operation constructor.
@@ -38,6 +45,11 @@ class Operation implements EntityInterface, JsonSerializable
         $this->quantity = $quantity;
         $this->price = $price;
         $this->brokerageNote = $brokerageNote;
+        $this->operational_fee = .0;
+        $this->registration_fee = .0;
+        $this->emolument_fee = .0;
+        $this->brokerage = .0;
+        $this->iss_pis_cofins = .0;
 
         $this->calculateTotal();
     }
@@ -213,6 +225,11 @@ class Operation implements EntityInterface, JsonSerializable
             'quantity' => $this->quantity,
             'price' => $this->price,
             'total' => $this->getTotal(),
+            'operational_fee' => $this->operational_fee,
+            'registration_fee' => $this->registration_fee,
+            'emolument_fee' => $this->emolument_fee,
+            'brokerage' => $this->brokerage,
+            'iss_pis_cofins' => $this->iss_pis_cofins,
             '_links' => [
                 [
                     'rel' => 'self',
