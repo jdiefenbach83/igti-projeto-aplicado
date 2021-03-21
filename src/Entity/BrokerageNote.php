@@ -488,6 +488,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $totalProratedOperationalFee = .0;
         $totalProratedRegistrationFee = .0;
         $totalProratedEmolumentFee = .0;
+        $totalProratedBrokerage = .0;
 
         /** @var Operation $operation */
         foreach ($this->operations as $operation) {
@@ -500,6 +501,9 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $proportionEmolumentFee = bcdiv($this->getEmolumentFee(), $qtdeTotal, 2);
             $proratedEmolumentFee = bcmul($operation->getQuantity(), $proportionEmolumentFee, 2);
 
+            $proportionBrokerage = bcdiv($this->getBrokerage(), $qtdeTotal, 2);
+            $proratedBrokerage = bcmul($operation->getQuantity(), $proportionBrokerage, 2);
+
             $operation->setOperationalFee($proratedOperationalFee);
             $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $proratedOperationalFee, 2);
 
@@ -508,6 +512,9 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
             $operation->setEmolumentFee($proratedEmolumentFee);
             $totalProratedEmolumentFee = bcadd($totalProratedEmolumentFee, $proratedEmolumentFee, 2);
+
+            $operation->setBrokerage($proratedBrokerage);
+            $totalProratedBrokerage = bcadd($totalProratedBrokerage, $proratedBrokerage, 2);
         }
 
         if ($totalProratedOperationalFee <> $this->getOperationalFee()) {
@@ -533,6 +540,15 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $fixedValue = bcadd($lastOperation->getEmolumentFee(), $diff, 2);
 
             $lastOperation->setEmolumentFee($fixedValue);
+        }
+
+        if ($totalProratedBrokerage <> $this->getBrokerage()) {
+            $diff = bcsub($this->getBrokerage(), $totalProratedBrokerage, 2);
+
+            $lastOperation = $this->operations->last();
+            $fixedValue = bcadd($lastOperation->getBrokerage(), $diff, 2);
+
+            $lastOperation->setBrokerage($fixedValue);
         }
     }
 

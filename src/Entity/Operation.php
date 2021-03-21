@@ -257,6 +257,25 @@ class Operation implements EntityInterface, JsonSerializable
         return $this;
     }
 
+    /**
+     * @return float
+     */
+    public function getBrokerage(): float
+    {
+        return $this->brokerage;
+    }
+
+    /**
+     * @param float $brokerage
+     * @return Operation
+     */
+    public function setBrokerage(float $brokerage): Operation
+    {
+        $this->brokerage = $brokerage;
+
+        return $this;
+    }
+
     public static function getTypes(): array
     {
         return [
