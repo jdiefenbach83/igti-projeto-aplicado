@@ -170,7 +170,8 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals(0.0, $brokerageNote->getCalculationBasisIr());
     }
 
-    public function testBrokerageNote_ShouldAddOperationSuccessfully() {
+    public function testBrokerageNote_ShouldAddOperationSuccessfully()
+    {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
 
@@ -200,7 +201,8 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals(-3.05, $brokerage_note->getTotalOperations());
     }
 
-    public function testBrokerageNote_ShouldEditOperationSuccessfully() {
+    public function testBrokerageNote_ShouldEditOperationSuccessfully()
+    {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
 
@@ -242,7 +244,8 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals(1.1, $totalAfterEdit);
     }
 
-    public function testBrokerageNote_ShouldRemoveOperationSuccessfully() {
+    public function testBrokerageNote_ShouldRemoveOperationSuccessfully()
+    {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
 
@@ -273,5 +276,46 @@ class BrokerageNoteTest extends TestCase
 
         $this->assertEquals(-55, $totalBeforeRemove);
         $this->assertEquals(-40, $totalAfterRemove);
+    }
+
+    public function testBrokerageNote_Should(): void
+    {
+        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
+        $number = $this->faker->numberBetween(1, 100_000);
+
+        $cnpj = $this->faker->text(18);
+        $name = $this->faker->text(255);
+
+        $company = new Company();
+        $company
+            ->setCnpj($cnpj)
+            ->setName($name);
+
+        $asset = (new Asset())
+            ->setCode('ABCD1')
+            ->setType(Asset::TYPE_STOCK)
+            ->setCompany($company);
+
+        $brokerageNote = new BrokerageNote();
+        $brokerageNote
+            ->setBroker($this->broker)
+            ->setDate($date)
+            ->setNumber($number)
+            ->setTotalMoviments(-10)
+            ->setOperationalFee(3);
+
+        $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 2, 1.50);
+        $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 2.0);
+        $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 5.0);
+        $brokerageNote->prorateValues();
+
+        $totalProratedOperationalFee = .0;
+        foreach($brokerageNote->getOperations() as $operation) {
+            $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $operation->getOperationalFee(), 2);
+        }
+
+        self::assertTrue($brokerageNote->hasOperationsCompleted());
+        self::assertEquals($brokerageNote->getTotalOperations(), $brokerageNote->getTotalMoviments());
+        self::assertEquals($totalProratedOperationalFee, $brokerageNote->getOperationalFee());
     }
 }

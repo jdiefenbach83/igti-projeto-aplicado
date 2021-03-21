@@ -467,6 +467,44 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         }
     }
 
+    public function hasOperationsCompleted(): bool
+    {
+        return $this->total_moviments === $this->total_operations;
+    }
+
+    public function prorateValues(): void
+    {
+        if (!$this->hasOperationsCompleted()){
+            return;
+        }
+
+        $qtdeTotal = .0;
+
+        /** @var Operation $operation */
+        foreach ($this->operations as $operation) {
+            $qtdeTotal += $operation->getQuantity();
+        }
+
+        $totalProratedOperationalFee = .0;
+
+        /** @var Operation $operation */
+        foreach ($this->operations as $operation) {
+            $proportionOperationalFee = bcdiv($this->getOperationalFee(), $qtdeTotal, 2);
+            $proratedOperationalFee = bcmul($operation->getQuantity(), $proportionOperationalFee, 2);
+
+            $operation->setOperationalFee($proratedOperationalFee);
+            $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $proratedOperationalFee, 2);
+        }
+
+        if ($totalProratedOperationalFee <> $this->getOperationalFee()) {
+            $diff = bcsub($this->getOperationalFee(), $totalProratedOperationalFee, 2);
+
+            $lastOperation = $this->operations->last();
+            $fixedValue = bcadd($lastOperation->getOperationalFee(), $diff, 2);
+            $lastOperation->setOperationalFee($fixedValue);
+        }
+    }
+
     public function jsonSerialize(): array
     {
         $operations = [];

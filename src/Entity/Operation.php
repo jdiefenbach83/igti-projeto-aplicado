@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Gedmo\Timestampable\Traits\Timestampable;
+use InvalidArgumentException;
 use JsonSerializable;
 
 class Operation implements EntityInterface, JsonSerializable
@@ -96,7 +97,7 @@ class Operation implements EntityInterface, JsonSerializable
     public function setType(string $type): Operation
     {
         if (!in_array($type, array(self::TYPE_BUY, self::TYPE_SELL))) {
-            throw new \InvalidArgumentException("Invalid type");
+            throw new InvalidArgumentException("Invalid type");
         }
 
         $this->type = $type;
@@ -202,6 +203,18 @@ class Operation implements EntityInterface, JsonSerializable
     public function setBrokerageNote(BrokerageNote $brokerageNote): Operation
     {
         $this->brokerageNote = $brokerageNote;
+
+        return $this;
+    }
+
+    public function getOperationalFee(): float
+    {
+        return $this->operational_fee;
+    }
+
+    public function setOperationalFee(float $operationalFee): Operation
+    {
+        $this->operational_fee = $operationalFee;
 
         return $this;
     }
