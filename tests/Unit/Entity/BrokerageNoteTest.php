@@ -278,7 +278,7 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals(-40, $totalAfterRemove);
     }
 
-    public function testBrokerageNote_ShouldProrateValues(): void
+    private function buildBrokerageNoteToProvateValues(): BrokerageNote
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
@@ -312,13 +312,20 @@ class BrokerageNoteTest extends TestCase
         $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 2.0);
         $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 5.0);
 
+        return $brokerageNote;
+    }
+
+    public function testBrokerageNote_ShouldProrateValues(): void
+    {
+        $brokerageNote = $this->buildBrokerageNoteToProvateValues();
+
         $totalProratedOperationalFee = .0;
         $totalProratedRegistrationFee = .0;
         $totalProratedEmolumentFee = .0;
         $totalProratedBrokerage = .0;
         $totalProratedIssPisCofins = .0;
 
-        foreach($brokerageNote->getOperations() as $operation) {
+        foreach ($brokerageNote->getOperations() as $operation) {
             $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $operation->getOperationalFee(), 2);
             $totalProratedRegistrationFee = bcadd($totalProratedRegistrationFee, $operation->getRegistrationFee(), 2);
             $totalProratedEmolumentFee = bcadd($totalProratedEmolumentFee, $operation->getEmolumentFee(), 2);
@@ -333,5 +340,19 @@ class BrokerageNoteTest extends TestCase
         self::assertEquals($totalProratedEmolumentFee, $brokerageNote->getEmolumentFee());
         self::assertEquals($totalProratedBrokerage, $brokerageNote->getBrokerage());
         self::assertEquals($totalProratedIssPisCofins, $brokerageNote->getIssPisCofins());
+    }
+
+    public function testBrokerageNote_ShouldZeroProrateValues(): void
+    {
+        $brokerageNote = $this->buildBrokerageNoteToProvateValues();
+        $brokerageNote->removeOperation(3);
+
+        foreach ($brokerageNote->getOperations() as $operation) {
+            self::assertEquals(.0, $operation->getOperationalFee());
+            self::assertEquals(.0, $operation->getRegistrationFee());
+            self::assertEquals(.0, $operation->getEmolumentFee());
+            self::assertEquals(.0, $operation->getBrokerage());
+            self::assertEquals(.0, $operation->getIssPisCofins());
+        }
     }
 }
