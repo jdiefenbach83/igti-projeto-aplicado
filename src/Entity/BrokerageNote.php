@@ -489,6 +489,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $totalProratedRegistrationFee = .0;
         $totalProratedEmolumentFee = .0;
         $totalProratedBrokerage = .0;
+        $totalProratedIssPisCofins = .0;
 
         /** @var Operation $operation */
         foreach ($this->operations as $operation) {
@@ -504,6 +505,9 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $proportionBrokerage = bcdiv($this->getBrokerage(), $qtdeTotal, 2);
             $proratedBrokerage = bcmul($operation->getQuantity(), $proportionBrokerage, 2);
 
+            $proportionIssPisCofins = bcdiv($this->getIssPisCofins(), $qtdeTotal, 2);
+            $proratedIssPisCofins = bcmul($operation->getQuantity(), $proportionIssPisCofins, 2);
+
             $operation->setOperationalFee($proratedOperationalFee);
             $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $proratedOperationalFee, 2);
 
@@ -515,6 +519,9 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
             $operation->setBrokerage($proratedBrokerage);
             $totalProratedBrokerage = bcadd($totalProratedBrokerage, $proratedBrokerage, 2);
+
+            $operation->setIssPisCofins($proratedIssPisCofins);
+            $totalProratedIssPisCofins = bcadd($totalProratedIssPisCofins, $proratedIssPisCofins, 2);
         }
 
         if ($totalProratedOperationalFee <> $this->getOperationalFee()) {
@@ -549,6 +556,15 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $fixedValue = bcadd($lastOperation->getBrokerage(), $diff, 2);
 
             $lastOperation->setBrokerage($fixedValue);
+        }
+
+        if ($totalProratedIssPisCofins <> $this->getIssPisCofins()) {
+            $diff = bcsub($this->getIssPisCofins(), $totalProratedIssPisCofins, 2);
+
+            $lastOperation = $this->operations->last();
+            $fixedValue = bcadd($lastOperation->getIssPisCofins(), $diff, 2);
+
+            $lastOperation->setIssPisCofins($fixedValue);
         }
     }
 

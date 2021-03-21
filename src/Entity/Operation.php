@@ -260,6 +260,25 @@ class Operation implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
+    public function getIssPisCofins(): float
+    {
+        return $this->iss_pis_cofins;
+    }
+
+    /**
+     * @param float $iss_pis_cofins
+     * @return Operation
+     */
+    public function setIssPisCofins(float $iss_pis_cofins): Operation
+    {
+        $this->iss_pis_cofins = $iss_pis_cofins;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
     public function getBrokerage(): float
     {
         return $this->brokerage;
