@@ -311,7 +311,6 @@ class BrokerageNoteTest extends TestCase
         $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 2, 1.50);
         $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 2.0);
         $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 5.0);
-        $brokerageNote->prorateValues();
 
         $totalProratedOperationalFee = .0;
         $totalProratedRegistrationFee = .0;

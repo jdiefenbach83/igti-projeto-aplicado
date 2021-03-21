@@ -341,6 +341,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->calculateNetTotal();
         $this->calculateResult();
         $this->calculateBasisIr();
+        $this->prorateValues();
     }
 
     private function calculateFees(): void
@@ -393,6 +394,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->operations->add($operation);
 
         $this->total_operations = bcadd($this->total_operations, $operation->getTotalForCalculations(), 2);
+        $this->prorateValues();
 
         return $operation;
     }
@@ -440,6 +442,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
         $this->total_operations = bcsub($this->total_operations, $old_total, 2);
         $this->total_operations = bcadd($this->total_operations, $operation->getTotalForCalculations(), 2);
+        $this->prorateValues();
 
         return $operation;
     }
@@ -453,6 +456,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         }
 
         $this->total_operations = bcsub($this->total_operations, $operation->getTotalForCalculations(), 2);
+        $this->prorateValues();
 
         return $this->operations->removeElement($operation);
     }
@@ -472,9 +476,18 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $this->total_moviments === $this->total_operations;
     }
 
-    public function prorateValues(): void
+    private function prorateValues(): void
     {
         if (!$this->hasOperationsCompleted()){
+            /** @var Operation $operation */
+            foreach ($this->operations as $operation) {
+                $operation->setOperationalFee(.0);
+                $operation->setRegistrationFee(.0);
+                $operation->setEmolumentFee(.0);
+                $operation->setBrokerage(.0);
+                $operation->setIssPisCofins(.0);
+            }
+
             return;
         }
 
