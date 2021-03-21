@@ -26,6 +26,7 @@
           <DateSelector
             :value="date"
             @changeValue="date = $event"
+            :disabled="is_editing === true"
           />
         </v-col>
         <v-col
@@ -208,6 +209,7 @@ export default {
 
         is_valid_form: false,
         is_disabled_form: false,
+        is_editing: false,
         flash_message: {
           show: false,
           description: '',
@@ -306,6 +308,8 @@ export default {
         this.brokerage = brokerageNote.brokerage;
         this.iss_pis_cofins = brokerageNote.iss_pis_cofins;
         this.note_irrf_tax = brokerageNote.note_irrf_tax;
+
+        this.is_editing = true;
       },
       showFlashMessage(){
         this.flash_message.show = true;
