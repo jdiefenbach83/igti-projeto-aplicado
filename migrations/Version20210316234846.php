@@ -14,7 +14,7 @@ final class Version20210316234846 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return 'Add column to apportionment columns to fees and costs';
+        return 'Add columns to prorate fees and costs';
     }
 
     public function up(Schema $schema) : void
