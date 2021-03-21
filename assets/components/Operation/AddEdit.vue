@@ -161,6 +161,11 @@ export default {
         this.quantity = operation.quantity;
         this.price = operation.price;
         this.total = operation.total;
+        this.operational_fee = operation.operational_fee;
+        this.registration_fee = operation.registration_fee;
+        this.emolument_fee = operation.emolument_fee;
+        this.brokerage = operation.brokerage;
+        this.iss_pis_cofins = operation.iss_pis_cofins;
       },
       showFlashMessage(){
         this.flashMessage.show = true;

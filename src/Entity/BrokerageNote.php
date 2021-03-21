@@ -595,6 +595,11 @@ class BrokerageNote implements EntityInterface, JsonSerializable
                 'quantity' => $operation->getQuantity(),
                 'price' => $operation->getPrice(),
                 'total' => $operation->getTotal(),
+                'operational_fee' => $operation->getOperationalFee(),
+                'registration_fee' => $operation->getRegistrationFee(),
+                'emolument_fee' => $operation->getEmolumentFee(),
+                'brokerage' => $operation->getBrokerage(),
+                'iss_pis_cofins' => $operation->getIssPisCofins(),
             ];
         }
 
