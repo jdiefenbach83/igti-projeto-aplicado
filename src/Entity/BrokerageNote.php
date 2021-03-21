@@ -487,6 +487,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
         $totalProratedOperationalFee = .0;
         $totalProratedRegistrationFee = .0;
+        $totalProratedEmolumentFee = .0;
 
         /** @var Operation $operation */
         foreach ($this->operations as $operation) {
@@ -496,11 +497,17 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $proportionRegistrationFee = bcdiv($this->getRegistrationFee(), $qtdeTotal, 2);
             $proratedRegistrationFee = bcmul($operation->getQuantity(), $proportionRegistrationFee, 2);
 
+            $proportionEmolumentFee = bcdiv($this->getEmolumentFee(), $qtdeTotal, 2);
+            $proratedEmolumentFee = bcmul($operation->getQuantity(), $proportionEmolumentFee, 2);
+
             $operation->setOperationalFee($proratedOperationalFee);
             $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $proratedOperationalFee, 2);
 
             $operation->setRegistrationFee($proratedRegistrationFee);
             $totalProratedRegistrationFee = bcadd($totalProratedRegistrationFee, $proratedRegistrationFee, 2);
+
+            $operation->setEmolumentFee($proratedEmolumentFee);
+            $totalProratedEmolumentFee = bcadd($totalProratedEmolumentFee, $proratedEmolumentFee, 2);
         }
 
         if ($totalProratedOperationalFee <> $this->getOperationalFee()) {
@@ -517,6 +524,15 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $lastOperation = $this->operations->last();
             $fixedValue = bcadd($lastOperation->getRegistrationFee(), $diff, 2);
             $lastOperation->setRegistrationFee($fixedValue);
+        }
+
+        if ($totalProratedEmolumentFee <> $this->getEmolumentFee()) {
+            $diff = bcsub($this->getEmolumentFee(), $totalProratedEmolumentFee, 2);
+
+            $lastOperation = $this->operations->last();
+            $fixedValue = bcadd($lastOperation->getEmolumentFee(), $diff, 2);
+
+            $lastOperation->setEmolumentFee($fixedValue);
         }
     }
 

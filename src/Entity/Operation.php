@@ -238,6 +238,25 @@ class Operation implements EntityInterface, JsonSerializable
         return $this;
     }
 
+    /**
+     * @return float
+     */
+    public function getEmolumentFee(): float
+    {
+        return $this->emolument_fee;
+    }
+
+    /**
+     * @param float $emolument_fee
+     * @return Operation
+     */
+    public function setEmolumentFee(float $emolument_fee): Operation
+    {
+        $this->emolument_fee = $emolument_fee;
+
+        return $this;
+    }
+
     public static function getTypes(): array
     {
         return [
