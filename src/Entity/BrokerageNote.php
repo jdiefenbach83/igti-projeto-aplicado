@@ -486,14 +486,21 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         }
 
         $totalProratedOperationalFee = .0;
+        $totalProratedRegistrationFee = .0;
 
         /** @var Operation $operation */
         foreach ($this->operations as $operation) {
             $proportionOperationalFee = bcdiv($this->getOperationalFee(), $qtdeTotal, 2);
             $proratedOperationalFee = bcmul($operation->getQuantity(), $proportionOperationalFee, 2);
 
+            $proportionRegistrationFee = bcdiv($this->getRegistrationFee(), $qtdeTotal, 2);
+            $proratedRegistrationFee = bcmul($operation->getQuantity(), $proportionRegistrationFee, 2);
+
             $operation->setOperationalFee($proratedOperationalFee);
             $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $proratedOperationalFee, 2);
+
+            $operation->setRegistrationFee($proratedRegistrationFee);
+            $totalProratedRegistrationFee = bcadd($totalProratedRegistrationFee, $proratedRegistrationFee, 2);
         }
 
         if ($totalProratedOperationalFee <> $this->getOperationalFee()) {
@@ -502,6 +509,14 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $lastOperation = $this->operations->last();
             $fixedValue = bcadd($lastOperation->getOperationalFee(), $diff, 2);
             $lastOperation->setOperationalFee($fixedValue);
+        }
+
+        if ($totalProratedRegistrationFee <> $this->getRegistrationFee()) {
+            $diff = bcsub($this->getRegistrationFee(), $totalProratedRegistrationFee, 2);
+
+            $lastOperation = $this->operations->last();
+            $fixedValue = bcadd($lastOperation->getRegistrationFee(), $diff, 2);
+            $lastOperation->setRegistrationFee($fixedValue);
         }
     }
 

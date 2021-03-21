@@ -302,7 +302,8 @@ class BrokerageNoteTest extends TestCase
             ->setDate($date)
             ->setNumber($number)
             ->setTotalMoviments(-10)
-            ->setOperationalFee(3);
+            ->setOperationalFee(3)
+            ->setRegistrationFee(4);
 
         $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 2, 1.50);
         $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 2.0);
@@ -310,12 +311,16 @@ class BrokerageNoteTest extends TestCase
         $brokerageNote->prorateValues();
 
         $totalProratedOperationalFee = .0;
+        $totalProratedRegistrationFee = .0;
+
         foreach($brokerageNote->getOperations() as $operation) {
             $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $operation->getOperationalFee(), 2);
+            $totalProratedRegistrationFee = bcadd($totalProratedRegistrationFee, $operation->getRegistrationFee(), 2);
         }
 
         self::assertTrue($brokerageNote->hasOperationsCompleted());
         self::assertEquals($brokerageNote->getTotalOperations(), $brokerageNote->getTotalMoviments());
         self::assertEquals($totalProratedOperationalFee, $brokerageNote->getOperationalFee());
+        self::assertEquals($totalProratedRegistrationFee, $brokerageNote->getRegistrationFee());
     }
 }
