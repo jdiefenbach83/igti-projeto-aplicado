@@ -278,7 +278,7 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals(-40, $totalAfterRemove);
     }
 
-    public function testBrokerageNote_Should(): void
+    public function testBrokerageNote_ShouldProrateValues(): void
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
