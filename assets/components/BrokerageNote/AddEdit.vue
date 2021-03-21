@@ -218,7 +218,7 @@ export default {
     },
     watch: {
       isLoading(newValue, oldValue) {
-        const canLoadBrokerageNoteToEdit = (newValue === false && oldValue === true);
+        const canLoadBrokerageNoteToEdit = (newValue === false && oldValue === true && this.isNewBrokerageNote() === false);
 
         if (canLoadBrokerageNoteToEdit) {
           this.loadBrokerageNoteToEdit(this.local_brokerage_note_id);

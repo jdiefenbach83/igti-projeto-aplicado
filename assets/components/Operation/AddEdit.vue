@@ -121,7 +121,7 @@ export default {
     },
     watch: {
       isLoading(newValue, oldValue) {
-        const canLoadOperationToEdit = (newValue === false && oldValue === true);
+        const canLoadOperationToEdit = (newValue === false && oldValue === true && this.isNewOperation === false);
 
         if (canLoadOperationToEdit) {
           this.loadOperationToEdit(this.localBrokerageNoteId, this.localOperationId);
