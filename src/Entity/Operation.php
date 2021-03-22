@@ -28,6 +28,7 @@ class Operation implements EntityInterface, JsonSerializable
     private float $brokerage;
     private float $iss_pis_cofins;
     private float $total_costs;
+    private ?Position $position;
 
     /**
      * Operation constructor.
@@ -292,6 +293,24 @@ class Operation implements EntityInterface, JsonSerializable
     {
         $this->brokerage = $brokerage;
 
+        return $this;
+    }
+
+    /**
+     * @return Position|null
+     */
+    public function getPosition(): ?Position
+    {
+        return $this->position;
+    }
+
+    /**
+     * @param Position|null $position
+     * @return Operation
+     */
+    public function setPosition(?Position $position): Operation
+    {
+        $this->position = $position;
         return $this;
     }
 
