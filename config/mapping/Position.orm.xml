@@ -33,5 +33,9 @@
         <unique-constraints>
             <unique-constraint columns="asset_id,sequence" name="uk_asset_sequence" />
         </unique-constraints>
+
+        <indexes>
+            <index name="IDX_POSITION_DATE" columns="date"/>
+        </indexes>
     </entity>
 </doctrine-mapping>
