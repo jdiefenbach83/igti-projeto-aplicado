@@ -13,12 +13,12 @@
         </many-to-one>
         <field name="sequence" type="integer" nullable="false"/>
         <field name="type" column-definition="ENUM('BUY', 'SELL', 'GROUPING', 'OUTSPREAD')" nullable="false"/>
-        <field name="date" type="datetime_immutable" nullable="false"/>
+        <field name="date" type="date_immutable" nullable="false"/>
         <field name="quantity" type="integer" nullable="false"/>
         <field name="unitCost" column="unit_cost" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="accumulatedQuantity" column="accumulated_quantity" type="integer" nullable="false"/>
         <field name="totalOperation" column="total_operation" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="accumulatedTotal" column="accumulater_total" type="integer" nullable="false"/>
+        <field name="accumulatedQuantity" column="accumulated_quantity" type="integer" nullable="false"/>
+        <field name="accumulatedTotal" column="accumulated_total" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="averagePrice" column="average_price" type="decimal" precision="14" scale="4" nullable="false"/>
         <one-to-one field="operation" target-entity="App\Entity\Operation">
             <join-column name="operation_id" referenced-column-name="id" nullable="true" />
