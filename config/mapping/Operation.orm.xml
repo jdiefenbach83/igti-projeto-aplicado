@@ -24,11 +24,6 @@
         <field name="emolument_fee" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="brokerage" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="iss_pis_cofins" type="decimal" precision="14" scale="4" nullable="false"/>
-        <one-to-one field="position" target-entity="App\Entity\Position" mapped-by="operation" orphan-removal="true">
-            <cascade>
-                <cascade-all />
-            </cascade>
-        </one-to-one>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>
         </field>

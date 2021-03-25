@@ -34,17 +34,24 @@ class BrokerageNoteService implements ServiceInterface
      * @var iterable
      */
     private iterable $validationErrors;
+    /**
+     * @var PositionService
+     */
+    private PositionService $positionService;
 
     public function __construct(
         BrokerageNoteRepositoryInterface $brokerageNoteRepository,
         BrokerRepositoryInterface $brokerRepository,
         AssetRepositoryInterface $assetRepository,
-        ValidatorInterface $validator)
+        ValidatorInterface $validator,
+        PositionService $positionService
+    )
     {
         $this->brokerageNoteRepository = $brokerageNoteRepository;
         $this->brokerRepository = $brokerRepository;
         $this->assetRepository = $assetRepository;
         $this->validator = $validator;
+        $this->positionService = $positionService;
     }
 
     public function getAll(): array {
@@ -146,6 +153,7 @@ class BrokerageNoteService implements ServiceInterface
         );
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
+        $this->positionService->processPosition($existingBrokerageNote);
 
         return $newOperation;
     }
@@ -182,6 +190,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
+        $this->positionService->processPosition($existingBrokerageNote);
 
         return $updatedOperation;
     }
@@ -206,6 +215,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
+        $this->positionService->processPosition($existingBrokerageNote);
     }
 
     private function isDTOValid(DTOInterface $dto): bool

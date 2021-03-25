@@ -10,8 +10,8 @@ class Position implements EntityInterface, JsonSerializable
 {
     use Timestampable;
 
-    const TYPE_BUY = 'BUY';
-    const TYPE_SELL = 'SELL';
+    public const TYPE_BUY = 'BUY';
+    public const TYPE_SELL = 'SELL';
 
     private ?int $id;
     private Asset $asset;
@@ -22,7 +22,7 @@ class Position implements EntityInterface, JsonSerializable
     private float $unitCost;
     private int $accumulatedQuantity;
     private float $totalOperation;
-    private int $accumulatedTotal;
+    private float $accumulatedTotal;
     private float $averagePrice;
     private ?Operation $operation;
 

@@ -12,7 +12,7 @@
             <join-column name="asset_id" referenced-column-name="id" nullable="false"/>
         </many-to-one>
         <field name="sequence" type="integer" nullable="false"/>
-        <field name="type" column-definition="ENUM('BUY', 'SELL', 'GROUPING', 'OUTSPREAD')" nullable="false"/>
+        <field name="type" column-definition="ENUM('BUY', 'SELL')" nullable="false"/>
         <field name="date" type="date_immutable" nullable="false"/>
         <field name="quantity" type="integer" nullable="false"/>
         <field name="unitCost" column="unit_cost" type="decimal" precision="14" scale="4" nullable="false"/>

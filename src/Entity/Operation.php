@@ -322,6 +322,16 @@ class Operation implements EntityInterface, JsonSerializable
         ];
     }
 
+    public function getGrossTotal(): float
+    {
+        $totalCosts = bcadd($this->operational_fee, $this->registration_fee, 2);
+        $totalCosts = bcadd($totalCosts, $this->emolument_fee, 2);
+        $totalCosts = bcadd($totalCosts, $this->brokerage, 2);
+        $totalCosts = bcadd($totalCosts, $this->iss_pis_cofins, 2);
+
+        return bcadd($this->getTotal(), $totalCosts, 2);
+    }
+
     public function jsonSerialize(): array
     {
         return [
