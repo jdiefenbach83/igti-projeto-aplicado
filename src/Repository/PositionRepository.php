@@ -2,10 +2,8 @@
 
 namespace App\Repository;
 
-use App\Entity\Asset;
 use App\Entity\Position;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ObjectRepository;
 
 class PositionRepository implements PositionRepositoryInterface

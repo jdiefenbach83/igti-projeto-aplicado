@@ -33,6 +33,11 @@ class PositionService
         $this->brokerageNoteRepository = $brokerageNoteRepository;
     }
 
+    public function getAll(): array
+    {
+        return $this->positionRepository->findAll();
+    }
+
     public function processPosition(): void
     {
         $this->removePositionsByOperation();

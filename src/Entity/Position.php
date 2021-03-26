@@ -258,6 +258,18 @@ class Position implements EntityInterface, JsonSerializable
 
     public function jsonSerialize()
     {
-        // TODO: Implement jsonSerialize() method.
+        return [
+            'id' => $this->id,
+            'asset_id' => $this->asset->getId(),
+            'sequence' => $this->sequence,
+            'type' => $this->type,
+            'date' => $this->date->format('Y-m-d'),
+            'quantity' => $this->quantity,
+            'unit_cost' => $this->unitCost,
+            'total_operation' => $this->totalOperation,
+            'accumulated_quantity' => $this->accumulatedQuantity,
+            'accumulated_total' => $this->accumulatedTotal,
+            'average_price' => $this->averagePrice,
+        ];
     }
 }

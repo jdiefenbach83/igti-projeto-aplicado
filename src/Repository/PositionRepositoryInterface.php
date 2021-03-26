@@ -11,4 +11,6 @@ interface PositionRepositoryInterface
     public function add(Position $position): void;
     public function update(Position $position): void;
     public function remove(Position $position): void;
+    public function findAllAssets(): array;
+    public function findByAsset(int $assetId);
 }

@@ -153,7 +153,7 @@ class BrokerageNoteService implements ServiceInterface
         );
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
-        $this->positionService->processPosition($existingBrokerageNote);
+        $this->positionService->processPosition();
 
         return $newOperation;
     }
@@ -190,7 +190,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
-        $this->positionService->processPosition($existingBrokerageNote);
+        $this->positionService->processPosition();
 
         return $updatedOperation;
     }
@@ -215,7 +215,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
-        $this->positionService->processPosition($existingBrokerageNote);
+        $this->positionService->processPosition();
     }
 
     private function isDTOValid(DTOInterface $dto): bool
