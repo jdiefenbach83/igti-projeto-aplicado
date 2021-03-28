@@ -37,7 +37,7 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-title>
-              <router-link class="no-underline" to="/companies">Posições</router-link>
+              <router-link class="no-underline" to="/positions">Posições</router-link>
             </v-list-item-title>
           </v-list-item>
         </v-list>
