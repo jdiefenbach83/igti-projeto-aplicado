@@ -18,6 +18,7 @@
         required
         :rules="validationRules"
         background-color="#ffffbb"
+        :disabled="disabled"
       ></v-text-field>
     </template>
     <v-date-picker
@@ -40,6 +41,7 @@
     name: "DateSelector",
     props: {
       value: null,
+      disabled: false,
     },
     data() {
       return {

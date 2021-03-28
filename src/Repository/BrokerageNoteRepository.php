@@ -24,9 +24,9 @@ class BrokerageNoteRepository implements BrokerageNoteRepositoryInterface
         $this->objectRepository = $this->entityManager->getRepository(BrokerageNote::class);
     }
 
-    public function findAll()
+    public function findAll(): array
     {
-        return $this->objectRepository->findAll();
+        return $this->objectRepository->findBy([], ['date' => 'ASC']);
     }
 
     public function findById(int $id)

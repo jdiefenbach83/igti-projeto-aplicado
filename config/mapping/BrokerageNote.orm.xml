@@ -17,6 +17,7 @@
         <field name="operational_fee" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="registration_fee" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="emolument_fee" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="brokerage" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="iss_pis_cofins" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="total_fees" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="note_irrf_tax" type="decimal" precision="14" scale="4" nullable="false"/>
@@ -33,7 +34,7 @@
         <field name="updatedAt" column="updated_at" type="datetime" nullable="false">
             <gedmo:timestampable on="update"/>
         </field>
-        <field name="version" type="integer" nullable="false"/>
+        <field name="version" type="integer" nullable="true"/>
         <one-to-many field="operations" target-entity="App\Entity\Operation" mapped-by="brokerageNote" fetch="EAGER" orphan-removal="true">
             <cascade>
                 <cascade-all />

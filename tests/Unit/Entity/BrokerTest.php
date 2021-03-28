@@ -16,7 +16,7 @@ class BrokerTest extends TestCase
         $this->faker = Factory::create();
     }
     
-    public function testBroker_ShouldSetAndGetSuccessfully()
+    public function testBroker_ShouldSetAndGetSuccessfully(): void
     {
         $code = $this->faker->numberBetween(100000, 200000);
         $name = $this->faker->name();
@@ -30,9 +30,9 @@ class BrokerTest extends TestCase
             ->setCnpj($cnpj)
             ->setSite($site);
 
-        $this->assertEquals($code, $broker->getCode());
-        $this->assertEquals($name, $broker->getName());
-        $this->assertEquals($cnpj, $broker->getCnpj());
-        $this->assertEquals($site, $broker->getSite());
+        self::assertEquals($code, $broker->getCode());
+        self::assertEquals($name, $broker->getName());
+        self::assertEquals($cnpj, $broker->getCnpj());
+        self::assertEquals($site, $broker->getSite());
     }
 }

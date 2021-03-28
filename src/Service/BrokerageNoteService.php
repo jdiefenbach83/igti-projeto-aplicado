@@ -34,17 +34,24 @@ class BrokerageNoteService implements ServiceInterface
      * @var iterable
      */
     private iterable $validationErrors;
+    /**
+     * @var PositionService
+     */
+    private PositionService $positionService;
 
     public function __construct(
         BrokerageNoteRepositoryInterface $brokerageNoteRepository,
         BrokerRepositoryInterface $brokerRepository,
         AssetRepositoryInterface $assetRepository,
-        ValidatorInterface $validator)
+        ValidatorInterface $validator,
+        PositionService $positionService
+    )
     {
         $this->brokerageNoteRepository = $brokerageNoteRepository;
         $this->brokerRepository = $brokerRepository;
         $this->assetRepository = $assetRepository;
         $this->validator = $validator;
+        $this->positionService = $positionService;
     }
 
     public function getAll(): array {
@@ -97,6 +104,7 @@ class BrokerageNoteService implements ServiceInterface
         $existing_entity->setNoteIrrfTax($brokerage_note_entity->getNoteIrrfTax());
 
         $this->brokerageNoteRepository->update($existing_entity);
+        $this->positionService->processPosition();
 
         return $existing_entity;
     }
@@ -110,6 +118,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->remove($existing_entity);
+        $this->positionService->processPosition();
     }
 
     /**
@@ -146,6 +155,7 @@ class BrokerageNoteService implements ServiceInterface
         );
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
+        $this->positionService->processPosition();
 
         return $newOperation;
     }
@@ -182,6 +192,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
+        $this->positionService->processPosition();
 
         return $updatedOperation;
     }
@@ -206,6 +217,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
+        $this->positionService->processPosition();
     }
 
     private function isDTOValid(DTOInterface $dto): bool

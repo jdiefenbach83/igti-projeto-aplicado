@@ -17,7 +17,7 @@ class AssetTest extends TestCase
         $this->faker = Factory::create();
     }
     
-    public function testAsset_ShouldSetAndGetSuccessfully()
+    public function testAsset_ShouldSetAndGetSuccessfully(): void
     {
         $cnpj = $this->faker->text(18);
         $name = $this->faker->text(255);
@@ -41,8 +41,8 @@ class AssetTest extends TestCase
             ->setType($type)
             ->setCompany($company);
 
-        $this->assertEquals($code, $asset->getCode());
-        $this->assertEquals($type, $asset->getType());
-        $this->assertEquals($company, $asset->getCompany());
+        self::assertEquals($code, $asset->getCode());
+        self::assertEquals($type, $asset->getType());
+        self::assertEquals($company, $asset->getCompany());
     }
 }

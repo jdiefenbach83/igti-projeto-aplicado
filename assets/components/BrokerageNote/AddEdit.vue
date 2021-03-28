@@ -23,19 +23,20 @@
           cols="12"
           sm="3"
         >
-          <DateSelector
-            :value="date"
-            @changeValue="date = $event"
+          <input-numeric
+            :value="number"
+            label="Número"
+            @changeValue="number = $event"
           />
         </v-col>
         <v-col
           cols="12"
           sm="3"
         >
-          <input-numeric
-            :value="number"
-            label="Número"
-            @changeValue="number = $event"
+          <DateSelector
+            :value="date"
+            @changeValue="date = $event"
+            :disabled="is_editing === true"
           />
         </v-col>
         <v-col
@@ -77,6 +78,16 @@
             :value="emolument_fee"
             label="Emolumentos"
             @changeValue="emolument_fee = $event"
+          />
+        </v-col>
+        <v-col
+            cols="12"
+            sm="3"
+        >
+          <input-numeric
+              :value="brokerage"
+              label="Corretagem"
+              @changeValue="brokerage = $event"
           />
         </v-col>
         <v-col
@@ -192,11 +203,13 @@ export default {
         operational_fee: null,
         registration_fee: null,
         emolument_fee: null,
+        brokerage: null,
         iss_pis_cofins: null,
         note_irrf_tax: null,
 
         is_valid_form: false,
         is_disabled_form: false,
+        is_editing: false,
         flash_message: {
           show: false,
           description: '',
@@ -205,7 +218,7 @@ export default {
     },
     watch: {
       isLoading(newValue, oldValue) {
-        const canLoadBrokerageNoteToEdit = (newValue === false && oldValue === true);
+        const canLoadBrokerageNoteToEdit = (newValue === false && oldValue === true && this.isNewBrokerageNote() === false);
 
         if (canLoadBrokerageNoteToEdit) {
           this.loadBrokerageNoteToEdit(this.local_brokerage_note_id);
@@ -230,11 +243,13 @@ export default {
       getNetTotal() {
         const total_moviments = parseFloat(this.total_moviments);
         const total_fees = parseFloat(this.getTotalFees);
+        const brokerage = parseFloat(this.brokerage);
         const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
         const note_irrf_tax = parseFloat(this.note_irrf_tax);
 
         return (
           (isNaN(total_moviments) ? .0 : total_moviments) -
+          (isNaN(brokerage) ? .0 : brokerage) -
           (isNaN(total_fees) ? .0 : total_fees) -
           (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins) -
           (isNaN(note_irrf_tax) ? .0 : note_irrf_tax)
@@ -242,11 +257,13 @@ export default {
       },
       getTotalCosts() {
         const total_fees = parseFloat(this.getTotalFees);
+        const brokerage = parseFloat(this.brokerage);
         const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
         const note_irrf_tax = parseFloat(this.note_irrf_tax);
 
         return (
           (isNaN(total_fees) ? .0 : total_fees) +
+          (isNaN(brokerage) ? .0 : brokerage) +
           (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins) +
           (isNaN(note_irrf_tax) ? .0 : note_irrf_tax)
         ).toFixed(2);
@@ -254,11 +271,13 @@ export default {
       getResult() {
         const total_moviments = parseFloat(this.total_moviments);
         const total_fees = parseFloat(this.getTotalFees);
+        const brokerage = parseFloat(this.brokerage);
         const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
 
         return (
           (isNaN(total_moviments) ? .0 : total_moviments) -
           (isNaN(total_fees) ? .0 : total_fees) -
+          (isNaN(brokerage) ? .0 : brokerage) -
           (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins)
         ).toFixed(2);
       },
@@ -286,8 +305,11 @@ export default {
         this.operational_fee = brokerageNote.operational_fee;
         this.registration_fee = brokerageNote.registration_fee;
         this.emolument_fee = brokerageNote.emolument_fee;
+        this.brokerage = brokerageNote.brokerage;
         this.iss_pis_cofins = brokerageNote.iss_pis_cofins;
         this.note_irrf_tax = brokerageNote.note_irrf_tax;
+
+        this.is_editing = true;
       },
       showFlashMessage(){
         this.flash_message.show = true;
@@ -311,6 +333,7 @@ export default {
           operational_fee: parseFloat(this.operational_fee).toFixed(2),
           registration_fee: parseFloat(this.registration_fee).toFixed(2),
           emolument_fee: parseFloat(this.emolument_fee).toFixed(2),
+          brokerage: parseFloat(this.brokerage).toFixed(2),
           iss_pis_cofins: parseFloat(this.iss_pis_cofins).toFixed(2),
           note_irrf_tax: parseFloat(this.note_irrf_tax).toFixed(2),
         }

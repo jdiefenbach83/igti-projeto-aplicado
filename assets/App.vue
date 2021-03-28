@@ -12,12 +12,68 @@
         />
       </div>
 
-      <router-link to="/home" class="white--text mx-3">Home</router-link>
+      <router-link to="/home" class="white--text mx-3 no-underline">Home</router-link>
 
       <v-spacer />
 
-      <router-link to="/brokerageNotes" class="white--text mx-3">Notas de corretagem</router-link>
-      <router-link to="/brokers" class="white--text mx-3">Corretoras</router-link>
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+              plain
+              small
+              color="green darken-2"
+              class="white--text"
+              v-bind="attrs"
+              v-on="on"
+          >
+            Operações
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/brokerageNotes">Notas de corretagem</router-link>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/positions">Posições</router-link>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            plain
+            small
+            color="green darken-2"
+            class="white--text mx-3"
+            v-bind="attrs"
+            v-on="on"
+          >
+            Tabelas
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/brokers">Corretoras</router-link>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/companies">Empresas</router-link>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/assets">Ativos</router-link>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
 
     <v-main>
@@ -40,6 +96,7 @@ export default {
       store.dispatch('broker/getAll'),
       store.dispatch('brokerageNote/getAll'),
       store.dispatch('company/getAll'),
+      store.dispatch('position/getAll'),
     ]);
     // 'End of loading prereqs in vuex store
   }
@@ -47,5 +104,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .no-underline {
+    text-decoration: none;
+  }
 </style>

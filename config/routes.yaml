@@ -121,6 +121,12 @@ remove_operation_at_brokerage_note:
   methods:
     - DELETE
 
+positions:
+  path: /api/positions
+  controller: App\Controller\PositionController::getAll
+  methods:
+    - GET
+
 index:
   path: /{resource?}
   requirements:
