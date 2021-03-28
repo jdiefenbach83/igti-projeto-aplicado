@@ -244,7 +244,7 @@ class BrokerageNoteTest extends TestCase
         $this->assertEquals(1.1, $totalAfterEdit);
     }
 
-    public function testBrokerageNote_ShouldRemoveOperationSuccessfully()
+    public function testBrokerageNote_ShouldRemoveOperationSuccessfully(): void
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);

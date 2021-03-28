@@ -451,11 +451,11 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     {
         $operation = $this->getOperation($line);
 
-        if (empty($operation)) {
+        if ($operation === null) {
             return false;
         }
 
-        $this->total_operations = bcsub($this->total_operations, $operation->getTotal(), 2);
+        $this->total_operations = bcsub($this->total_operations, $operation->getTotalForCalculations(), 2);
         $this->prorateValues();
 
         return $this->operations->removeElement($operation);
@@ -540,7 +540,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $totalProratedIssPisCofins = bcadd($totalProratedIssPisCofins, $proratedIssPisCofins, 2);
         }
 
-        if ($totalProratedOperationalFee <> $this->getOperationalFee()) {
+        if ($totalProratedOperationalFee !== $this->getOperationalFee()) {
             $diff = bcsub($this->getOperationalFee(), $totalProratedOperationalFee, 2);
 
             $lastOperation = $this->operations->last();
@@ -548,7 +548,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $lastOperation->setOperationalFee($fixedValue);
         }
 
-        if ($totalProratedRegistrationFee <> $this->getRegistrationFee()) {
+        if ($totalProratedRegistrationFee !== $this->getRegistrationFee()) {
             $diff = bcsub($this->getRegistrationFee(), $totalProratedRegistrationFee, 2);
 
             $lastOperation = $this->operations->last();
@@ -556,7 +556,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $lastOperation->setRegistrationFee($fixedValue);
         }
 
-        if ($totalProratedEmolumentFee <> $this->getEmolumentFee()) {
+        if ($totalProratedEmolumentFee !== $this->getEmolumentFee()) {
             $diff = bcsub($this->getEmolumentFee(), $totalProratedEmolumentFee, 2);
 
             $lastOperation = $this->operations->last();
@@ -565,7 +565,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $lastOperation->setEmolumentFee($fixedValue);
         }
 
-        if ($totalProratedBrokerage <> $this->getBrokerage()) {
+        if ($totalProratedBrokerage !== $this->getBrokerage()) {
             $diff = bcsub($this->getBrokerage(), $totalProratedBrokerage, 2);
 
             $lastOperation = $this->operations->last();
@@ -574,7 +574,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             $lastOperation->setBrokerage($fixedValue);
         }
 
-        if ($totalProratedIssPisCofins <> $this->getIssPisCofins()) {
+        if ($totalProratedIssPisCofins !== $this->getIssPisCofins()) {
             $diff = bcsub($this->getIssPisCofins(), $totalProratedIssPisCofins, 2);
 
             $lastOperation = $this->operations->last();
