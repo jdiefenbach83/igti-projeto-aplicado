@@ -17,6 +17,14 @@
           class="mx-4"
         />
       </template>
+      <template v-slot:item.type="{ item }">
+        <v-chip
+            :color="getColorToBuySellColumn(item.original_type)"
+            dark
+        >
+          {{ item.type }}
+        </v-chip>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -44,6 +52,12 @@
           typeof value === 'string' &&
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
       },
+      getColorToBuySellColumn (type) {
+        if (type === POSITION_TYPES.POSITION_TYPE_BUY)
+          return 'red'
+
+        return 'green'
+      },
     },
     computed: {
       positions() {
@@ -55,7 +69,8 @@
           return {
             ...position,
             asset: asset?.code,
-            type: position.type === POSITION_TYPES.OPERATION_TYPE_BUY ? 'Compra' : 'Venda',
+            original_type: position.type,
+            type: position.type === POSITION_TYPES.POSITION_TYPE_BUY ? 'Compra' : 'Venda',
             date: brazilianDateFormatter(position.date),
             accumulated_total: currencyFormatter(position.accumulated_total),
             average_price: currencyFormatter(position.average_price),
