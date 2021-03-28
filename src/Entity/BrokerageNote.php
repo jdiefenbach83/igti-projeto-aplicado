@@ -393,7 +393,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
         $this->operations->add($operation);
 
-        $this->total_operations = bcadd($this->total_operations, $operation->getTotal(), 2);
+        $this->total_operations = bcadd($this->total_operations, $operation->getTotalForCalculations(), 2);
         $this->prorateValues();
 
         return $operation;
@@ -441,7 +441,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $operation->setPrice($price);
 
         $this->total_operations = bcsub($this->total_operations, $old_total, 2);
-        $this->total_operations = bcadd($this->total_operations, $operation->getTotal(), 2);
+        $this->total_operations = bcadd($this->total_operations, $operation->getTotalForCalculations(), 2);
         $this->prorateValues();
 
         return $operation;
@@ -473,7 +473,10 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
     public function hasOperationsCompleted(): bool
     {
-        return $this->total_moviments === $this->total_operations;
+        $total_moviments = $this->total_moviments;
+        $total_operations = $this->total_operations;
+
+        return $total_moviments === $total_operations;
     }
 
     private function prorateValues(): void

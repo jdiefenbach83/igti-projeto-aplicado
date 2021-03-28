@@ -17,7 +17,7 @@ class PositionControllerTest extends BaseTest
             'broker_id' => $broker->getId(),
             'date' => $this->faker->dateTime()->format('Y-m-d'),
             'number' => $this->faker->numberBetween(1, 100_000),
-            'total_moviments' => 1_000,
+            'total_moviments' => -1_000,
             'operational_fee' => 1,
             'registration_fee' => 1,
             'emolument_fee' => 1,
