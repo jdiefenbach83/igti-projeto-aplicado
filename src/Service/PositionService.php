@@ -107,8 +107,8 @@ class PositionService
              * @var Position $currentValue */
             foreach ($positions as $current => $currentValue) {
                 $position = $currentValue;
-                $sequence += $current;
-                $position->setSequence($sequence);
+
+                $position->setSequence($sequence++);
 
                 if ($sequence === 1) {
                     $accumulatedQuantity = $position->getQuantity();

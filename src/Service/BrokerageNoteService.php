@@ -104,6 +104,7 @@ class BrokerageNoteService implements ServiceInterface
         $existing_entity->setNoteIrrfTax($brokerage_note_entity->getNoteIrrfTax());
 
         $this->brokerageNoteRepository->update($existing_entity);
+        $this->positionService->processPosition();
 
         return $existing_entity;
     }
@@ -117,6 +118,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->remove($existing_entity);
+        $this->positionService->processPosition();
     }
 
     /**

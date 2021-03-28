@@ -226,6 +226,8 @@ export default {
         const response = await BrokerageNoteService.edit(id, message);
         commit(EDITING_BROKERAGE_NOTE_SUCCESS, response.content);
 
+        await dispatch('position/getAll');
+
         return response.data;
       } catch (error) {
         commit(EDITING_BROKERAGE_NOTE_ERROR, error);
@@ -238,6 +240,8 @@ export default {
       try {
         const response = await BrokerageNoteService.remove(message);
         commit(REMOVING_BROKERAGE_NOTE_SUCCESS, message);
+
+        await dispatch('position/getAll');
 
         return response.data;
       } catch (error) {
@@ -256,6 +260,7 @@ export default {
 
         const payload = { id: message.brokerage_note_id };
         await dispatch('getById', payload);
+        await dispatch('position/getAll');
 
         return response.data;
       } catch (error) {
@@ -274,6 +279,7 @@ export default {
 
         const payload = { id: message.brokerage_note_id };
         await dispatch('getById', payload);
+        await dispatch('position/getAll');
 
         return response.data;
       } catch (error) {
@@ -291,6 +297,7 @@ export default {
 
         const payload = { id: message.brokerage_note_id };
         await dispatch('getById', payload);
+        await dispatch('position/getAll');
 
         return response.data;
       } catch (error) {
