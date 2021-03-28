@@ -23,20 +23,20 @@
           cols="12"
           sm="3"
         >
-          <DateSelector
-            :value="date"
-            @changeValue="date = $event"
-            :disabled="is_editing === true"
+          <input-numeric
+            :value="number"
+            label="Número"
+            @changeValue="number = $event"
           />
         </v-col>
         <v-col
           cols="12"
           sm="3"
         >
-          <input-numeric
-            :value="number"
-            label="Número"
-            @changeValue="number = $event"
+          <DateSelector
+            :value="date"
+            @changeValue="date = $event"
+            :disabled="is_editing === true"
           />
         </v-col>
         <v-col
