@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '@/views/Home';
+import Asset from '@/views/Asset/Listing';
 import Broker from '@/views/Broker/Listing';
 import BrokerageNoteListing from '@/views/BrokerageNote/Listing';
 import BrokerageNoteAdd from '@/views/BrokerageNote/Add';
@@ -15,6 +16,7 @@ Vue.use(VueRouter);
 export default new VueRouter({
   mode: 'history',
   routes: [
+    { name: 'AssetListing', path: '/assets', component: Asset },
     { name: 'BrokerListing', path: '/brokers', component: Broker },
     { name: 'BrokerageNoteListing', path: '/brokerageNotes', component: BrokerageNoteListing },
     { name: 'BrokerageNoteAdd', path: '/brokerageNotes/add', component: BrokerageNoteAdd },
