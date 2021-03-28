@@ -16,7 +16,7 @@ class CompanyTest extends TestCase
         $this->faker = Factory::create();
     }
     
-    public function testCompany_ShouldSetAndGetSuccessfully()
+    public function testCompany_ShouldSetAndGetSuccessfully(): void
     {
         $cnpj = $this->faker->text(18);
         $name = $this->faker->text(255);
@@ -26,7 +26,7 @@ class CompanyTest extends TestCase
             ->setCnpj($cnpj)
             ->setName($name);
 
-        $this->assertEquals($cnpj, $company->getCnpj());
-        $this->assertEquals($name, $company->getName());
+        self::assertEquals($cnpj, $company->getCnpj());
+        self::assertEquals($name, $company->getName());
     }
 }

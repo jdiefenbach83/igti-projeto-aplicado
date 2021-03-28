@@ -33,7 +33,7 @@ class BrokerageNoteTest extends TestCase
             ->setSite($site);
     }
 
-    public function testBrokerageNote_ShouldSetAndGetSuccessfully()
+    public function testBrokerageNote_ShouldSetAndGetSuccessfully(): void
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
@@ -58,19 +58,19 @@ class BrokerageNoteTest extends TestCase
             ->setIssPisCofins($iss_pis_cofins)
             ->setNoteIrrfTax($note_irrf_tax);
 
-        $this->assertEquals($this->broker, $brokerageNote->getBroker());
-        $this->assertEquals($date, $brokerageNote->getDate());
-        $this->assertEquals($number, $brokerageNote->getNumber());
-        $this->assertEquals($total_moviments, $brokerageNote->getTotalMoviments());
-        $this->assertEquals($operational_fee, $brokerageNote->getOperationalFee());
-        $this->assertEquals($registration_fee, $brokerageNote->getRegistrationFee());
-        $this->assertEquals($emolument_fee, $brokerageNote->getEmolumentFee());
-        $this->assertEquals($brokerage, $brokerageNote->getBrokerage());
-        $this->assertEquals($iss_pis_cofins, $brokerageNote->getIssPisCofins());
-        $this->assertEquals($note_irrf_tax, $brokerageNote->getNoteIrrfTax());
+        self::assertEquals($this->broker, $brokerageNote->getBroker());
+        self::assertEquals($date, $brokerageNote->getDate());
+        self::assertEquals($number, $brokerageNote->getNumber());
+        self::assertEquals($total_moviments, $brokerageNote->getTotalMoviments());
+        self::assertEquals($operational_fee, $brokerageNote->getOperationalFee());
+        self::assertEquals($registration_fee, $brokerageNote->getRegistrationFee());
+        self::assertEquals($emolument_fee, $brokerageNote->getEmolumentFee());
+        self::assertEquals($brokerage, $brokerageNote->getBrokerage());
+        self::assertEquals($iss_pis_cofins, $brokerageNote->getIssPisCofins());
+        self::assertEquals($note_irrf_tax, $brokerageNote->getNoteIrrfTax());
     }
 
-    public function testBrokerageNote_ShouldCalculareCorrectly()
+    public function testBrokerageNote_ShouldCalculareCorrectly(): void
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
@@ -108,13 +108,13 @@ class BrokerageNoteTest extends TestCase
         $result = bcsub($result, $iss_pis_cofins, 4);
         $result = bcsub($result, $brokerage, 4);
 
-        $this->assertEquals($total_fees, $brokerageNote->getTotalFees());
-        $this->assertEquals($total_costs, $brokerageNote->getTotalCosts());
-        $this->assertEquals($net_total, $brokerageNote->getNetTotal());
-        $this->assertEquals($result, $brokerageNote->getResult());
+        self::assertEquals($total_fees, $brokerageNote->getTotalFees());
+        self::assertEquals($total_costs, $brokerageNote->getTotalCosts());
+        self::assertEquals($net_total, $brokerageNote->getNetTotal());
+        self::assertEquals($result, $brokerageNote->getResult());
     }
 
-    public function testBrokerageNote_ShouldCalculareBasisIrCorrectly()
+    public function testBrokerageNote_ShouldCalculareBasisIrCorrectly(): void
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
@@ -139,10 +139,10 @@ class BrokerageNoteTest extends TestCase
             ->setIssPisCofins($iss_pis_cofins)
             ->setNoteIrrfTax($note_irrf_tax);
 
-        $this->assertEquals($brokerageNote->getResult(), $brokerageNote->getCalculationBasisIr());
+        self::assertEquals($brokerageNote->getResult(), $brokerageNote->getCalculationBasisIr());
     }
 
-    public function testBrokerageNote_ShouldCalculareBasisIrZeroCorrectly()
+    public function testBrokerageNote_ShouldCalculareBasisIrZeroCorrectly(): void
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
@@ -167,10 +167,10 @@ class BrokerageNoteTest extends TestCase
             ->setIssPisCofins($iss_pis_cofins)
             ->setNoteIrrfTax($note_irrf_tax);
 
-        $this->assertEquals(0.0, $brokerageNote->getCalculationBasisIr());
+        self::assertEquals(0.0, $brokerageNote->getCalculationBasisIr());
     }
 
-    public function testBrokerageNote_ShouldAddOperationSuccessfully()
+    public function testBrokerageNote_ShouldAddOperationSuccessfully(): void
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
@@ -197,11 +197,11 @@ class BrokerageNoteTest extends TestCase
         $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.50);
         $brokerage_note->addOperation(Operation::TYPE_BUY, $asset, 1, 1.55);
 
-        $this->assertCount(2, $brokerage_note->getOperations());
-        $this->assertEquals(-3.05, $brokerage_note->getTotalOperations());
+        self::assertCount(2, $brokerage_note->getOperations());
+        self::assertEquals(-3.05, $brokerage_note->getTotalOperations());
     }
 
-    public function testBrokerageNote_ShouldEditOperationSuccessfully()
+    public function testBrokerageNote_ShouldEditOperationSuccessfully(): void
     {
         $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
         $number = $this->faker->numberBetween(1, 100_000);
@@ -236,12 +236,12 @@ class BrokerageNoteTest extends TestCase
         $brokerage_note->editOperation(1, Operation::TYPE_SELL, $new_asset, 2, 1.55);
         $totalAfterEdit = $brokerage_note->getTotalOperations();
 
-        $this->assertEquals(Operation::TYPE_SELL, $brokerage_note->getOperations()[0]->getType());
-        $this->assertEquals($new_asset, $brokerage_note->getOperations()[0]->getAsset());
-        $this->assertEquals(2, $brokerage_note->getOperations()[0]->getQuantity());
-        $this->assertEquals(1.55, $brokerage_note->getOperations()[0]->getPrice());
-        $this->assertEquals(-3.5, $totalBeforeEdit);
-        $this->assertEquals(1.1, $totalAfterEdit);
+        self::assertEquals(Operation::TYPE_SELL, $brokerage_note->getOperations()[0]->getType());
+        self::assertEquals($new_asset, $brokerage_note->getOperations()[0]->getAsset());
+        self::assertEquals(2, $brokerage_note->getOperations()[0]->getQuantity());
+        self::assertEquals(1.55, $brokerage_note->getOperations()[0]->getPrice());
+        self::assertEquals(-3.5, $totalBeforeEdit);
+        self::assertEquals(1.1, $totalAfterEdit);
     }
 
     public function testBrokerageNote_ShouldRemoveOperationSuccessfully(): void
@@ -274,8 +274,8 @@ class BrokerageNoteTest extends TestCase
         $brokerage_note->removeOperation(1);
         $totalAfterRemove = $brokerage_note->getTotalOperations();
 
-        $this->assertEquals(-55, $totalBeforeRemove);
-        $this->assertEquals(-40, $totalAfterRemove);
+        self::assertEquals(-55, $totalBeforeRemove);
+        self::assertEquals(-40, $totalAfterRemove);
     }
 
     public function testBrokerageNote_ShouldThrowExceptionWhenAllOperationsIsGreaterThenTotal(): void

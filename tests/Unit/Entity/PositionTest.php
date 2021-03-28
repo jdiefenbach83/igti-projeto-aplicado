@@ -45,7 +45,7 @@ class PositionTest extends TestCase
         return $asset;
     }
 
-    public function testAsset_ShouldSetAndGetSuccessfully()
+    public function testAsset_ShouldSetAndGetSuccessfully(): void
     {
        $asset = $this->buildAsset();
        $sequence = $this->faker->numberBetween(1, 100);
