@@ -433,7 +433,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             return null;
         }
 
-        $old_total = $operation->getTotal();
+        $old_total = $operation->getTotalForCalculations();
 
         $operation->setType($type);
         $operation->setAsset($asset);
