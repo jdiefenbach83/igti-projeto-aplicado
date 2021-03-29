@@ -25,6 +25,7 @@ class Position implements EntityInterface, JsonSerializable
     private float $accumulatedTotal;
     private float $averagePrice;
     private ?Operation $operation;
+    private bool $isLast;
 
     public static function getTypes(): array
     {
@@ -37,6 +38,7 @@ class Position implements EntityInterface, JsonSerializable
     public function __construct()
     {
         $this->operation = null;
+        $this->isLast = false;
     }
 
     /**
@@ -256,7 +258,26 @@ class Position implements EntityInterface, JsonSerializable
         return $this;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return bool
+     */
+    public function isLast(): bool
+    {
+        return $this->isLast;
+    }
+
+    /**
+     * @param bool $isLast
+     * @return Position
+     */
+    public function setIsLast(bool $isLast): Position
+    {
+        $this->isLast = $isLast;
+
+        return $this;
+    }
+
+    public function jsonSerialize(): array
     {
         return [
             'id' => $this->id,
@@ -270,6 +291,7 @@ class Position implements EntityInterface, JsonSerializable
             'accumulated_quantity' => $this->accumulatedQuantity,
             'accumulated_total' => $this->accumulatedTotal,
             'average_price' => $this->averagePrice,
+            'is_last' => $this->isLast,
         ];
     }
 }

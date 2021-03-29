@@ -29,6 +29,11 @@
         <field name="updatedAt" column="updated_at" type="datetime" nullable="false">
             <gedmo:timestampable on="update"/>
         </field>
+        <field name="isLast" column="is_last" type="boolean" nullable="true">
+            <options>
+                <option name="default">0</option>
+            </options>
+        </field>
 
         <indexes>
             <index name="IDX_POSITION_DATE" columns="date"/>
