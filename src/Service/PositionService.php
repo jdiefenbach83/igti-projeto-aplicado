@@ -98,17 +98,18 @@ class PositionService
         foreach ($assetIds as $assetId)
         {
             $positions = $this->positionRepository->findByAsset($assetId['id']);
-            $sequence = 1;
 
             $lastPositionAccumulatedQuantity = 0;
             $lastPositionAccumulatedTotal = 0;
+
             /**
              * @var int $current
              * @var Position $currentValue */
             foreach ($positions as $current => $currentValue) {
                 $position = $currentValue;
 
-                $position->setSequence($sequence++);
+                $sequence = $current + 1;
+                $position->setSequence($sequence);
 
                 if ($sequence === 1) {
                     $accumulatedQuantity = $position->getQuantity();
@@ -126,6 +127,10 @@ class PositionService
                 $position->setAccumulatedQuantity($accumulatedQuantity);
                 $position->setAccumulatedTotal($accumulatedTotal);
                 $position->setAveragePrice($averagePrice);
+
+                if ($sequence === count($positions)) {
+                    $position->setIsLast(true);
+                }
 
                 $this->positionRepository->update($position);
 
