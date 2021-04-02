@@ -22,8 +22,10 @@
         <field name="operational_fee" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="registration_fee" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="emolument_fee" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="total_fees" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="brokerage" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="iss_pis_cofins" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="total_costs" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>
         </field>

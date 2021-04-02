@@ -216,6 +216,7 @@ class Operation implements EntityInterface, JsonSerializable
     public function setOperationalFee(float $operationalFee): Operation
     {
         $this->operational_fee = $operationalFee;
+        $this->calculateFeesAndCosts();
 
         return $this;
     }
@@ -235,6 +236,7 @@ class Operation implements EntityInterface, JsonSerializable
     public function setRegistrationFee(float $registration_fee): Operation
     {
         $this->registration_fee = $registration_fee;
+        $this->calculateFeesAndCosts();
 
         return $this;
     }
@@ -254,8 +256,17 @@ class Operation implements EntityInterface, JsonSerializable
     public function setEmolumentFee(float $emolument_fee): Operation
     {
         $this->emolument_fee = $emolument_fee;
+        $this->calculateFeesAndCosts();
 
         return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalFees(): float
+    {
+        return $this->total_fees;
     }
 
     /**
@@ -273,6 +284,7 @@ class Operation implements EntityInterface, JsonSerializable
     public function setIssPisCofins(float $iss_pis_cofins): Operation
     {
         $this->iss_pis_cofins = $iss_pis_cofins;
+        $this->calculateFeesAndCosts();
 
         return $this;
     }
@@ -292,8 +304,17 @@ class Operation implements EntityInterface, JsonSerializable
     public function setBrokerage(float $brokerage): Operation
     {
         $this->brokerage = $brokerage;
+        $this->calculateFeesAndCosts();
 
         return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalCosts(): float
+    {
+        return $this->total_costs;
     }
 
     /**
@@ -311,6 +332,7 @@ class Operation implements EntityInterface, JsonSerializable
     public function setPosition(?Position $position): Operation
     {
         $this->position = $position;
+
         return $this;
     }
 
@@ -322,12 +344,27 @@ class Operation implements EntityInterface, JsonSerializable
         ];
     }
 
+    private function calculateFeesAndCosts(): void
+    {
+        $this->calculateFees();
+        $this->calculateTotalCosts();
+    }
+
+    private function calculateFees(): void
+    {
+        $this->total_fees = bcadd($this->operational_fee, $this->registration_fee, 4);
+        $this->total_fees = bcadd($this->total_fees, $this->emolument_fee, 4);
+    }
+
+    private function calculateTotalCosts(): void
+    {
+        $this->total_costs = bcadd($this->total_fees, $this->brokerage, 4);
+        $this->total_costs = bcadd($this->total_costs, $this->iss_pis_cofins, 4);
+    }
+
     public function getGrossTotal(): float
     {
-        $totalCosts = bcadd($this->operational_fee, $this->registration_fee, 2);
-        $totalCosts = bcadd($totalCosts, $this->emolument_fee, 2);
-        $totalCosts = bcadd($totalCosts, $this->brokerage, 2);
-        $totalCosts = bcadd($totalCosts, $this->iss_pis_cofins, 2);
+        $totalCosts = bcadd($this->total_fees, $this->total_costs, 2);
 
         return bcadd($this->getTotal(), $totalCosts, 2);
     }
