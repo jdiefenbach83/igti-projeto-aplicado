@@ -65,7 +65,7 @@ class PositionTest extends TestCase
            ->setType($type)
            ->setDate($date)
            ->setQuantity($quantity)
-           ->setUnitCost($unitCost)
+           ->setUnitPrice($unitCost)
            ->setAccumulatedQuantity($accumulatedQuantity)
            ->setTotalOperation($totalOperation)
            ->setAccumulatedTotal($accumulatedTotal)
@@ -76,7 +76,7 @@ class PositionTest extends TestCase
        self::assertEquals($type, $position->getType());
        self::assertEquals($date, $position->getDate());
        self::assertEquals($quantity, $position->getQuantity());
-       self::assertEquals($unitCost, $position->getUnitCost());
+       self::assertEquals($unitCost, $position->getUnitPrice());
        self::assertEquals($accumulatedQuantity, $position->getAccumulatedQuantity());
        self::assertEquals($totalOperation, $position->getTotalOperation());
        self::assertEquals($accumulatedTotal, $position->getAccumulatedTotal());

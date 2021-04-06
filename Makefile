@@ -9,7 +9,7 @@ basics:
 	echo "Creating database..."
 	symfony console doctrine:database:create --no-debug --env=$(ENV)
 
-	echo "Running migrations fixtures..."
+	echo "Running migrations..."
 	symfony console doctrine:migrations:migrate --no-interaction --no-debug --env=$(ENV)
 
 	echo "Loading fixtures..."

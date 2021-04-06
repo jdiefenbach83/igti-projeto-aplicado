@@ -40,7 +40,7 @@ class PositionControllerTest extends BaseTest
         ];
     }
 
-    public function testGetPositions_ShouldReturnSuccess()
+    public function testGetPositions_ShouldReturnSuccess(): void
     {
         $status_code_expected = 201;
 

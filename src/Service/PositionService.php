@@ -70,8 +70,9 @@ class PositionService
         }
 
         /** @var Operation $operation */
-        foreach ($brokerageNote->getOperations() as $operation) {
-            $unitCost = bcdiv($operation->getGrossTotal(), $operation->getQuantity(), 2);
+        foreach ($brokerageNote->getOperations() as $operation)
+        {
+            $unitPrice = bcdiv($operation->getGrossTotal(), $operation->getQuantity(), 2);
 
             $position = new Position();
             $position
@@ -81,11 +82,14 @@ class PositionService
                 ->setType($operation->getType())
                 ->setDate($brokerageNote->getDate())
                 ->setQuantity($operation->getQuantity())
-                ->setUnitCost($unitCost)
+                ->setUnitPrice($unitPrice)
                 ->setTotalOperation($operation->getGrossTotal())
+                ->setTotalCosts($operation->getTotalCosts())
                 ->setAccumulatedQuantity(0)
                 ->setAccumulatedTotal(.0)
-                ->setAveragePrice(.0);
+                ->setAccumulatedCosts(.0)
+                ->setAveragePrice(.0)
+                ->setAveragePriceToIr(.0);
 
             $this->positionRepository->add($position);
         }
@@ -101,6 +105,7 @@ class PositionService
 
             $lastPositionAccumulatedQuantity = 0;
             $lastPositionAccumulatedTotal = 0;
+            $lastPositionAccumulatedCosts = 0;
 
             /**
              * @var int $current
@@ -114,19 +119,29 @@ class PositionService
                 if ($sequence === 1) {
                     $accumulatedQuantity = $position->getQuantity();
                     $accumulatedTotal = $position->getTotalOperation();
+                    $accumulatedCosts = $position->getTotalCosts();
                 } else {
                     $signal = ($position->getType() === Position::TYPE_BUY) ? 1 : -1;
 
                     $accumulatedQuantity = bcadd($position->getQuantity(), ($lastPositionAccumulatedQuantity * $signal), 2);
-                    $accumulatedTotal = bcadd($position->getTotalOperation(),  ($lastPositionAccumulatedTotal * $signal), 2);
+                    $accumulatedTotal = bcadd($position->getTotalOperation(), ($lastPositionAccumulatedTotal * $signal), 2);
+                    $accumulatedCosts = bcadd($position->getTotalCosts(), ($lastPositionAccumulatedCosts * $signal), 2);
                 }
 
-                $divisor = $accumulatedQuantity === 0 ? 1 : $accumulatedQuantity;
-                $averagePrice = bcdiv($accumulatedTotal, $divisor, 2);
+                if ($accumulatedQuantity > 0) {
+                    $averagePrice = bcdiv($accumulatedTotal, $accumulatedQuantity, 2);
+                    $totalToIr = bcadd($accumulatedTotal, $accumulatedCosts, 2);
+                    $averagePriceToIr = bcdiv($totalToIr, $accumulatedQuantity, 2);
+                } else {
+                    $averagePrice = 0;
+                    $averagePriceToIr = 0;
+                }
 
                 $position->setAccumulatedQuantity($accumulatedQuantity);
                 $position->setAccumulatedTotal($accumulatedTotal);
+                $position->setAccumulatedCosts($accumulatedCosts);
                 $position->setAveragePrice($averagePrice);
+                $position->setAveragePriceToIr($averagePriceToIr);
 
                 if ($sequence === count($positions)) {
                     $position->setIsLast(true);
@@ -136,6 +151,7 @@ class PositionService
 
                 $lastPositionAccumulatedQuantity = $accumulatedQuantity;
                 $lastPositionAccumulatedTotal = $accumulatedTotal;
+                $lastPositionAccumulatedCosts = $accumulatedCosts;
             }
         }
     }

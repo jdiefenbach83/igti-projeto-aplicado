@@ -15,11 +15,14 @@
         <field name="type" column-definition="ENUM('BUY', 'SELL')" nullable="false"/>
         <field name="date" type="date_immutable" nullable="false"/>
         <field name="quantity" type="integer" nullable="false"/>
-        <field name="unitCost" column="unit_cost" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="unitPrice" column="unit_price" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="totalOperation" column="total_operation" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="totalCosts" column="total_costs" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="accumulatedQuantity" column="accumulated_quantity" type="integer" nullable="false"/>
         <field name="accumulatedTotal" column="accumulated_total" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="accumulatedCosts" column="accumulated_costs" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="averagePrice" column="average_price" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="averagePriceToIr" column="average_price_to_ir" type="decimal" precision="14" scale="4" nullable="false"/>
         <one-to-one field="operation" target-entity="App\Entity\Operation">
             <join-column name="operation_id" referenced-column-name="id" nullable="true" />
         </one-to-one>
