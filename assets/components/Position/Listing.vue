@@ -11,11 +11,31 @@
       sear
     >
       <template v-slot:top>
-        <v-text-field
-          v-model="search"
-          label="Pesquisa"
-          class="mx-4"
-        />
+        <v-row>
+          <v-col
+            cols="9"
+            sm="9"
+            md="9"
+          >
+            <v-text-field
+              v-model="search"
+              label="Pesquisa"
+              class="mx-4"
+              append-icon="mdi-magnify"
+            />
+          </v-col>
+          <v-col
+            cols="3"
+            sm="3"
+            md="3"
+          >
+            <v-switch
+              v-model="lastPositionFilter"
+              label="Apenas última posição"
+            />
+          </v-col>
+        </v-row>
+
       </template>
       <template v-slot:item.type="{ item }">
         <v-chip
@@ -42,7 +62,8 @@
     name: "PositionListing",
     data() {
       return {
-        search: ''
+        search: '',
+        lastPositionFilter: false,
       };
     },
     methods: {
@@ -61,7 +82,11 @@
     },
     computed: {
       positions() {
-        const positions = this.$store.getters["position/positions"];
+        let positions = this.$store.getters["position/positions"];
+
+        if (this.lastPositionFilter) {
+          positions = positions.filter(position => position.is_last === this.lastPositionFilter);
+        }
 
         return positions.map(position => {
           const asset = this.$store.getters["asset/getById"](position.asset_id);
@@ -73,7 +98,9 @@
             type: position.type === POSITION_TYPES.POSITION_TYPE_BUY ? 'Compra' : 'Venda',
             date: brazilianDateFormatter(position.date),
             accumulated_total: currencyFormatter(position.accumulated_total),
+            accumulated_costs: currencyFormatter(position.accumulated_costs),
             average_price: currencyFormatter(position.average_price),
+            average_price_to_ir: currencyFormatter(position.average_price_to_ir),
           }
         });
       },
@@ -110,10 +137,22 @@
             value: 'accumulated_total',
           },
           {
+            text: 'Custos acumulado',
+            align: 'end',
+            sortable: true,
+            value: 'accumulated_costs',
+          },
+          {
             text: 'Preço médio',
             align: 'end',
             sortable: true,
             value: 'average_price',
+          },
+          {
+            text: 'Preço médio (IR)',
+            align: 'end',
+            sortable: true,
+            value: 'average_price_to_ir',
           },
         ]
       }
