@@ -53,6 +53,18 @@
       <template v-slot:item.average_price_to_ir="{ item }">
         <strong>{{ item.average_price_to_ir }}</strong>
       </template>
+      <template v-slot:group.header="{ group, headers, toggle, remove, isOpen }">
+        <td :colspan="headers.length">
+          <v-btn @click="toggle" x-small icon :ref="group">
+            <v-icon v-if="isOpen">mdi-plus</v-icon>
+            <v-icon v-else>mdi-minus</v-icon>
+          </v-btn>
+          <span class="mx-5 font-weight-bold">{{ group }}</span>
+          <v-btn @click="remove" x-small icon :ref="group">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </td>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -71,7 +83,7 @@
     data() {
       return {
         search: '',
-        lastPositionFilter: false,
+        lastPositionFilter: true,
       };
     },
     methods: {
