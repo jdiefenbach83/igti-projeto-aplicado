@@ -10,8 +10,8 @@ class Operation implements EntityInterface, JsonSerializable
 {
     use Timestampable;
 
-    const TYPE_BUY = 'BUY';
-    const TYPE_SELL = 'SELL';
+    public const TYPE_BUY = 'BUY';
+    public const TYPE_SELL = 'SELL';
 
     private ?int $id;
     private int $line;
