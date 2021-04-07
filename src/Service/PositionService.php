@@ -72,7 +72,7 @@ class PositionService
         /** @var Operation $operation */
         foreach ($brokerageNote->getOperations() as $operation)
         {
-            $unitPrice = bcdiv($operation->getGrossTotal(), $operation->getQuantity(), 2);
+            $unitPrice = bcdiv($operation->getTotal(), $operation->getQuantity(), 2);
 
             $position = new Position();
             $position
@@ -83,7 +83,7 @@ class PositionService
                 ->setDate($brokerageNote->getDate())
                 ->setQuantity($operation->getQuantity())
                 ->setUnitPrice($unitPrice)
-                ->setTotalOperation($operation->getGrossTotal())
+                ->setTotalOperation($operation->getTotal())
                 ->setTotalCosts($operation->getTotalCosts())
                 ->setAccumulatedQuantity(0)
                 ->setAccumulatedTotal(.0)
