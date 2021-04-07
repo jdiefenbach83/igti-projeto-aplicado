@@ -8,6 +8,8 @@
       class="elevation-1"
       :search="search"
       :custom-filter="filterList"
+      group-by="asset"
+      show-group-by
       sear
     >
       <template v-slot:top>
@@ -37,13 +39,19 @@
         </v-row>
 
       </template>
+      <template v-slot:item.asset="{ item }">
+        <strong>{{ item.asset }}</strong>
+      </template>
       <template v-slot:item.type="{ item }">
         <v-chip
-            :color="getColorToBuySellColumn(item.original_type)"
-            dark
+          :color="getColorToBuySellColumn(item.original_type)"
+          dark
         >
           {{ item.type }}
         </v-chip>
+      </template>
+      <template v-slot:item.average_price_to_ir="{ item }">
+        <strong>{{ item.average_price_to_ir }}</strong>
       </template>
     </v-data-table>
   </div>
@@ -111,48 +119,56 @@
             align: 'start',
             sortable: true,
             value: 'asset',
+            groupable: true,
           },
           {
             text: 'Tipo',
             align: 'start',
             sortable: true,
             value: 'type',
+            groupable: false,
           },
           {
             text: 'Data',
             align: 'start',
             sortable: true,
             value: 'date',
+            groupable: true,
           },
           {
             text: 'Quantidade acumulada',
             align: 'end',
             sortable: true,
             value: 'accumulated_quantity',
+            groupable: false,
           },
           {
             text: 'Total acumulado',
             align: 'end',
             sortable: true,
             value: 'accumulated_total',
+            groupable: false,
           },
           {
             text: 'Custos acumulado',
             align: 'end',
             sortable: true,
             value: 'accumulated_costs',
+            groupable: false,
           },
           {
             text: 'Preço médio',
             align: 'end',
             sortable: true,
             value: 'average_price',
+            groupable: false,
           },
           {
             text: 'Preço médio (IR)',
             align: 'end',
             sortable: true,
             value: 'average_price_to_ir',
+            groupable: false,
           },
         ]
       }
