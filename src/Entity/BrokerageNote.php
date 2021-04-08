@@ -498,7 +498,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
         /** @var Operation $operation */
         foreach ($this->operations as $operation) {
-            $qtdeTotal += $operation->getQuantity();
+            $qtdeTotal = bcadd($qtdeTotal, $operation->getQuantity());
         }
 
         $totalProratedOperationalFee = .0;
@@ -507,19 +507,21 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $totalProratedBrokerage = .0;
         $totalProratedIssPisCofins = .0;
 
-        $proportionOperationalFee = bcdiv($this->getOperationalFee(), $qtdeTotal, 4);
-        $proportionRegistrationFee = bcdiv($this->getRegistrationFee(), $qtdeTotal, 4);
-        $proportionEmolumentFee = bcdiv($this->getEmolumentFee(), $qtdeTotal, 4);
-        $proportionBrokerage = bcdiv($this->getBrokerage(), $qtdeTotal, 4);
-        $proportionIssPisCofins = bcdiv($this->getIssPisCofins(), $qtdeTotal, 4);
+        $proportionOperationalFee = bcdiv($this->getOperationalFee(), $qtdeTotal, 6);
+        $proportionRegistrationFee = bcdiv($this->getRegistrationFee(), $qtdeTotal, 6);
+        $proportionEmolumentFee = bcdiv($this->getEmolumentFee(), $qtdeTotal, 6);
+        $proportionBrokerage = bcdiv($this->getBrokerage(), $qtdeTotal, 6);
+        $proportionIssPisCofins = bcdiv($this->getIssPisCofins(), $qtdeTotal, 6);
 
         /** @var Operation $operation */
         foreach ($this->operations as $operation) {
-            $proratedOperationalFee = bcmul($operation->getQuantity(), $proportionOperationalFee, 4);
-            $proratedRegistrationFee = bcmul($operation->getQuantity(), $proportionRegistrationFee, 4);
-            $proratedEmolumentFee = bcmul($operation->getQuantity(), $proportionEmolumentFee, 4);
-            $proratedBrokerage = bcmul($operation->getQuantity(), $proportionBrokerage, 4);
-            $proratedIssPisCofins = bcmul($operation->getQuantity(), $proportionIssPisCofins, 4);
+            $OperationQuantity = $operation->getQuantity();
+            
+            $proratedOperationalFee = bcmul($OperationQuantity, $proportionOperationalFee, 4);
+            $proratedRegistrationFee = bcmul($OperationQuantity, $proportionRegistrationFee, 4);
+            $proratedEmolumentFee = bcmul($OperationQuantity, $proportionEmolumentFee, 4);
+            $proratedBrokerage = bcmul($OperationQuantity, $proportionBrokerage, 4);
+            $proratedIssPisCofins = bcmul($OperationQuantity, $proportionIssPisCofins, 4);
 
             $operation->setOperationalFee($proratedOperationalFee);
             $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $proratedOperationalFee, 4);
