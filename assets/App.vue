@@ -96,7 +96,6 @@ export default {
       store.dispatch('broker/getAll'),
       store.dispatch('brokerageNote/getAll'),
       store.dispatch('company/getAll'),
-      store.dispatch('position/getAll'),
     ]);
     // 'End of loading prereqs in vuex store
   }

@@ -11,6 +11,8 @@
       group-by="asset"
       show-group-by
       sear
+      :loading="isLoadingPositions"
+      loading-text="Carregando..."
     >
       <template v-slot:top>
         <v-row>
@@ -37,7 +39,6 @@
             />
           </v-col>
         </v-row>
-
       </template>
       <template v-slot:item.asset="{ item }">
         <strong>{{ item.asset }}</strong>
@@ -73,6 +74,7 @@
   import {formatBrazilianDate as brazilianDateFormatter} from "@/helper/DateFormatter";
   import {format as currencyFormatter} from "@/helper/CurrencyFormatter";
   import {format as numberFormatter} from "@/helper/NumberFormatter";
+  import store from "@/store";
 
   const POSITION_TYPES = {
     POSITION_TYPE_BUY: "BUY",
@@ -81,6 +83,9 @@
 
   export default {
     name: "PositionListing",
+    created() {
+      store.dispatch('position/getAll');
+    },
     data() {
       return {
         search: '',
@@ -102,6 +107,9 @@
       },
     },
     computed: {
+      isLoadingPositions() {
+        return this.$store.getters["position/isLoading"];
+      },
       positions() {
         let positions = this.$store.getters["position/positions"];
 
