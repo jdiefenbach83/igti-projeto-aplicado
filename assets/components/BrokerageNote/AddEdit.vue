@@ -311,7 +311,7 @@ export default {
 
         this.is_editing = true;
       },
-      showFlashMessage(){
+      showFlashMessage(redirect = false, id = null){
         this.flash_message.show = true;
         this.flash_message.description = 'A note de corretagem foi salva com sucesso! Você será redirecionado';
         this.is_disabled_form = true;
@@ -320,7 +320,12 @@ export default {
         setTimeout(() => {
           self.flash_message.show = false;
           self.flash_message.description = '';
-          this.$router.push({ name: 'BrokerageNoteListing'});
+
+          if (redirect) {
+            this.$router.push({ name: 'OperationAdd', params: { brokerageNoteId: id }});
+          } else {
+            this.$router.push({ name: 'BrokerageNoteListing'});
+          }
         }, 2000);
       },
       async saveBrokageNote() {
@@ -339,18 +344,18 @@ export default {
         }
 
         let result = null;
+        let redirect = false;
+        let newBrokerageNoteId = null;
 
         if (this.isNewBrokerageNote()) {
           result = await this.$store.dispatch("brokerageNote/add", payload);
+          redirect = true;
+          newBrokerageNoteId = result.id;
         } else {
           result = await this.$store.dispatch("brokerageNote/edit", payload);
         }
 
-        this.showFlashMessage();
-
-        if (result !== undefined) {
-          console.log(result);
-        }
+        this.showFlashMessage(redirect, newBrokerageNoteId);
       }
     },
   }

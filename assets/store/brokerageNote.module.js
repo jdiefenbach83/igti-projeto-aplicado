@@ -210,7 +210,7 @@ export default {
         const response = await BrokerageNoteService.add(message);
         commit(ADDING_BROKERAGE_NOTE_SUCCESS, response.content);
 
-        return response.data;
+        return response.content;
       } catch (error) {
         commit(ADDING_BROKERAGE_NOTE_ERROR, error);
 
