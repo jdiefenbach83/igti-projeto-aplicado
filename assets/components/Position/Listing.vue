@@ -72,6 +72,7 @@
 <script>
   import {formatBrazilianDate as brazilianDateFormatter} from "@/helper/DateFormatter";
   import {format as currencyFormatter} from "@/helper/CurrencyFormatter";
+  import {format as numberFormatter} from "@/helper/NumberFormatter";
 
   const POSITION_TYPES = {
     POSITION_TYPE_BUY: "BUY",
@@ -117,6 +118,7 @@
             original_type: position.type,
             type: position.type === POSITION_TYPES.POSITION_TYPE_BUY ? 'Compra' : 'Venda',
             date: brazilianDateFormatter(position.date),
+            accumulated_quantity: numberFormatter(position.accumulated_quantity),
             accumulated_total: currencyFormatter(position.accumulated_total),
             accumulated_costs: currencyFormatter(position.accumulated_costs),
             average_price: currencyFormatter(position.average_price),
