@@ -123,15 +123,15 @@ class PositionService
                 } else {
                     $signal = ($position->getType() === Position::TYPE_BUY) ? 1 : -1;
 
-                    $accumulatedQuantity = bcadd($position->getQuantity(), ($lastPositionAccumulatedQuantity * $signal), 2);
-                    $accumulatedTotal = bcadd($position->getTotalOperation(), ($lastPositionAccumulatedTotal * $signal), 2);
-                    $accumulatedCosts = bcadd($position->getTotalCosts(), ($lastPositionAccumulatedCosts * $signal), 2);
+                    $accumulatedQuantity = bcadd($position->getQuantity(), ($lastPositionAccumulatedQuantity * $signal), 4);
+                    $accumulatedTotal = bcadd($position->getTotalOperation(), ($lastPositionAccumulatedTotal * $signal), 4);
+                    $accumulatedCosts = bcadd($position->getTotalCosts(), ($lastPositionAccumulatedCosts * $signal), 4);
                 }
 
                 if ($accumulatedQuantity > 0) {
-                    $averagePrice = bcdiv($accumulatedTotal, $accumulatedQuantity, 2);
-                    $totalToIr = bcadd($accumulatedTotal, $accumulatedCosts, 2);
-                    $averagePriceToIr = bcdiv($totalToIr, $accumulatedQuantity, 2);
+                    $averagePrice = bcdiv($accumulatedTotal, $accumulatedQuantity, 4);
+                    $totalToIr = bcadd($accumulatedTotal, $accumulatedCosts, 4);
+                    $averagePriceToIr = bcdiv($totalToIr, $accumulatedQuantity, 4);
                 } else {
                     $averagePrice = 0;
                     $averagePriceToIr = 0;
