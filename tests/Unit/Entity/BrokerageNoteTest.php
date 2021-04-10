@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit;
+namespace App\Tests\Unit\Entity;
 
 use App\Entity\Asset;
 use App\Entity\Broker;
@@ -368,15 +368,15 @@ class BrokerageNoteTest extends TestCase
         $totalOfCosts = .0;
 
         foreach ($brokerageNote->getOperations() as $operation) {
-            $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $operation->getOperationalFee(), 2);
-            $totalProratedRegistrationFee = bcadd($totalProratedRegistrationFee, $operation->getRegistrationFee(), 2);
-            $totalProratedEmolumentFee = bcadd($totalProratedEmolumentFee, $operation->getEmolumentFee(), 2);
-            $totalOfFees = bcadd($totalProratedOperationalFee, $totalProratedRegistrationFee,2);
-            $totalOfFees = bcadd($totalOfFees, $totalProratedEmolumentFee,2);
-            $totalProratedBrokerage = bcadd($totalProratedBrokerage, $operation->getBrokerage(), 2);
-            $totalProratedIssPisCofins = bcadd($totalProratedIssPisCofins, $operation->getIssPisCofins(), 2);
-            $totalOfCosts = bcadd($totalOfFees, $totalProratedBrokerage, 2);
-            $totalOfCosts = bcadd($totalOfCosts, $totalProratedIssPisCofins, 2);
+            $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $operation->getOperationalFee(), 4);
+            $totalProratedRegistrationFee = bcadd($totalProratedRegistrationFee, $operation->getRegistrationFee(), 4);
+            $totalProratedEmolumentFee = bcadd($totalProratedEmolumentFee, $operation->getEmolumentFee(), 4);
+            $totalOfFees = bcadd($totalProratedOperationalFee, $totalProratedRegistrationFee,4);
+            $totalOfFees = bcadd($totalOfFees, $totalProratedEmolumentFee,4);
+            $totalProratedBrokerage = bcadd($totalProratedBrokerage, $operation->getBrokerage(), 4);
+            $totalProratedIssPisCofins = bcadd($totalProratedIssPisCofins, $operation->getIssPisCofins(), 4);
+            $totalOfCosts = bcadd($totalOfFees, $totalProratedBrokerage, 4);
+            $totalOfCosts = bcadd($totalOfCosts, $totalProratedIssPisCofins, 4);
         }
 
         self::assertTrue($brokerageNote->hasOperationsCompleted());
