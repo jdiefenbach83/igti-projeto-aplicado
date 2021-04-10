@@ -9,8 +9,8 @@ class Asset implements EntityInterface, JsonSerializable
 {
     use Timestampable;
 
-    const TYPE_STOCK = 'STOCK';
-    const TYPE_FUTURE_CONTRACT = 'FUTURE_CONTRACT';
+    public const TYPE_STOCK = 'STOCK';
+    public const TYPE_FUTURE_CONTRACT = 'FUTURE_CONTRACT';
 
     private ?int $id;
     private string $code;
@@ -57,7 +57,7 @@ class Asset implements EntityInterface, JsonSerializable
      */
     public function setType(string $type): self
     {
-        if (!in_array($type, array(self::TYPE_STOCK, self::TYPE_FUTURE_CONTRACT))) {
+        if (!in_array($type, self::getTypes(), true)) {
             throw new \InvalidArgumentException("Invalid type");
         }
 

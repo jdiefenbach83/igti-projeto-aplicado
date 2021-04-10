@@ -97,7 +97,7 @@ class Operation implements EntityInterface, JsonSerializable
      */
     public function setType(string $type): Operation
     {
-        if (!in_array($type, array(self::TYPE_BUY, self::TYPE_SELL))) {
+        if (!in_array($type, self::getTypes(), true)) {
             throw new InvalidArgumentException("Invalid type");
         }
 
