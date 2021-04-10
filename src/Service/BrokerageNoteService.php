@@ -35,23 +35,23 @@ class BrokerageNoteService implements ServiceInterface
      */
     private iterable $validationErrors;
     /**
-     * @var PositionService
+     * @var CalculationService
      */
-    private PositionService $positionService;
+    private CalculationService $calculationService;
 
     public function __construct(
         BrokerageNoteRepositoryInterface $brokerageNoteRepository,
         BrokerRepositoryInterface $brokerRepository,
         AssetRepositoryInterface $assetRepository,
         ValidatorInterface $validator,
-        PositionService $positionService
+        CalculationService $calculationService
     )
     {
         $this->brokerageNoteRepository = $brokerageNoteRepository;
         $this->brokerRepository = $brokerRepository;
         $this->assetRepository = $assetRepository;
         $this->validator = $validator;
-        $this->positionService = $positionService;
+        $this->calculationService = $calculationService;
     }
 
     public function getAll(): array {
@@ -104,7 +104,7 @@ class BrokerageNoteService implements ServiceInterface
         $existing_entity->setNoteIrrfTax($brokerage_note_entity->getNoteIrrfTax());
 
         $this->brokerageNoteRepository->update($existing_entity);
-        $this->positionService->processPosition();
+        $this->calculationService->process();
 
         return $existing_entity;
     }
@@ -118,7 +118,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->remove($existing_entity);
-        $this->positionService->processPosition();
+        $this->calculationService->process();
     }
 
     /**
@@ -155,7 +155,7 @@ class BrokerageNoteService implements ServiceInterface
         );
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
-        $this->positionService->processPosition();
+        $this->calculationService->process();
 
         return $newOperation;
     }
@@ -192,7 +192,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
-        $this->positionService->processPosition();
+        $this->calculationService->process();
 
         return $updatedOperation;
     }
@@ -217,7 +217,7 @@ class BrokerageNoteService implements ServiceInterface
         }
 
         $this->brokerageNoteRepository->update($existingBrokerageNote);
-        $this->positionService->processPosition();
+        $this->calculationService->process();
     }
 
     private function isDTOValid(DTOInterface $dto): bool

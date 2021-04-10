@@ -38,7 +38,7 @@ class PositionService
         return $this->positionRepository->findAll();
     }
 
-    public function processPosition(): void
+    public function process(): void
     {
         $this->removePositionsByOperation();
         $this->createPositions();
