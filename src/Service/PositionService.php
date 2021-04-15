@@ -80,6 +80,7 @@ class PositionService
                 ->setOperation($operation)
                 ->setSequence(0)
                 ->setType($operation->getType())
+                ->setNegotiationType(Position::NEGOTIATION_TYPE_NORMAL)
                 ->setDate($brokerageNote->getDate())
                 ->setQuantity($operation->getQuantity())
                 ->setUnitPrice($unitPrice)

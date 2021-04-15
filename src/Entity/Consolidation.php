@@ -132,6 +132,10 @@ class Consolidation implements EntityInterface, JsonSerializable
      */
     public function setNegotiationType(string $negotiationType): Consolidation
     {
+        if (!in_array($negotiationType, self::getNegotiationTypes(), true)){
+            throw new \InvalidArgumentException("Invalid negotiation type");
+        }
+
         $this->negotiationType = $negotiationType;
 
         return $this;

@@ -13,6 +13,7 @@
         </many-to-one>
         <field name="sequence" type="integer" nullable="false"/>
         <field name="type" column-definition="ENUM('BUY', 'SELL')" nullable="false"/>
+        <field name="negotiationType" column="negotiation_type" column-definition="ENUM('NORMAL', 'DAYTRADE')" nullable="true"/>
         <field name="date" type="date_immutable" nullable="false"/>
         <field name="quantity" type="integer" nullable="false"/>
         <field name="unitPrice" column="unit_price" type="decimal" precision="14" scale="4" nullable="false"/>
@@ -23,9 +24,10 @@
         <field name="accumulatedCosts" column="accumulated_costs" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="averagePrice" column="average_price" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="averagePriceToIr" column="average_price_to_ir" type="decimal" precision="14" scale="4" nullable="false"/>
-        <one-to-one field="operation" target-entity="App\Entity\Operation">
+        <field name="quantityBalance" column="quantity_balance" type="integer" nullable="true"/>
+        <many-to-one field="operation" target-entity="App\Entity\Operation">
             <join-column name="operation_id" referenced-column-name="id" nullable="true" />
-        </one-to-one>
+        </many-to-one>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>
         </field>
