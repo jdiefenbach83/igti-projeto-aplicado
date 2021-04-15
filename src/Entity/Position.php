@@ -293,6 +293,7 @@ class Position implements EntityInterface, JsonSerializable
     public function setAveragePriceToIr(float $averagePriceToIr): Position
     {
         $this->averagePriceToIr = $averagePriceToIr;
+
         return $this;
     }
 

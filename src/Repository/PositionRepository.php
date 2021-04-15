@@ -26,7 +26,12 @@ class PositionRepository implements PositionRepositoryInterface
 
     public function findAll(): array
     {
-        return $this->objectRepository->findAll();
+        $order = [
+            'asset' => 'ASC',
+            'sequence' => 'ASC'
+        ];
+
+        return $this->objectRepository->findBy([], $order);
     }
 
     public function findById(int $id)

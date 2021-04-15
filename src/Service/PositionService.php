@@ -106,6 +106,7 @@ class PositionService
             $lastPositionAccumulatedQuantity = 0;
             $lastPositionAccumulatedTotal = 0;
             $lastPositionAccumulatedCosts = 0;
+            $lastAveragePriceToIr = 0;
 
             /**
              * @var int $current
@@ -116,32 +117,39 @@ class PositionService
                 $sequence = $current + 1;
                 $position->setSequence($sequence);
 
+                $averagePrice = bcadd($position->getTotalOperation(), $position->getTotalCosts(), 6);
+                $averagePrice = bcdiv($averagePrice, $position->getQuantity(), 6);
+
                 if ($sequence === 1) {
                     $accumulatedQuantity = $position->getQuantity();
                     $accumulatedTotal = $position->getTotalOperation();
                     $accumulatedCosts = $position->getTotalCosts();
+
+                    $averagePriceToIr = $averagePrice;
+
                 } else {
                     $signal = ($position->getType() === Position::TYPE_BUY) ? 1 : -1;
 
-                    $accumulatedQuantity = bcadd($position->getQuantity(), ($lastPositionAccumulatedQuantity * $signal), 4);
-                    $accumulatedTotal = bcadd($position->getTotalOperation(), ($lastPositionAccumulatedTotal * $signal), 4);
-                    $accumulatedCosts = bcadd($position->getTotalCosts(), ($lastPositionAccumulatedCosts * $signal), 4);
-                }
+                    $accumulatedQuantity = bcadd(($position->getQuantity() * $signal), $lastPositionAccumulatedQuantity, 6);
+                    $accumulatedTotal = bcadd(($position->getTotalOperation() * $signal), $lastPositionAccumulatedTotal, 6);
+                    $accumulatedCosts = bcadd(($position->getTotalCosts() * $signal), $lastPositionAccumulatedCosts, 6);
 
-                if ($accumulatedQuantity > 0) {
-                    $averagePrice = bcdiv($accumulatedTotal, $accumulatedQuantity, 4);
-                    $totalToIr = bcadd($accumulatedTotal, $accumulatedCosts, 4);
-                    $averagePriceToIr = bcdiv($totalToIr, $accumulatedQuantity, 4);
-                } else {
-                    $averagePrice = 0;
-                    $averagePriceToIr = 0;
+                    if ($position->getType() === Position::TYPE_BUY) {
+                        $averagePriceToIr = bcmul($lastPositionAccumulatedQuantity, $lastAveragePriceToIr, 6);
+                        $totalLine = bcmul($averagePrice, $position->getQuantity(), 6);
+                        $averagePriceToIr = bcadd($averagePriceToIr, $totalLine, 6);
+                        $averagePriceToIr = bcdiv($averagePriceToIr, $accumulatedQuantity, 6);
+
+                    } else {
+                        $averagePriceToIr = $lastAveragePriceToIr;
+                    }
                 }
 
                 $position->setAccumulatedQuantity($accumulatedQuantity);
-                $position->setAccumulatedTotal($accumulatedTotal);
-                $position->setAccumulatedCosts($accumulatedCosts);
-                $position->setAveragePrice($averagePrice);
-                $position->setAveragePriceToIr($averagePriceToIr);
+                $position->setAccumulatedTotal($this->adjustDecimalValues($accumulatedTotal));
+                $position->setAccumulatedCosts($this->adjustDecimalValues($accumulatedCosts));
+                $position->setAveragePrice($this->adjustDecimalValues($averagePrice));
+                $position->setAveragePriceToIr($this->adjustDecimalValues($averagePriceToIr));
 
                 if ($sequence === count($positions)) {
                     $position->setIsLast(true);
@@ -152,7 +160,13 @@ class PositionService
                 $lastPositionAccumulatedQuantity = $accumulatedQuantity;
                 $lastPositionAccumulatedTotal = $accumulatedTotal;
                 $lastPositionAccumulatedCosts = $accumulatedCosts;
+                $lastAveragePriceToIr = $averagePriceToIr;
             }
         }
+    }
+
+    private function adjustDecimalValues(float $value): float
+    {
+        return (float) number_format($value, 4, '.', '');
     }
 }
