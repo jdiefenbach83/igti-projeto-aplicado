@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Entity;
+namespace App\Tests\Unit\Entity\Entity;
 
 use App\Entity\Asset;
 use App\Entity\Broker;
@@ -276,46 +276,6 @@ class BrokerageNoteTest extends TestCase
 
         self::assertEquals(-55, $totalBeforeRemove);
         self::assertEquals(-40, $totalAfterRemove);
-    }
-
-    public function testBrokerageNote_ShouldThrowExceptionWhenAllOperationsIsGreaterThenTotal(): void
-    {
-        $this->expectExceptionMessage("The total of operations is greater than total of moviments");
-
-        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
-        $number = $this->faker->numberBetween(1, 100_000);
-
-        $cnpj = $this->faker->text(18);
-        $name = $this->faker->text(255);
-
-        $company = new Company();
-        $company
-            ->setCnpj($cnpj)
-            ->setName($name);
-
-        $asset = (new Asset())
-            ->setCode('ABCD1')
-            ->setType(Asset::TYPE_STOCK)
-            ->setCompany($company);
-
-        $brokerageNote = new BrokerageNote();
-        $brokerageNote
-            ->setBroker($this->broker)
-            ->setDate($date)
-            ->setNumber($number)
-            ->setTotalMoviments(-10)
-            ->setOperationalFee(3)
-            ->setRegistrationFee(4)
-            ->setEmolumentFee(1.5)
-            ->setBrokerage(2.5)
-            ->setIssPisCofins(1.35);
-
-        $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 2, 1.50);
-        $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 2.0);
-        $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 5.0);
-        $brokerageNote->addOperation(Operation::TYPE_BUY, $asset, 1, 5.0);
-
-        $brokerageNote->validate();
     }
 
     private function buildBrokerageNoteToProvateValues(): BrokerageNote

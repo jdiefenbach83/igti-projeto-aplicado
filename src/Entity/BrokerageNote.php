@@ -461,16 +461,6 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $this->operations->removeElement($operation);
     }
 
-    public function validate(): void
-    {
-        $total_moviments = abs($this->total_moviments);
-        $total_operations = abs($this->total_operations);
-
-        if ($total_operations > $total_moviments) {
-            throw new ValidatorException('The total of operations is greater than total of moviments');
-        }
-    }
-
     public function hasOperationsCompleted(): bool
     {
         $total_moviments = $this->total_moviments;
