@@ -27,6 +27,7 @@ class Position implements EntityInterface, JsonSerializable
     private int $accumulatedQuantity;
     private float $totalOperation;
     private float $totalCosts;
+    private float $positionPrice;
     private float $accumulatedTotal;
     private float $accumulatedCosts;
     private float $averagePrice;
@@ -261,6 +262,25 @@ class Position implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
+    public function getPositionPrice(): float
+    {
+        return $this->positionPrice;
+    }
+
+    /**
+     * @param float $positionPrice
+     * @return Position
+     */
+    public function setPositionPrice(float $positionPrice): Position
+    {
+        $this->positionPrice = $positionPrice;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
     public function getAccumulatedTotal(): float
     {
         return $this->accumulatedTotal;
@@ -403,6 +423,7 @@ class Position implements EntityInterface, JsonSerializable
             'unit_price' => $this->unitPrice,
             'total_operation' => $this->totalOperation,
             'total_costs' => $this->totalCosts,
+            'position_price' => $this->positionPrice,
             'accumulated_quantity' => $this->accumulatedQuantity,
             'accumulated_total' => $this->accumulatedTotal,
             'accumulated_costs' => $this->accumulatedCosts,

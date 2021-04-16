@@ -19,6 +19,7 @@
         <field name="unitPrice" column="unit_price" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="totalOperation" column="total_operation" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="totalCosts" column="total_costs" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="positionPrice" column="position_price" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="accumulatedQuantity" column="accumulated_quantity" type="integer" nullable="false"/>
         <field name="accumulatedTotal" column="accumulated_total" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="accumulatedCosts" column="accumulated_costs" type="decimal" precision="14" scale="4" nullable="false"/>

@@ -78,6 +78,12 @@ final class PositionServiceTest extends KernelTestCase
             ],
             'expected' => [
                 [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 100,
+                    'unitPrice' => 9.0,
+                    'totalOperation' => 900.0,
+                    'totalCosts' => 21.5,
+                    'positionPrice' => 9.215,
                     'accumulatedQuantity' => 100,
                     'accumulatedTotal' => 900,
                     'accumulatedCosts' => 21.5,
@@ -85,17 +91,29 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 9.215,
                 ],
                 [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 100,
+                    'unitPrice' => 12.0,
+                    'totalOperation' => 1200.0,
+                    'totalCosts' => 21.7,
+                    'positionPrice' => 12.217,
                     'accumulatedQuantity' => 200,
                     'accumulatedTotal' => 2100,
                     'accumulatedCosts' => 43.2,
-                    'averagePrice' => 12.217,
+                    'averagePrice' => 10.716,
                     'averagePriceToIr' => 10.716,
                 ],
                 [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 200,
+                    'unitPrice' => 15.0,
+                    'totalOperation' => 3000.0,
+                    'totalCosts' => 23.6,
+                    'positionPrice' => 15.118,
                     'accumulatedQuantity' => 400,
                     'accumulatedTotal' => 5100,
                     'accumulatedCosts' => 66.8,
-                    'averagePrice' => 15.118,
+                    'averagePrice' => 12.917,
                     'averagePriceToIr' => 12.917,
                 ],
             ],
@@ -150,6 +168,12 @@ final class PositionServiceTest extends KernelTestCase
             ],
             'expected' => [
                 [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 100,
+                    'unitPrice' => 9.0,
+                    'totalOperation' => 900.0,
+                    'totalCosts' => 21.5,
+                    'positionPrice' => 9.215,
                     'accumulatedQuantity' => 100,
                     'accumulatedTotal' => 900,
                     'accumulatedCosts' => 21.5,
@@ -157,24 +181,42 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 9.215,
                 ],
                 [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 100,
+                    'unitPrice' => 12.0,
+                    'totalOperation' => 1200.0,
+                    'totalCosts' => 21.7,
+                    'positionPrice' => 12.217,
                     'accumulatedQuantity' => 200,
                     'accumulatedTotal' => 2100,
                     'accumulatedCosts' => 43.2,
-                    'averagePrice' => 12.217,
+                    'averagePrice' => 10.716,
                     'averagePriceToIr' => 10.716,
                 ],
                 [
+                    'type' => Operation::TYPE_SELL,
+                    'quantity' => 50,
+                    'unitPrice' => 11.5,
+                    'totalOperation' => 575.0,
+                    'totalCosts' => 20.86,
+                    'positionPrice' => 11.0828,
                     'accumulatedQuantity' => 150,
-                    'accumulatedTotal' => 1525,
+                    'accumulatedTotal' => 1525.0,
                     'accumulatedCosts' => 22.34,
-                    'averagePrice' => 11.9172,
+                    'averagePrice' => 10.7160,
                     'averagePriceToIr' => 10.716,
                 ],
                 [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 200,
+                    'unitPrice' => 15.0,
+                    'totalOperation' => 3000.0,
+                    'totalCosts' => 23.6,
+                    'positionPrice' => 15.118,
                     'accumulatedQuantity' => 350,
-                    'accumulatedTotal' => 4525,
+                    'accumulatedTotal' => 4525.0,
                     'accumulatedCosts' => 45.94,
-                    'averagePrice' => 15.1180,
+                    'averagePrice' => 13.0598,
                     'averagePriceToIr' => 13.2314,
                 ],
             ],
@@ -210,6 +252,12 @@ final class PositionServiceTest extends KernelTestCase
 
         /** @var Position $position */
         foreach ($positions as $key => $position){
+            self::assertEquals($expected[$key]['type'], $position->getType());
+            self::assertEquals($expected[$key]['quantity'], $position->getQuantity());
+            self::assertEquals($expected[$key]['unitPrice'], $position->getUnitPrice());
+            self::assertEquals($expected[$key]['totalOperation'], $position->getTotalOperation());
+            self::assertEquals($expected[$key]['totalCosts'], $position->getTotalCosts());
+            self::assertEquals($expected[$key]['positionPrice'], $position->getPositionPrice());
             self::assertEquals($expected[$key]['accumulatedQuantity'], $position->getAccumulatedQuantity());
             self::assertEquals($expected[$key]['accumulatedTotal'], $position->getAccumulatedTotal());
             self::assertEquals($expected[$key]['accumulatedCosts'], $position->getAccumulatedCosts());
