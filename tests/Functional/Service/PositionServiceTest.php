@@ -219,10 +219,23 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePrice' => 13.0598,
                     'averagePriceToIr' => 13.2314,
                 ],
+                [
+                    'type' => Operation::TYPE_SELL,
+                    'quantity' => 50,
+                    'unitPrice' => 11.5,
+                    'totalOperation' => 575.0,
+                    'totalCosts' => 20.86,
+                    'positionPrice' => 11.0828,
+                    'accumulatedQuantity' => 150,
+                    'accumulatedTotal' => 1525.0,
+                    'accumulatedCosts' => 22.34,
+                    'averagePrice' => 10.7160,
+                    'averagePriceToIr' => 10.716,
+                ],
             ],
         ];
 
-        yield 'Daytrade' => [
+        yield 'Daytrade with balance' => [
             'brokerageNotes' => [
                 [
                     'totalMoviments' => 100.0,
@@ -267,6 +280,140 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 0,
                     'averagePrice' => 20.17,
                     'averagePriceToIr' => 20.17,
+                ],
+            ],
+        ];
+
+        yield 'Daytrade zero balance - first buy then sell' => [
+            'brokerageNotes' => [
+                [
+                    'totalMoviments' => -189.9,
+                    'operationalFee' => 5.56,
+                    'operations' => [
+                        [
+                            'type' => Operation::TYPE_BUY,
+                            'quantity' => 3,
+                            'price' => 94.30,
+                        ],
+                        [
+                            'type' => Operation::TYPE_BUY,
+                            'quantity' => 1,
+                            'price' => 94.30,
+                        ],
+                        [
+                            'type' => Operation::TYPE_BUY,
+                            'quantity' => 2,
+                            'price' => 94.39,
+                        ],
+                        [
+                            'type' => Operation::TYPE_SELL,
+                            'quantity' => 4,
+                            'price' => 94.02,
+                        ],
+                    ]
+                ],
+            ],
+            'expected' => [
+                [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 3,
+                    'unitPrice' => 94.3,
+                    'totalOperation' => 282.9,
+                    'totalCosts' => 1.668,
+                    'positionPrice' => 94.856,
+                    'accumulatedQuantity' => 3,
+                    'accumulatedTotal' => 282.9,
+                    'accumulatedCosts' => 1.668,
+                    'averagePrice' => 94.856,
+                    'averagePriceToIr' => 94.856,
+                ],
+                [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 1,
+                    'unitPrice' => 94.3,
+                    'totalOperation' => 94.3,
+                    'totalCosts' => 0.556,
+                    'positionPrice' => 94.856,
+                    'accumulatedQuantity' => 4,
+                    'accumulatedTotal' => 377.2,
+                    'accumulatedCosts' => 2.224,
+                    'averagePrice' => 94.856,
+                    'averagePriceToIr' => 94.856,
+                ],
+                [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 2,
+                    'unitPrice' => 94.39,
+                    'totalOperation' => 188.78,
+                    'totalCosts' => 1.112,
+                    'positionPrice' => 94.946,
+                    'accumulatedQuantity' => 6,
+                    'accumulatedTotal' => 565.98,
+                    'accumulatedCosts' => 3.336,
+                    'averagePrice' => 94.886,
+                    'averagePriceToIr' => 94.886,
+                ],
+                [
+                    'type' => Operation::TYPE_SELL,
+                    'quantity' => 4,
+                    'unitPrice' => 94.02,
+                    'totalOperation' => 376.08,
+                    'totalCosts' => 2.224,
+                    'positionPrice' => 93.464,
+                    'accumulatedQuantity' => 2,
+                    'accumulatedTotal' => 189.9,
+                    'accumulatedCosts' => 1.112,
+                    'averagePrice' => 94.886,
+                    'averagePriceToIr' => 94.886,
+                ],
+            ],
+        ];
+
+        yield 'Daytrade zero - first sell then buy' => [
+            'brokerageNotes' => [
+                [
+                    'totalMoviments' => -100.0,
+                    'operationalFee' => 10.84,
+                    'operations' => [
+                        [
+                            'type' => Operation::TYPE_SELL,
+                            'quantity' => 10,
+                            'price' => 10.0,
+                        ],
+                        [
+                            'type' => Operation::TYPE_BUY,
+                            'quantity' => 10,
+                            'price' => 20.0,
+                        ],
+                    ]
+                ],
+            ],
+            'expected' => [
+                [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 10,
+                    'unitPrice' => 20.0,
+                    'totalOperation' => 200.0,
+                    'totalCosts' => 5.42,
+                    'positionPrice' => 20.542,
+                    'accumulatedQuantity' => 10,
+                    'accumulatedTotal' => 200,
+                    'accumulatedCosts' => 5.42,
+                    'averagePrice' => 20.542,
+                    'averagePriceToIr' => 20.542,
+                ],
+                [
+                    'type' => Operation::TYPE_SELL,
+                    'quantity' => 10,
+                    'unitPrice' => 10.0,
+                    'totalOperation' => 100.0,
+                    'totalCosts' => 5.42,
+                    'positionPrice' => 9.458,
+                    'accumulatedQuantity' => 0,
+                    'accumulatedTotal' => 0,
+                    'accumulatedCosts' => 0,
+                    'averagePrice' => 20.542,
+                    'averagePriceToIr' => 20.542,
                 ],
             ],
         ];

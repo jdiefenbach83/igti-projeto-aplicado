@@ -82,7 +82,8 @@ class PositionRepository implements PositionRepositoryInterface
             ->where(
                 $queryBuilder->expr()->eq('a.id', $assetId),
             )
-            ->orderBy('p.date', 'ASC')
+            ->addOrderBy('p.date', 'ASC')
+            ->addOrderBy('p.type', 'ASC')
             ->getQuery();
 
         return $query->getResult();
