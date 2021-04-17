@@ -13,4 +13,6 @@ interface PositionRepositoryInterface
     public function remove(Position $position): void;
     public function findAllAssets(): array;
     public function findByAsset(int $assetId);
+    public function findDayTradeNegotiations(): array;
+    public function findByAssetAndDateAndType(int $assetId, \DateTimeImmutable $date, string $type): array;
 }

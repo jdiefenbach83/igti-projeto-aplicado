@@ -42,6 +42,7 @@ class PositionService
     {
         $this->removePositionsByOperation();
         $this->createPositions();
+        $this->processNegotiations();
         $this->calculatePositions();
     }
 
@@ -91,10 +92,59 @@ class PositionService
                 ->setAccumulatedTotal(.0)
                 ->setAccumulatedCosts(.0)
                 ->setAveragePrice(.0)
-                ->setAveragePriceToIr(.0);
+                ->setAveragePriceToIr(.0)
+                ->setQuantityBalance($operation->getQuantity());
 
             $this->positionRepository->add($position);
         }
+    }
+
+    private function processNegotiations(): void
+    {
+        $daytrades = $this->positionRepository->findDayTradeNegotiations();
+
+        foreach($daytrades as $daytrade){
+            $quantityBuy = $daytrade['quantity_buy'];
+            $quantitySell = $daytrade['quantity_sell'];
+
+            $this->processDaytradePositions($quantityBuy, $quantitySell, $daytrade['asset_id'], $daytrade['date'], Position::TYPE_BUY);
+            $this->processDaytradePositions($quantityBuy, $quantitySell, $daytrade['asset_id'], $daytrade['date'], Position::TYPE_SELL);
+        }
+    }
+
+    private function processDaytradePositions(int $quantityBuy, int $quantitySell, int $assetId, \DateTimeImmutable $date, string $type): void
+    {
+        $balance = (int) bcsub($quantityBuy, $quantitySell);
+
+        $daytradeQuantity = ($quantityBuy > $quantitySell) ? $quantityBuy : $quantitySell;
+        $daytradeQuantity = abs(bcsub($daytradeQuantity, $balance));
+
+        $positions = $this->positionRepository->findByAssetAndDateAndType($assetId, $date, $type);
+
+        do {
+            /** @var Position $position */
+            foreach ($positions as $position) {
+                $quantity = $position->getQuantity();
+
+                if ($position->getNegotiationType() === Position::NEGOTIATION_TYPE_DAYTRADE) {
+                    $daytradeQuantity -= $quantity;
+
+                    continue;
+                }
+
+                $balance = 0;
+
+                if ($quantity > $daytradeQuantity) {
+                    $balance = $quantity - $daytradeQuantity;
+                }
+
+                $position->setNegotiationType(Position::NEGOTIATION_TYPE_DAYTRADE);
+                $position->setQuantityBalance($balance);
+                $this->positionRepository->update($position);
+
+                $daytradeQuantity -= $quantity;
+            }
+        } while ($daytradeQuantity > 0);
     }
 
     private function calculatePositions(): void

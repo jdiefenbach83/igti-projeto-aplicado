@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Position;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ObjectRepository;
 
 class PositionRepository implements PositionRepositoryInterface
@@ -84,6 +87,52 @@ class PositionRepository implements PositionRepositoryInterface
             )
             ->addOrderBy('p.date', 'ASC')
             ->addOrderBy('p.type', 'ASC')
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+
+    public function findDayTradeNegotiations(): array
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $query = $queryBuilder
+            ->select([
+                'p.date',
+                'a.id as asset_id',
+                'SUM(IFELSE(p.type=\'BUY\', p.quantity, 0)) as quantity_buy',
+                'SUM(IFELSE(p.type=\'SELL\', p.quantity, 0)) as quantity_sell',
+            ])
+            ->from(Position::class, 'p')
+            ->innerJoin('p.asset', 'a')
+            ->groupBy('p.date, a.id')
+            ->having('COUNT(DISTINCT p.type) = 2')
+            ->orderBy('p.date', 'ASC')
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findByAssetAndDateAndType(int $assetId, \DateTimeImmutable $date, string $type): array
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $query = $queryBuilder
+            ->select(array('p'))
+            ->from(Position::class, 'p')
+            ->innerJoin('p.asset', 'a')
+            ->where(
+                $queryBuilder->expr()->eq('a.id', ':assetId'),
+                $queryBuilder->expr()->eq('p.date', ':date'),
+                $queryBuilder->expr()->eq('p.type', ':type'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('assetId', $assetId),
+                new Parameter('date', $date),
+                new Parameter('type', $type),
+            ]))
+            ->orderBy('p.date', 'ASC')
             ->getQuery();
 
         return $query->getResult();
