@@ -40,10 +40,15 @@ class PositionService
 
     public function process(): void
     {
+        $this->positionRepository->startWorkUnit();
         $this->removePositionsByOperation();
         $this->createPositions();
+        $this->positionRepository->endWorkUnit();
+
+        $this->positionRepository->startWorkUnit();
         $this->processNegotiations();
         $this->calculatePositions();
+        $this->positionRepository->endWorkUnit();
     }
 
     private function removePositionsByOperation(): void

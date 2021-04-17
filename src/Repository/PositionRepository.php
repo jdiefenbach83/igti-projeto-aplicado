@@ -21,10 +21,13 @@ class PositionRepository implements PositionRepositoryInterface
      */
     private ObjectRepository $objectRepository;
 
+    private bool $isTransaction;
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->objectRepository = $this->entityManager->getRepository(Position::class);
+        $this->isTransaction = false;
     }
 
     public function findAll(): array
@@ -45,20 +48,41 @@ class PositionRepository implements PositionRepositoryInterface
     public function add(Position $position): void
     {
         $this->entityManager->persist($position);
-        $this->entityManager->flush();
+        $this->processWorkUnit();
     }
 
     public function update(Position $position): void
     {
         $this->entityManager->persist($position);
-        $this->entityManager->flush();
+        $this->processWorkUnit();
     }
 
     public function remove(Position $position): void
     {
         $this->entityManager->remove($position);
+        $this->processWorkUnit();
+    }
+
+    public function startWorkUnit(): void
+    {
+        $this->isTransaction = true;
+    }
+
+    public function endWorkUnit(): void
+    {
+        $this->isTransaction = false;
+        $this->processWorkUnit();
+    }
+
+    private function processWorkUnit() : void
+    {
+        if ($this->isTransaction) {
+            return;
+        }
+
         $this->entityManager->flush();
     }
+
 
     public function findAllAssets(): array
     {
