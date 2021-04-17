@@ -47,7 +47,7 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 21.5,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 100,
                             'price' => 9,
                         ]
@@ -58,7 +58,7 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 21.7,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 100,
                             'price' => 12,
                         ]
@@ -69,7 +69,7 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 23.6,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 200,
                             'price' => 15,
                         ]
@@ -78,7 +78,8 @@ final class PositionServiceTest extends KernelTestCase
             ],
             'expected' => [
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_NORMAL,
                     'quantity' => 100,
                     'unitPrice' => 9.0,
                     'totalOperation' => 900.0,
@@ -91,7 +92,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 9.215,
                 ],
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_NORMAL,
                     'quantity' => 100,
                     'unitPrice' => 12.0,
                     'totalOperation' => 1200.0,
@@ -104,7 +106,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 10.716,
                 ],
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_NORMAL,
                     'quantity' => 200,
                     'unitPrice' => 15.0,
                     'totalOperation' => 3000.0,
@@ -126,7 +129,7 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 21.5,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 100,
                             'price' => 9,
                         ]
@@ -137,7 +140,7 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 21.7,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 100,
                             'price' => 12,
                         ]
@@ -148,7 +151,7 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 20.86,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_SELL,
+                            'type' => Position::TYPE_SELL,
                             'quantity' => 50,
                             'price' => 11.5,
                         ]
@@ -159,7 +162,7 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 23.6,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 200,
                             'price' => 15,
                         ]
@@ -168,7 +171,8 @@ final class PositionServiceTest extends KernelTestCase
             ],
             'expected' => [
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_NORMAL,
                     'quantity' => 100,
                     'unitPrice' => 9.0,
                     'totalOperation' => 900.0,
@@ -181,7 +185,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 9.215,
                 ],
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_NORMAL,
                     'quantity' => 100,
                     'unitPrice' => 12.0,
                     'totalOperation' => 1200.0,
@@ -194,7 +199,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 10.716,
                 ],
                 [
-                    'type' => Operation::TYPE_SELL,
+                    'type' => Position::TYPE_SELL,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_NORMAL,
                     'quantity' => 50,
                     'unitPrice' => 11.5,
                     'totalOperation' => 575.0,
@@ -207,7 +213,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 10.716,
                 ],
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_NORMAL,
                     'quantity' => 200,
                     'unitPrice' => 15.0,
                     'totalOperation' => 3000.0,
@@ -220,7 +227,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 13.2314,
                 ],
                 [
-                    'type' => Operation::TYPE_SELL,
+                    'type' => Position::TYPE_SELL,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_NORMAL,
                     'quantity' => 50,
                     'unitPrice' => 11.5,
                     'totalOperation' => 575.0,
@@ -242,12 +250,12 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 1.70,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 5,
                             'price' => 20.0,
                         ],
                         [
-                            'type' => Operation::TYPE_SELL,
+                            'type' => Position::TYPE_SELL,
                             'quantity' => 5,
                             'price' => 40.0,
                         ],
@@ -256,7 +264,8 @@ final class PositionServiceTest extends KernelTestCase
             ],
             'expected' => [
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
                     'quantity' => 5,
                     'unitPrice' => 20.0,
                     'totalOperation' => 100.0,
@@ -269,7 +278,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 20.17,
                 ],
                 [
-                    'type' => Operation::TYPE_SELL,
+                    'type' => Position::TYPE_SELL,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
                     'quantity' => 5,
                     'unitPrice' => 40.0,
                     'totalOperation' => 200.0,
@@ -291,22 +301,22 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 5.56,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 3,
                             'price' => 94.30,
                         ],
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 1,
                             'price' => 94.30,
                         ],
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 2,
                             'price' => 94.39,
                         ],
                         [
-                            'type' => Operation::TYPE_SELL,
+                            'type' => Position::TYPE_SELL,
                             'quantity' => 4,
                             'price' => 94.02,
                         ],
@@ -315,7 +325,8 @@ final class PositionServiceTest extends KernelTestCase
             ],
             'expected' => [
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
                     'quantity' => 3,
                     'unitPrice' => 94.3,
                     'totalOperation' => 282.9,
@@ -328,7 +339,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 94.856,
                 ],
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
                     'quantity' => 1,
                     'unitPrice' => 94.3,
                     'totalOperation' => 94.3,
@@ -341,7 +353,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 94.856,
                 ],
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
                     'quantity' => 2,
                     'unitPrice' => 94.39,
                     'totalOperation' => 188.78,
@@ -354,7 +367,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 94.886,
                 ],
                 [
-                    'type' => Operation::TYPE_SELL,
+                    'type' => Position::TYPE_SELL,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
                     'quantity' => 4,
                     'unitPrice' => 94.02,
                     'totalOperation' => 376.08,
@@ -376,12 +390,12 @@ final class PositionServiceTest extends KernelTestCase
                     'operationalFee' => 10.84,
                     'operations' => [
                         [
-                            'type' => Operation::TYPE_SELL,
+                            'type' => Position::TYPE_SELL,
                             'quantity' => 10,
                             'price' => 10.0,
                         ],
                         [
-                            'type' => Operation::TYPE_BUY,
+                            'type' => Position::TYPE_BUY,
                             'quantity' => 10,
                             'price' => 20.0,
                         ],
@@ -390,7 +404,8 @@ final class PositionServiceTest extends KernelTestCase
             ],
             'expected' => [
                 [
-                    'type' => Operation::TYPE_BUY,
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
                     'quantity' => 10,
                     'unitPrice' => 20.0,
                     'totalOperation' => 200.0,
@@ -403,7 +418,8 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePriceToIr' => 20.542,
                 ],
                 [
-                    'type' => Operation::TYPE_SELL,
+                    'type' => Position::TYPE_SELL,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
                     'quantity' => 10,
                     'unitPrice' => 10.0,
                     'totalOperation' => 100.0,
@@ -449,6 +465,7 @@ final class PositionServiceTest extends KernelTestCase
         /** @var Position $position */
         foreach ($positions as $key => $position){
             self::assertEquals($expected[$key]['type'], $position->getType());
+            self::assertEquals($expected[$key]['negotiationType'], $position->getNegotiationType());
             self::assertEquals($expected[$key]['quantity'], $position->getQuantity());
             self::assertEquals($expected[$key]['unitPrice'], $position->getUnitPrice());
             self::assertEquals($expected[$key]['totalOperation'], $position->getTotalOperation());
