@@ -51,6 +51,14 @@
           {{ item.type }}
         </v-chip>
       </template>
+      <template v-slot:item.negotiation_type="{ item }">
+        <v-chip
+            :color="getColorToNegotiationTypeColumn(item.original_negotiation_type)"
+            dark
+        >
+          {{ item.negotiation_type }}
+        </v-chip>
+      </template>
       <template v-slot:item.average_price_to_ir="{ item }">
         <strong>{{ item.average_price_to_ir }}</strong>
       </template>
@@ -81,6 +89,11 @@
     POSITION_TYPE_SELL: "SELL"
   };
 
+  const NEGOTIATION_TYPES = {
+    NEGOTIATION_TYPE_NORMAL: "NORMAL",
+    NEGOTIATION_TYPE_DAYTRADE: "DAYTRADE"
+  };
+
   export default {
     name: "PositionListing",
     created() {
@@ -105,6 +118,12 @@
 
         return 'green'
       },
+      getColorToNegotiationTypeColumn (type) {
+        if (type === NEGOTIATION_TYPES.NEGOTIATION_TYPE_DAYTRADE)
+          return 'red'
+
+        return 'green'
+      },
     },
     computed: {
       isLoadingPositions() {
@@ -124,7 +143,9 @@
             ...position,
             asset: asset?.code,
             original_type: position.type,
+            original_negotiation_type: position.negotiation_type,
             type: position.type === POSITION_TYPES.POSITION_TYPE_BUY ? 'Compra' : 'Venda',
+            negotiation_type: position.negotiation_type === NEGOTIATION_TYPES.NEGOTIATION_TYPE_NORMAL ? 'Normal' : 'Daytrade',
             date: brazilianDateFormatter(position.date),
             accumulated_quantity: numberFormatter(position.accumulated_quantity),
             accumulated_total: currencyFormatter(position.accumulated_total),
@@ -156,6 +177,13 @@
             sortable: true,
             value: 'date',
             groupable: true,
+          },
+          {
+            text: 'Negociação',
+            align: 'start',
+            sortable: true,
+            value: 'negotiation_type',
+            groupable: false,
           },
           {
             text: 'Quantidade acumulada',
