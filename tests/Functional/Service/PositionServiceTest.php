@@ -90,6 +90,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 21.5,
                     'averagePrice' => 9.215,
                     'averagePriceToIr' => 9.215,
+                    'quantityBalance' => 100,
                 ],
                 [
                     'type' => Position::TYPE_BUY,
@@ -104,6 +105,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 43.2,
                     'averagePrice' => 10.716,
                     'averagePriceToIr' => 10.716,
+                    'quantityBalance' => 100,
                 ],
                 [
                     'type' => Position::TYPE_BUY,
@@ -118,6 +120,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 66.8,
                     'averagePrice' => 12.917,
                     'averagePriceToIr' => 12.917,
+                    'quantityBalance' => 200,
                 ],
             ],
         ];
@@ -183,6 +186,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 21.5,
                     'averagePrice' => 9.215,
                     'averagePriceToIr' => 9.215,
+                    'quantityBalance' => 50,
                 ],
                 [
                     'type' => Position::TYPE_BUY,
@@ -197,6 +201,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 43.2,
                     'averagePrice' => 10.716,
                     'averagePriceToIr' => 10.716,
+                    'quantityBalance' => 100,
                 ],
                 [
                     'type' => Position::TYPE_SELL,
@@ -211,6 +216,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 22.34,
                     'averagePrice' => 10.7160,
                     'averagePriceToIr' => 10.716,
+                    'quantityBalance' => 0,
                 ],
                 [
                     'type' => Position::TYPE_BUY,
@@ -225,76 +231,12 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 45.94,
                     'averagePrice' => 13.0598,
                     'averagePriceToIr' => 13.2314,
-                ],
-                [
-                    'type' => Position::TYPE_SELL,
-                    'negotiationType' => Position::NEGOTIATION_TYPE_NORMAL,
-                    'quantity' => 50,
-                    'unitPrice' => 11.5,
-                    'totalOperation' => 575.0,
-                    'totalCosts' => 20.86,
-                    'positionPrice' => 11.0828,
-                    'accumulatedQuantity' => 150,
-                    'accumulatedTotal' => 1525.0,
-                    'accumulatedCosts' => 22.34,
-                    'averagePrice' => 10.7160,
-                    'averagePriceToIr' => 10.716,
+                    'quantityBalance' => 200,
                 ],
             ],
         ];
 
         yield 'Daytrade with balance' => [
-            'brokerageNotes' => [
-                [
-                    'totalMoviments' => 100.0,
-                    'operationalFee' => 1.70,
-                    'operations' => [
-                        [
-                            'type' => Position::TYPE_BUY,
-                            'quantity' => 5,
-                            'price' => 20.0,
-                        ],
-                        [
-                            'type' => Position::TYPE_SELL,
-                            'quantity' => 5,
-                            'price' => 40.0,
-                        ],
-                    ]
-                ],
-            ],
-            'expected' => [
-                [
-                    'type' => Position::TYPE_BUY,
-                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
-                    'quantity' => 5,
-                    'unitPrice' => 20.0,
-                    'totalOperation' => 100.0,
-                    'totalCosts' => 0.85,
-                    'positionPrice' => 20.17,
-                    'accumulatedQuantity' => 5,
-                    'accumulatedTotal' => 100,
-                    'accumulatedCosts' => 0.85,
-                    'averagePrice' => 20.17,
-                    'averagePriceToIr' => 20.17,
-                ],
-                [
-                    'type' => Position::TYPE_SELL,
-                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
-                    'quantity' => 5,
-                    'unitPrice' => 40.0,
-                    'totalOperation' => 200.0,
-                    'totalCosts' => 0.85,
-                    'positionPrice' => 39.83,
-                    'accumulatedQuantity' => 0,
-                    'accumulatedTotal' => 0,
-                    'accumulatedCosts' => 0,
-                    'averagePrice' => 20.17,
-                    'averagePriceToIr' => 20.17,
-                ],
-            ],
-        ];
-
-        yield 'Daytrade zero balance - first buy then sell' => [
             'brokerageNotes' => [
                 [
                     'totalMoviments' => -189.9,
@@ -337,6 +279,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 1.668,
                     'averagePrice' => 94.856,
                     'averagePriceToIr' => 94.856,
+                    'quantityBalance' => 0,
                 ],
                 [
                     'type' => Position::TYPE_BUY,
@@ -351,6 +294,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 2.224,
                     'averagePrice' => 94.856,
                     'averagePriceToIr' => 94.856,
+                    'quantityBalance' => 0,
                 ],
                 [
                     'type' => Position::TYPE_BUY,
@@ -365,6 +309,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 3.336,
                     'averagePrice' => 94.886,
                     'averagePriceToIr' => 94.886,
+                    'quantityBalance' => 2,
                 ],
                 [
                     'type' => Position::TYPE_SELL,
@@ -379,11 +324,65 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 1.112,
                     'averagePrice' => 94.886,
                     'averagePriceToIr' => 94.886,
+                    'quantityBalance' => 0,
                 ],
             ],
         ];
 
-        yield 'Daytrade zero - first sell then buy' => [
+        yield 'Daytrade zero balance - first buy then sell' => [
+            'brokerageNotes' => [
+                [
+                    'totalMoviments' => 100.0,
+                    'operationalFee' => 1.70,
+                    'operations' => [
+                        [
+                            'type' => Position::TYPE_BUY,
+                            'quantity' => 5,
+                            'price' => 20.0,
+                        ],
+                        [
+                            'type' => Position::TYPE_SELL,
+                            'quantity' => 5,
+                            'price' => 40.0,
+                        ],
+                    ]
+                ],
+            ],
+            'expected' => [
+                [
+                    'type' => Position::TYPE_BUY,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
+                    'quantity' => 5,
+                    'unitPrice' => 20.0,
+                    'totalOperation' => 100.0,
+                    'totalCosts' => 0.85,
+                    'positionPrice' => 20.17,
+                    'accumulatedQuantity' => 5,
+                    'accumulatedTotal' => 100,
+                    'accumulatedCosts' => 0.85,
+                    'averagePrice' => 20.17,
+                    'averagePriceToIr' => 20.17,
+                    'quantityBalance' => 0,
+                ],
+                [
+                    'type' => Position::TYPE_SELL,
+                    'negotiationType' => Position::NEGOTIATION_TYPE_DAYTRADE,
+                    'quantity' => 5,
+                    'unitPrice' => 40.0,
+                    'totalOperation' => 200.0,
+                    'totalCosts' => 0.85,
+                    'positionPrice' => 39.83,
+                    'accumulatedQuantity' => 0,
+                    'accumulatedTotal' => 0,
+                    'accumulatedCosts' => 0,
+                    'averagePrice' => 20.17,
+                    'averagePriceToIr' => 20.17,
+                    'quantityBalance' => 0,
+                ],
+            ],
+        ];
+
+        yield 'Daytrade zero balance - first sell then buy' => [
             'brokerageNotes' => [
                 [
                     'totalMoviments' => -100.0,
@@ -416,6 +415,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 5.42,
                     'averagePrice' => 20.542,
                     'averagePriceToIr' => 20.542,
+                    'quantityBalance' => 0,
                 ],
                 [
                     'type' => Position::TYPE_SELL,
@@ -430,6 +430,7 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 0,
                     'averagePrice' => 20.542,
                     'averagePriceToIr' => 20.542,
+                    'quantityBalance' => 0,
                 ],
             ],
         ];
@@ -476,6 +477,7 @@ final class PositionServiceTest extends KernelTestCase
             self::assertEquals($expected[$key]['accumulatedCosts'], $position->getAccumulatedCosts());
             self::assertEquals($expected[$key]['averagePrice'], $position->getAveragePrice());
             self::assertEquals($expected[$key]['averagePriceToIr'], $position->getAveragePriceToIr());
+            self::assertEquals($expected[$key]['quantityBalance'], $position->getQuantityBalance());
         }
     }
 

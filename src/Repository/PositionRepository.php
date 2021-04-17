@@ -114,7 +114,32 @@ class PositionRepository implements PositionRepositoryInterface
         return $query->getResult();
     }
 
-    public function findByAssetAndDateAndType(int $assetId, \DateTimeImmutable $date, string $type): array
+    public function findDayNormalNegotiations(): array
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $query = $queryBuilder
+            ->select([
+                'a.id as asset_id',
+                'SUM(IFELSE(p.type=\'BUY\', p.quantity, 0)) as quantity_buy',
+                'SUM(IFELSE(p.type=\'SELL\', p.quantity, 0)) as quantity_sell',
+            ])
+            ->from(Position::class, 'p')
+            ->innerJoin('p.asset', 'a')
+            ->where(
+                $queryBuilder->expr()->eq('p.negotiationType', ':negotiationType'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('negotiationType', Position::NEGOTIATION_TYPE_NORMAL),
+            ]))
+            ->groupBy('a.id')
+            ->having('COUNT(DISTINCT p.type) = 2')
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findByAssetAndTypeAndDate(int $assetId, string $type, \DateTimeImmutable $date = null): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -124,16 +149,24 @@ class PositionRepository implements PositionRepositoryInterface
             ->innerJoin('p.asset', 'a')
             ->where(
                 $queryBuilder->expr()->eq('a.id', ':assetId'),
-                $queryBuilder->expr()->eq('p.date', ':date'),
                 $queryBuilder->expr()->eq('p.type', ':type'),
+                $queryBuilder->expr()->gt('p.quantityBalance', '0'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('assetId', $assetId),
-                new Parameter('date', $date),
                 new Parameter('type', $type),
             ]))
-            ->orderBy('p.date', 'ASC')
-            ->getQuery();
+            ->orderBy('p.date', 'ASC');
+
+        if ($date) {
+            $query->andWhere(
+                $queryBuilder->expr()->eq('p.date', ':date'),
+            );
+
+            $query->getParameters()->add(new Parameter('date', $date));
+        }
+
+        $query = $query->getQuery();
 
         return $query->getResult();
     }
