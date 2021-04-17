@@ -138,7 +138,7 @@ class PositionRepository implements PositionRepositoryInterface
         return $query->getResult();
     }
 
-    public function findDayNormalNegotiations(): array
+    public function findNormalNegotiations(): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 

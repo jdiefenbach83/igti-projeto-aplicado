@@ -116,7 +116,7 @@ class PositionService
             $this->processDayTradePositions($quantityBuy, $quantitySell, $dayTrade['asset_id'], $dayTrade['date'], Position::TYPE_SELL);
         }
 
-        $normalTrades = $this->positionRepository->findDayNormalNegotiations();
+        $normalTrades = $this->positionRepository->findNormalNegotiations();
 
         foreach($normalTrades as $normalTrade){
             $quantityBuy = $normalTrade['quantity_buy'];

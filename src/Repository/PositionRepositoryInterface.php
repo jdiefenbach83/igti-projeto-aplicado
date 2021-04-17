@@ -16,6 +16,6 @@ interface PositionRepositoryInterface
     public function findAllAssets(): array;
     public function findByAsset(int $assetId);
     public function findDayTradeNegotiations(): array;
-    public function findDayNormalNegotiations(): array;
+    public function findNormalNegotiations(): array;
     public function findByAssetAndTypeAndDate(int $assetId, string $type, \DateTimeImmutable $date = null): array;
 }
