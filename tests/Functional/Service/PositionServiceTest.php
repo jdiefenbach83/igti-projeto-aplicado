@@ -221,6 +221,55 @@ final class PositionServiceTest extends KernelTestCase
                 ],
             ],
         ];
+
+        yield 'Daytrade' => [
+            'brokerageNotes' => [
+                [
+                    'totalMoviments' => 100.0,
+                    'operationalFee' => 1.70,
+                    'operations' => [
+                        [
+                            'type' => Operation::TYPE_BUY,
+                            'quantity' => 5,
+                            'price' => 20.0,
+                        ],
+                        [
+                            'type' => Operation::TYPE_SELL,
+                            'quantity' => 5,
+                            'price' => 40.0,
+                        ],
+                    ]
+                ],
+            ],
+            'expected' => [
+                [
+                    'type' => Operation::TYPE_BUY,
+                    'quantity' => 5,
+                    'unitPrice' => 20.0,
+                    'totalOperation' => 100.0,
+                    'totalCosts' => 0.85,
+                    'positionPrice' => 20.17,
+                    'accumulatedQuantity' => 5,
+                    'accumulatedTotal' => 100,
+                    'accumulatedCosts' => 0.85,
+                    'averagePrice' => 20.17,
+                    'averagePriceToIr' => 20.17,
+                ],
+                [
+                    'type' => Operation::TYPE_SELL,
+                    'quantity' => 5,
+                    'unitPrice' => 40.0,
+                    'totalOperation' => 200.0,
+                    'totalCosts' => 0.85,
+                    'positionPrice' => 39.83,
+                    'accumulatedQuantity' => 0,
+                    'accumulatedTotal' => 0,
+                    'accumulatedCosts' => 0,
+                    'averagePrice' => 20.17,
+                    'averagePriceToIr' => 20.17,
+                ],
+            ],
+        ];
     }
 
     /**
