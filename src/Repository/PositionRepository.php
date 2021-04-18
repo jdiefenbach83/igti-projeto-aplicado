@@ -83,7 +83,6 @@ class PositionRepository implements PositionRepositoryInterface
         $this->entityManager->flush();
     }
 
-
     public function findAllAssets(): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -116,7 +115,6 @@ class PositionRepository implements PositionRepositoryInterface
 
         return $query->getResult();
     }
-
 
     public function findDayTradeNegotiations(): array
     {
