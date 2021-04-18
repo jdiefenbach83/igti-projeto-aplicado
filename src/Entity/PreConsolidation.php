@@ -8,23 +8,27 @@ class PreConsolidation implements EntityInterface
 {
     use Timestampable;
 
-    public const TYPE_BUY = 'BUY';
-    public const TYPE_SELL = 'SELL';
+    public const NEGOTIATION_TYPE_NORMAL = 'NORMAL';
+    public const NEGOTIATION_TYPE_DAYTRADE = 'DAYTRADE';
 
     private ?int $id;
     private int $year;
     private int $month;
     private Asset $asset;
-    private string $type;
-    private int $quantity;
-    private float $totalOperation;
-    private float $totalCosts;
+    private string $negotiationType;
+    private float $result;
+    private float $negativeResultLastMonth;
+    private float $calculationBasis;
+    private float $lossToCompensate;
+    private float $withholdingTax;
+    private float $taxRate;
+    private float $taxDue;
 
-    public static function getTypes(): array
+    public static function getNegotiationTypes(): array
     {
         return [
-            self::TYPE_BUY,
-            self::TYPE_SELL,
+            self::NEGOTIATION_TYPE_NORMAL,
+            self::NEGOTIATION_TYPE_DAYTRADE,
         ];
     }
 
@@ -96,37 +100,22 @@ class PreConsolidation implements EntityInterface
     /**
      * @return string
      */
-    public function getType(): string
+    public function getNegotiationType(): string
     {
-        return $this->type;
+        return $this->negotiationType;
     }
 
     /**
-     * @param string $type
+     * @param string $negotiationType
      * @return PreConsolidation
      */
-    public function setType(string $type): PreConsolidation
+    public function setNegotiationType(string $negotiationType): PreConsolidation
     {
-        $this->type = $type;
+        if (!in_array($negotiationType, self::getNegotiationTypes(), true)){
+            throw new \InvalidArgumentException("Invalid negotiation type");
+        }
 
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getQuantity(): int
-    {
-        return $this->quantity;
-    }
-
-    /**
-     * @param int $quantity
-     * @return PreConsolidation
-     */
-    public function setQuantity(int $quantity): PreConsolidation
-    {
-        $this->quantity = $quantity;
+        $this->negotiationType = $negotiationType;
 
         return $this;
     }
@@ -134,18 +123,18 @@ class PreConsolidation implements EntityInterface
     /**
      * @return float
      */
-    public function getTotalOperation(): float
+    public function getResult(): float
     {
-        return $this->totalOperation;
+        return $this->result;
     }
 
     /**
-     * @param float $totalOperation
+     * @param float $result
      * @return PreConsolidation
      */
-    public function setTotalOperation(float $totalOperation): PreConsolidation
+    public function setResult(float $result): PreConsolidation
     {
-        $this->totalOperation = $totalOperation;
+        $this->result = $result;
 
         return $this;
     }
@@ -153,18 +142,113 @@ class PreConsolidation implements EntityInterface
     /**
      * @return float
      */
-    public function getTotalCosts(): float
+    public function getNegativeResultLastMonth(): float
     {
-        return $this->totalCosts;
+        return $this->negativeResultLastMonth;
     }
 
     /**
-     * @param float $totalCosts
+     * @param float $negativeResultLastMonth
      * @return PreConsolidation
      */
-    public function setTotalCosts(float $totalCosts): PreConsolidation
+    public function setNegativeResultLastMonth(float $negativeResultLastMonth): PreConsolidation
     {
-        $this->totalCosts = $totalCosts;
+        $this->negativeResultLastMonth = $negativeResultLastMonth;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCalculationBasis(): float
+    {
+        return $this->calculationBasis;
+    }
+
+    /**
+     * @param float $calculationBasis
+     * @return PreConsolidation
+     */
+    public function setCalculationBasis(float $calculationBasis): PreConsolidation
+    {
+        $this->calculationBasis = $calculationBasis;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getLossToCompensate(): float
+    {
+        return $this->lossToCompensate;
+    }
+
+    /**
+     * @param float $lossToCompensate
+     * @return PreConsolidation
+     */
+    public function setLossToCompensate(float $lossToCompensate): PreConsolidation
+    {
+        $this->lossToCompensate = $lossToCompensate;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getWithholdingTax(): float
+    {
+        return $this->withholdingTax;
+    }
+
+    /**
+     * @param float $withholdingTax
+     * @return PreConsolidation
+     */
+    public function setWithholdingTax(float $withholdingTax): PreConsolidation
+    {
+        $this->withholdingTax = $withholdingTax;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTaxRate(): float
+    {
+        return $this->taxRate;
+    }
+
+    /**
+     * @param float $taxRate
+     * @return PreConsolidation
+     */
+    public function setTaxRate(float $taxRate): PreConsolidation
+    {
+        $this->taxRate = $taxRate;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTaxDue(): float
+    {
+        return $this->taxDue;
+    }
+
+    /**
+     * @param float $taxDue
+     * @return PreConsolidation
+     */
+    public function setTaxDue(float $taxDue): PreConsolidation
+    {
+        $this->taxDue = $taxDue;
 
         return $this;
     }

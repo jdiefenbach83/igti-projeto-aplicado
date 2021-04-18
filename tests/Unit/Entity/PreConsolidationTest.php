@@ -37,28 +37,40 @@ class PreConsolidationTest extends TestCase
             ->setType(Asset::TYPE_STOCK)
             ->setCompany($company);
 
-        $type = $this->faker->randomElement(PreConsolidation::getTypes());
+        $negotiationType = $this->faker->randomElement(PreConsolidation::getNegotiationTypes());
 
-        $quantity = $this->faker->numberBetween(1, 1000);
-        $totalOperation = $this->faker->randomFloat(4, 1, 1_000);
-        $totalCosts = $this->faker->randomFloat(4, 1, 1_000);
+        $result = $this->faker->randomFloat(4, 1, 100_000);
+        $negativeResultLastMonth = $this->faker->randomFloat(4, 1, 100_000);
+        $calculationBasis = $this->faker->randomFloat(4, 1, 100_000);
+        $lossToCompensate = $this->faker->randomFloat(4, 1, 100_000);
+        $withholdingTax = $this->faker->randomFloat(4, 1, 100_000);
+        $taxRate = $this->faker->randomFloat(4, 1, 100_000);
+        $taxDue = $this->faker->randomFloat(4, 1, 100_000);
 
         $preConsolidation = new PreConsolidation();
         $preConsolidation
             ->setYear($year)
             ->setMonth($month)
             ->setAsset($asset)
-            ->setType($type)
-            ->setQuantity($quantity)
-            ->setTotalOperation($totalOperation)
-            ->setTotalCosts($totalCosts);
+            ->setNegotiationType($negotiationType)
+            ->setResult($result)
+            ->setNegativeResultLastMonth($negativeResultLastMonth)
+            ->setCalculationBasis($calculationBasis)
+            ->setLossToCompensate($lossToCompensate)
+            ->setWithholdingTax($withholdingTax)
+            ->setTaxRate($taxRate)
+            ->setTaxDue($taxDue);
 
         self::assertEquals($year, $preConsolidation->getYear());
         self::assertEquals($month, $preConsolidation->getMonth());
         self::assertEquals($asset, $preConsolidation->getAsset());
-        self::assertEquals($type, $preConsolidation->getType());
-        self::assertEquals($quantity, $preConsolidation->getQuantity());
-        self::assertEquals($totalOperation, $preConsolidation->getTotalOperation());
-        self::assertEquals($totalCosts, $preConsolidation->getTotalCosts());
+        self::assertEquals($negotiationType, $preConsolidation->getNegotiationType());
+        self::assertEquals($result, $preConsolidation->getResult());
+        self::assertEquals($negativeResultLastMonth, $preConsolidation->getNegativeResultLastMonth());
+        self::assertEquals($calculationBasis, $preConsolidation->getCalculationBasis());
+        self::assertEquals($lossToCompensate, $preConsolidation->getLossToCompensate());
+        self::assertEquals($withholdingTax, $preConsolidation->getWithholdingTax());
+        self::assertEquals($taxRate, $preConsolidation->getTaxRate());
+        self::assertEquals($taxDue, $preConsolidation->getTaxDue());
     }
 }
