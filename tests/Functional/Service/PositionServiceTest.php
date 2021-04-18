@@ -90,6 +90,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 21.5,
                     'averagePrice' => 9.215,
                     'averagePriceToIr' => 9.215,
+                    'result' => .0,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 100,
                 ],
                 [
@@ -105,6 +107,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 43.2,
                     'averagePrice' => 10.716,
                     'averagePriceToIr' => 10.716,
+                    'result' => .0,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 100,
                 ],
                 [
@@ -120,6 +124,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 66.8,
                     'averagePrice' => 12.917,
                     'averagePriceToIr' => 12.917,
+                    'result' => .0,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 200,
                 ],
             ],
@@ -186,6 +192,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 21.5,
                     'averagePrice' => 9.215,
                     'averagePriceToIr' => 9.215,
+                    'result' => .0,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 50,
                 ],
                 [
@@ -201,6 +209,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 43.2,
                     'averagePrice' => 10.716,
                     'averagePriceToIr' => 10.716,
+                    'result' => .0,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 100,
                 ],
                 [
@@ -216,6 +226,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 22.34,
                     'averagePrice' => 10.7160,
                     'averagePriceToIr' => 10.716,
+                    'result' => 18.34,
+                    'accumulatedResult' => 18.34,
                     'quantityBalance' => 0,
                 ],
                 [
@@ -231,6 +243,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 45.94,
                     'averagePrice' => 13.0598,
                     'averagePriceToIr' => 13.2314,
+                    'result' => .0,
+                    'accumulatedResult' => 18.34,
                     'quantityBalance' => 200,
                 ],
             ],
@@ -279,6 +293,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 1.668,
                     'averagePrice' => 94.856,
                     'averagePriceToIr' => 94.856,
+                    'result' => .0,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 0,
                 ],
                 [
@@ -294,6 +310,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 2.224,
                     'averagePrice' => 94.856,
                     'averagePriceToIr' => 94.856,
+                    'result' => .0,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 0,
                 ],
                 [
@@ -309,6 +327,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => .0,
                     'averagePrice' => 94.8560,
                     'averagePriceToIr' => 94.8560,
+                    'result' => -5.568,
+                    'accumulatedResult' => -5.568,
                     'quantityBalance' => 0,
                 ],
                 [
@@ -324,6 +344,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 1.112,
                     'averagePrice' => 94.946,
                     'averagePriceToIr' => 94.946,
+                    'result' => .0,
+                    'accumulatedResult' => -5.568,
                     'quantityBalance' => 2,
                 ],
             ],
@@ -362,6 +384,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 0.85,
                     'averagePrice' => 20.17,
                     'averagePriceToIr' => 20.17,
+                    'result' => .0,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 0,
                 ],
                 [
@@ -377,6 +401,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 0,
                     'averagePrice' => 20.17,
                     'averagePriceToIr' => 20.17,
+                    'result' => 98.30,
+                    'accumulatedResult' => 98.30,
                     'quantityBalance' => 0,
                 ],
             ],
@@ -415,6 +441,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 5.42,
                     'averagePrice' => 20.542,
                     'averagePriceToIr' => 20.542,
+                    'result' => .0,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 0,
                 ],
                 [
@@ -430,6 +458,8 @@ final class PositionServiceTest extends KernelTestCase
                     'accumulatedCosts' => 0,
                     'averagePrice' => 20.542,
                     'averagePriceToIr' => 20.542,
+                    'result' => -110.84,
+                    'accumulatedResult' => -110.84,
                     'quantityBalance' => 0,
                 ],
             ],
@@ -477,6 +507,8 @@ final class PositionServiceTest extends KernelTestCase
             self::assertEquals($expected[$key]['accumulatedCosts'], $position->getAccumulatedCosts());
             self::assertEquals($expected[$key]['averagePrice'], $position->getAveragePrice());
             self::assertEquals($expected[$key]['averagePriceToIr'], $position->getAveragePriceToIr());
+            self::assertEquals($expected[$key]['result'], $position->getResult());
+            self::assertEquals($expected[$key]['accumulatedResult'], $position->getAccumulatedResult());
             self::assertEquals($expected[$key]['quantityBalance'], $position->getQuantityBalance());
         }
     }

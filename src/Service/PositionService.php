@@ -96,6 +96,8 @@ class PositionService
                 ->setAccumulatedCosts(.0)
                 ->setAveragePrice(.0)
                 ->setAveragePriceToIr(.0)
+                ->setResult(.0)
+                ->setAccumulatedResult(.0)
                 ->setQuantityBalance($operation->getQuantity());
 
             $this->positionRepository->add($position);
@@ -231,6 +233,7 @@ class PositionService
             $lastPositionAccumulatedCosts = 0;
             $lastAveragePrice = 0;
             $lastAveragePriceToIr = 0;
+            $lastPositionAccumulatedResult = 0;
 
             /**
              * @var int $current
@@ -245,6 +248,9 @@ class PositionService
 
                 $positionPrice = bcadd($position->getTotalOperation(), ($position->getTotalCosts() * $signal), 6);
                 $positionPrice = bcdiv($positionPrice, $position->getQuantity(), 6);
+
+                $result = .0;
+                $accumulatedResult = .0;
 
                 if ($sequence === 1) {
                     $accumulatedQuantity = $position->getQuantity();
@@ -278,7 +284,12 @@ class PositionService
                     } else {
                         $averagePrice = $lastAveragePrice;
                         $averagePriceToIr = $lastAveragePriceToIr;
+
+                        $result = bcsub($positionPrice, $averagePriceToIr, 4);
+                        $result = bcmul($result, $position->getQuantity(), 6);
                     }
+
+                    $accumulatedResult = bcadd($lastPositionAccumulatedResult, $result, 4);
                 }
 
                 $position->setPositionPrice($this->adjustDecimalValues($positionPrice));
@@ -287,6 +298,8 @@ class PositionService
                 $position->setAccumulatedCosts($this->adjustDecimalValues($accumulatedCosts));
                 $position->setAveragePrice($this->adjustDecimalValues($averagePrice));
                 $position->setAveragePriceToIr($this->adjustDecimalValues($averagePriceToIr));
+                $position->setResult($result);
+                $position->setAccumulatedResult($accumulatedResult);
 
                 if ($sequence === count($positions)) {
                     $position->setIsLast(true);
@@ -299,6 +312,7 @@ class PositionService
                 $lastPositionAccumulatedCosts = $accumulatedCosts;
                 $lastAveragePrice = $averagePrice;
                 $lastAveragePriceToIr = $averagePriceToIr;
+                $lastPositionAccumulatedResult = $accumulatedResult;
             }
         }
 

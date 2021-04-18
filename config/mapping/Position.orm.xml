@@ -25,6 +25,8 @@
         <field name="accumulatedCosts" column="accumulated_costs" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="averagePrice" column="average_price" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="averagePriceToIr" column="average_price_to_ir" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="result" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="accumulatedResult" column="accumulated_result" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="quantityBalance" column="quantity_balance" type="integer" nullable="true"/>
         <many-to-one field="operation" target-entity="App\Entity\Operation">
             <join-column name="operation_id" referenced-column-name="id" nullable="true" />

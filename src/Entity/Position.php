@@ -32,6 +32,8 @@ class Position implements EntityInterface, JsonSerializable
     private float $accumulatedCosts;
     private float $averagePrice;
     private float $averagePriceToIr;
+    private float $result;
+    private float $accumulatedResult;
     private ?Operation $operation;
     private bool $isLast;
     private int $quantityBalance;
@@ -354,6 +356,43 @@ class Position implements EntityInterface, JsonSerializable
     }
 
     /**
+     * @return float
+     */
+    public function getResult(): float
+    {
+        return $this->result;
+    }
+
+    /**
+     * @param float $result
+     * @return Position
+     */
+    public function setResult(float $result): Position
+    {
+        $this->result = $result;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAccumulatedResult(): float
+    {
+        return $this->accumulatedResult;
+    }
+
+    /**
+     * @param float $accumulatedResult
+     * @return Position
+     */
+    public function setAccumulatedResult(float $accumulatedResult): Position
+    {
+        $this->accumulatedResult = $accumulatedResult;
+
+        return $this;
+    }
+
+    /**
      * @return Operation|null
      */
     public function getOperation(): ?Operation
@@ -429,6 +468,8 @@ class Position implements EntityInterface, JsonSerializable
             'accumulated_costs' => $this->accumulatedCosts,
             'average_price' => $this->averagePrice,
             'average_price_to_ir' => $this->averagePriceToIr,
+            'result' => $this->result,
+            'accumulated_result' => $this->accumulatedResult,
             'quantity_balance' => $this->quantityBalance,
             'is_last' => $this->isLast,
         ];
