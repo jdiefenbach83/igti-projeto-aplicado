@@ -152,6 +152,7 @@
             accumulated_costs: currencyFormatter(position.accumulated_costs),
             average_price: currencyFormatter(position.average_price),
             average_price_to_ir: currencyFormatter(position.average_price_to_ir),
+            accumulated_result: currencyFormatter(position.accumulated_result),
           }
         });
       },
@@ -207,17 +208,17 @@
             groupable: false,
           },
           {
-            text: 'Preço médio',
-            align: 'end',
-            sortable: true,
-            value: 'average_price',
-            groupable: false,
-          },
-          {
             text: 'Preço médio (IR)',
             align: 'end',
             sortable: true,
             value: 'average_price_to_ir',
+            groupable: false,
+          },
+          {
+            text: 'Resultado acumulado',
+            align: 'end',
+            sortable: true,
+            value: 'accumulated_result',
             groupable: false,
           },
         ]
