@@ -45,10 +45,8 @@ class PositionService
         $this->createPositions();
         $this->positionRepository->endWorkUnit();
 
-        $this->positionRepository->startWorkUnit();
         $this->processNegotiations();
         $this->calculatePositions();
-        $this->positionRepository->endWorkUnit();
     }
 
     private function removePositionsByOperation(): void
@@ -106,6 +104,8 @@ class PositionService
 
     private function processNegotiations(): void
     {
+        $this->positionRepository->startWorkUnit();
+
         $dayTrades = $this->positionRepository->findDayTradeNegotiations();
 
         foreach($dayTrades as $dayTrade){
@@ -125,6 +125,10 @@ class PositionService
             $this->processNormalTradePositions($quantityBuy, $quantitySell, $normalTrade['asset_id'], Position::TYPE_BUY);
             $this->processNormalTradePositions($quantityBuy, $quantitySell, $normalTrade['asset_id'], Position::TYPE_SELL);
         }
+
+        $this->positionRepository->endWorkUnit();
+
+        $this->processDayTradesWithBalance();
     }
 
     private function processDayTradePositions(int $quantityBuy, int $quantitySell, int $assetId, \DateTimeImmutable $date, string $type): void
@@ -194,8 +198,28 @@ class PositionService
         } while ($normalTradeQuantity > 0);
     }
 
+    private function processDayTradesWithBalance(): void
+    {
+        $processDayTradesWithBalance = $this->positionRepository->findDayTradeNegotiationsWithBalance();
+
+        $this->positionRepository->startWorkUnit();
+
+        /** @var Position $position */
+        foreach ($processDayTradesWithBalance as $position)
+        {
+            if ($position->getQuantity() === $position->getQuantityBalance()) {
+                $position->setNegotiationType(Position::NEGOTIATION_TYPE_NORMAL);
+                $this->positionRepository->update($position);
+            }
+        }
+
+        $this->positionRepository->endWorkUnit();
+    }
+
     private function calculatePositions(): void
     {
+        $this->positionRepository->startWorkUnit();
+
         $assetIds = $this->positionRepository->findAllAssets();
 
         foreach ($assetIds as $assetId)
@@ -277,6 +301,8 @@ class PositionService
                 $lastAveragePriceToIr = $averagePriceToIr;
             }
         }
+
+        $this->positionRepository->endWorkUnit();
     }
 
     private function adjustDecimalValues(float $value): float

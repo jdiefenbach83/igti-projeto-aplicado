@@ -18,4 +18,5 @@ interface PositionRepositoryInterface
     public function findDayTradeNegotiations(): array;
     public function findNormalNegotiations(): array;
     public function findByAssetAndTypeAndDate(int $assetId, string $type, \DateTimeImmutable $date = null): array;
+    public function findDayTradeNegotiationsWithBalance(): array;
 }

@@ -110,6 +110,7 @@ class PositionRepository implements PositionRepositoryInterface
                 $queryBuilder->expr()->eq('a.id', $assetId),
             )
             ->addOrderBy('p.date', 'ASC')
+            ->addOrderBy('lower(p.negotiationType)', 'ASC')
             ->addOrderBy('p.type', 'ASC')
             ->getQuery();
 
@@ -189,6 +190,27 @@ class PositionRepository implements PositionRepositoryInterface
 
             $query->getParameters()->add(new Parameter('date', $date));
         }
+
+        $query = $query->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findDayTradeNegotiationsWithBalance(): array
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $query = $queryBuilder
+            ->select(array('p'))
+            ->from(Position::class, 'p')
+            ->where(
+                $queryBuilder->expr()->eq('p.negotiationType', ':negotiationType'),
+                $queryBuilder->expr()->gt('p.quantityBalance', '0'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('negotiationType', Position::NEGOTIATION_TYPE_DAYTRADE),
+            ]))
+            ->orderBy('p.date', 'ASC');
 
         $query = $query->getQuery();
 
