@@ -123,9 +123,7 @@ class PositionRepository implements PositionRepositoryInterface
         $query = $queryBuilder
             ->select([
                 'p.date',
-                'a.id as asset_id',
-                'SUM(IFELSE(p.type=\'BUY\', p.quantity, 0)) as quantity_buy',
-                'SUM(IFELSE(p.type=\'SELL\', p.quantity, 0)) as quantity_sell',
+                'a.id as asset_id'
             ])
             ->from(Position::class, 'p')
             ->innerJoin('p.asset', 'a')
@@ -143,9 +141,7 @@ class PositionRepository implements PositionRepositoryInterface
 
         $query = $queryBuilder
             ->select([
-                'a.id as asset_id',
-                'SUM(IFELSE(p.type=\'BUY\', p.quantity, 0)) as quantity_buy',
-                'SUM(IFELSE(p.type=\'SELL\', p.quantity, 0)) as quantity_sell',
+                'a.id as asset_id'
             ])
             ->from(Position::class, 'p')
             ->innerJoin('p.asset', 'a')
@@ -162,7 +158,7 @@ class PositionRepository implements PositionRepositoryInterface
         return $query->getResult();
     }
 
-    public function findByAssetAndTypeAndDate(int $assetId, string $type, \DateTimeImmutable $date = null): array
+    public function findByAssetAndTypeAndDateAndNegotiationType(int $assetId, string $type, string $negotiationType, \DateTimeImmutable $date = null): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -173,13 +169,15 @@ class PositionRepository implements PositionRepositoryInterface
             ->where(
                 $queryBuilder->expr()->eq('a.id', ':assetId'),
                 $queryBuilder->expr()->eq('p.type', ':type'),
-                $queryBuilder->expr()->gt('p.quantityBalance', '0'),
+                $queryBuilder->expr()->eq('p.negotiationType', ':negotiationType'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('assetId', $assetId),
                 new Parameter('type', $type),
+                new Parameter('negotiationType', Position::NEGOTIATION_TYPE_NORMAL),
             ]))
-            ->orderBy('p.date', 'ASC');
+            ->addOrderBy('p.date', 'ASC')
+            ->addOrderBy('p.quantity', 'DESC');
 
         if ($date) {
             $query->andWhere(
@@ -187,6 +185,12 @@ class PositionRepository implements PositionRepositoryInterface
             );
 
             $query->getParameters()->add(new Parameter('date', $date));
+        }
+
+        if ($negotiationType === Position::NEGOTIATION_TYPE_DAYTRADE) {
+            $query->andWhere(
+                $queryBuilder->expr()->gt('p.quantityBalance', '0'),
+            );
         }
 
         $query = $query->getQuery();

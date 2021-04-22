@@ -473,23 +473,7 @@ final class PositionServiceTest extends KernelTestCase
      */
     public function testCalculatePositions_ShouldCalculatePositions($brokerageNotes, $expected): void
     {
-        $brokers = $this->brokerService->getAll();
-        /** @var Broker $broker */
-        $broker = $brokers[$this->faker->numberBetween(0, count($brokers) -1)];
-
-        $date = $this->faker->dateTime();
-
-        $assets = $this->assetService->getAll();
-        /** @var Asset $asset */
-        $asset = $assets[$this->faker->numberBetween(0, count($assets) -1)];
-
-        foreach($brokerageNotes as $key => $brokerageNote){
-            $brokerageNoteEntity = $this->addBrokerageNote($broker, $date->modify("+$key day"), $brokerageNote['totalMoviments'], $brokerageNote['operationalFee']);
-
-            foreach ($brokerageNote['operations'] as $operation){
-                $this->addOperation($brokerageNoteEntity->getId(), $operation['type'], $asset->getId(), $operation['quantity'], $operation['price']);
-            }
-        }
+        $this->setupBrokerageNote($brokerageNotes);
 
         $positions = $this->positionService->getAll();
 
@@ -538,5 +522,70 @@ final class PositionServiceTest extends KernelTestCase
             ->setPrice($price);
 
         $this->brokerageNoteService->addOperation($brokerageNoteId, $operationDTO);
+    }
+
+
+
+    public function getBrokerageNotesForShortSales(): iterable
+    {
+        yield 'Short sales' => [
+            'brokerageNotes' => [
+                [
+                    'totalMoviments' => 300.0,
+                    'operationalFee' => .0,
+                    'operations' => [
+                        [
+                            'type' => Position::TYPE_BUY,
+                            'quantity' => 5,
+                            'price' => 20.0,
+                        ],
+                        [
+                            'type' => Position::TYPE_SELL,
+                            'quantity' => 10,
+                            'price' => 40.0,
+                        ],
+                    ]
+                ],
+            ],
+            'expected' =>
+                'Short sale position calculation not implemented'
+            ,
+        ];
+    }
+
+    /**
+     * @dataProvider getBrokerageNotesForShortSales
+     * @param array $brokerageNotes
+     * @param string $expected
+     */
+    public function testCalculatePositions_ShoudThrownNotImplementedException(array $brokerageNotes, string $expected): void
+    {
+        $this->expectExceptionMessage($expected);
+
+        $this->setupBrokerageNote($brokerageNotes);
+    }
+
+    /**
+     * @param array $brokerageNotes
+     */
+    private function setupBrokerageNote(array $brokerageNotes): void
+    {
+        $brokers = $this->brokerService->getAll();
+        /** @var Broker $broker */
+        $broker = $brokers[$this->faker->numberBetween(0, count($brokers) - 1)];
+
+        $date = $this->faker->dateTime();
+
+        $assets = $this->assetService->getAll();
+        /** @var Asset $asset */
+        $asset = $assets[$this->faker->numberBetween(0, count($assets) - 1)];
+
+        foreach ($brokerageNotes as $key => $brokerageNote) {
+            $brokerageNoteEntity = $this->addBrokerageNote($broker, $date->modify("+$key day"), $brokerageNote['totalMoviments'], $brokerageNote['operationalFee']);
+
+            foreach ($brokerageNote['operations'] as $operation) {
+                $this->addOperation($brokerageNoteEntity->getId(), $operation['type'], $asset->getId(), $operation['quantity'], $operation['price']);
+            }
+        }
     }
 }

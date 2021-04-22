@@ -106,101 +106,162 @@ class PositionService
 
     private function processNegotiations(): void
     {
-        $this->positionRepository->startWorkUnit();
-
         $dayTrades = $this->positionRepository->findDayTradeNegotiations();
 
         foreach($dayTrades as $dayTrade){
-            $quantityBuy = $dayTrade['quantity_buy'];
-            $quantitySell = $dayTrade['quantity_sell'];
-
-            $this->processDayTradePositions($quantityBuy, $quantitySell, $dayTrade['asset_id'], $dayTrade['date'], Position::TYPE_BUY);
-            $this->processDayTradePositions($quantityBuy, $quantitySell, $dayTrade['asset_id'], $dayTrade['date'], Position::TYPE_SELL);
+            $this->processDaytradeNegotiations($dayTrade['asset_id'], $dayTrade['date']);
         }
 
         $normalTrades = $this->positionRepository->findNormalNegotiations();
 
         foreach($normalTrades as $normalTrade){
-            $quantityBuy = $normalTrade['quantity_buy'];
-            $quantitySell = $normalTrade['quantity_sell'];
+            $this->processNormalTradeNegotiations($normalTrade['asset_id']);
+        }
+    }
 
-            $this->processNormalTradePositions($quantityBuy, $quantitySell, $normalTrade['asset_id'], Position::TYPE_BUY);
-            $this->processNormalTradePositions($quantityBuy, $quantitySell, $normalTrade['asset_id'], Position::TYPE_SELL);
+    private function processDaytradeNegotiations(int $assetId, \DateTimeImmutable $date): void
+    {
+        $negotiationType = Position::NEGOTIATION_TYPE_DAYTRADE;
+
+        $buys = $this->positionRepository->findByAssetAndTypeAndDateAndNegotiationType($assetId, Position::TYPE_BUY, $negotiationType, $date);
+        $sells = $this->positionRepository->findByAssetAndTypeAndDateAndNegotiationType($assetId, Position::TYPE_SELL, $negotiationType, $date);
+
+        $this->positionRepository->startWorkUnit();
+
+        $processDaytradeWithBalance = $this->processZeroBalanceDaytradePositions($buys, $sells) === false;
+
+        if ($processDaytradeWithBalance) {
+            $this->processPositions($buys, $sells, $negotiationType);
         }
 
         $this->positionRepository->endWorkUnit();
-
-        $this->processDayTradesWithBalance();
     }
 
-    private function processDayTradePositions(int $quantityBuy, int $quantitySell, int $assetId, \DateTimeImmutable $date, string $type): void
+    private function processZeroBalanceDaytradePositions(array $buys, array $sells): bool
     {
-        $result = (int) bcsub($quantityBuy, $quantitySell);
+        $sumarizedQuantities = $this->summarizeQuantities($buys, $sells);
+        $zeroQuantity = $sumarizedQuantities['buys'] - $sumarizedQuantities['sells'];
 
-        $dayTradeQuantity = ($quantityBuy > $quantitySell) ? $quantityBuy : $quantitySell;
-        $dayTradeQuantity = abs(bcsub($dayTradeQuantity, $result));
+        if ($zeroQuantity !== 0) {
+            return false;
+        }
 
-        $positions = $this->positionRepository->findByAssetAndTypeAndDate($assetId, $type, $date);
+        $positions = array_merge($buys, $sells);
 
-        do {
-            /** @var Position $position */
-            foreach ($positions as $position) {
-                $quantity = $position->getQuantity();
+        /** @var Position $position */
+        foreach ($positions as $position){
+             $position
+                ->setNegotiationType(Position::NEGOTIATION_TYPE_DAYTRADE)
+                ->setQuantityBalance(0);
 
-                if ($position->getNegotiationType() === Position::NEGOTIATION_TYPE_DAYTRADE) {
-                    $dayTradeQuantity -= $quantity;
+            $this->positionRepository->update($position);
+        }
 
-                    continue;
+        return true;
+    }
+
+    private function summarizeQuantities(array $buys, array $sells): array
+    {
+        $buysQuantity = array_reduce($buys, static function ($accumulator, $position) {
+            return $accumulator + $position->getQuantity();
+        }, 0);
+
+        $sellsQuantity = array_reduce($sells, static function ($accumulator, $position) {
+            return $accumulator + $position->getQuantity();
+        }, 0);
+
+        return [
+            'buys' => $buysQuantity,
+            'sells' => $sellsQuantity,
+        ];
+    }
+
+    private function processNormalTradeNegotiations(int $assetId): void
+    {
+        $negotiationType = Position::NEGOTIATION_TYPE_NORMAL;
+
+        $buys = $this->positionRepository->findByAssetAndTypeAndDateAndNegotiationType($assetId, Position::TYPE_BUY, $negotiationType);
+        $sells = $this->positionRepository->findByAssetAndTypeAndDateAndNegotiationType($assetId, Position::TYPE_SELL, $negotiationType);
+
+        $this->positionRepository->startWorkUnit();
+
+        $this->processPositions($buys, $sells, $negotiationType);
+        $this->transformDayTradeWithBalanceIntoNormalTrade();
+
+        $this->positionRepository->endWorkUnit();
+    }
+
+    private function processPositions(array $buys, array $sells, string $negotiationType): void
+    {
+        $sumarizedQuantities = $this->summarizeQuantities($buys, $sells);
+        $isShortSale = bcsub($sumarizedQuantities['sells'], $sumarizedQuantities['buys']);
+        $isShortSale = $isShortSale > 0;
+
+        if ($isShortSale){
+            throw new \Exception('Short sale position calculation not implemented');
+        }
+
+        $operators = [
+            'equals',
+            'greater'
+        ];
+
+        /** @var Position $sell */
+        foreach ($sells as $sell) {
+            $soldQuantity = $sell->getQuantity();
+
+            do {
+                foreach ($operators as $operator) {
+                    if ($soldQuantity === 0) {
+                        break;
+                    }
+
+                    $soldQuantity = $this->decreaseSellFromBuys($buys, $operator, $negotiationType, $soldQuantity);
                 }
+            } while ($soldQuantity > 0);
 
+            $sell
+                ->setNegotiationType($negotiationType)
+                ->setQuantityBalance(.0);
+            $this->positionRepository->update($sell);
+        }
+    }
+
+    private function decreaseSellFromBuys(array $buys, string $operator, string $negotiationType, int $soldQuantity): int
+    {
+        $isEqualsOperator = $operator === 'equals';
+        $isGreaterThanOperator = $operator === 'greater';
+
+        /** @var Position $buy */
+        foreach ($buys as $buy) {
+            $boughtQuantity = $buy->getQuantity();
+
+            if ($isEqualsOperator && ($boughtQuantity === $soldQuantity)) {
                 $balance = 0;
-                $controlBalance = $quantity;
-
-                if ($quantity > $dayTradeQuantity) {
-                    $balance = $quantity - $dayTradeQuantity;
-                    $controlBalance = $dayTradeQuantity;
-                }
-
-                $position->setNegotiationType(Position::NEGOTIATION_TYPE_DAYTRADE);
-                $position->setQuantityBalance($balance);
-                $this->positionRepository->update($position);
-
-                $dayTradeQuantity -= $controlBalance;
+                $controlBalance = $boughtQuantity;
+            } elseif ($isGreaterThanOperator && ($boughtQuantity > $soldQuantity)) {
+                $balance = $boughtQuantity - $soldQuantity;
+                $controlBalance = $soldQuantity;
+            } elseif ($isGreaterThanOperator && ($soldQuantity > $boughtQuantity)) {
+                $balance = 0;
+                $controlBalance = $boughtQuantity;
+            } else {
+                continue;
             }
-        } while ($dayTradeQuantity > 0);
+
+            $buy
+                ->setNegotiationType($negotiationType)
+                ->setQuantityBalance($balance);
+            $this->positionRepository->update($buy);
+
+            $soldQuantity -= $controlBalance;
+            break;
+        }
+
+        return $soldQuantity;
     }
 
-    private function processNormalTradePositions(int $quantityBuy, int $quantitySell, int $assetId, string $type): void
-    {
-        $result = (int) bcsub($quantityBuy, $quantitySell);
-
-        $normalTradeQuantity = ($quantityBuy > $quantitySell) ? $quantityBuy : $quantitySell;
-        $normalTradeQuantity = abs(bcsub($normalTradeQuantity, $result));
-
-        $positions = $this->positionRepository->findByAssetAndTypeAndDate($assetId, $type);
-
-        do {
-            /** @var Position $position */
-            foreach ($positions as $position) {
-                $quantity = $position->getQuantity();
-
-                $newBalance = 0;
-                $controlBalance = $quantity;
-
-                if ($quantity > $normalTradeQuantity) {
-                    $newBalance = $quantity - $normalTradeQuantity;
-                    $controlBalance = $normalTradeQuantity;
-                }
-
-                $position->setQuantityBalance($newBalance);
-                $this->positionRepository->update($position);
-
-                $normalTradeQuantity -= $controlBalance;
-            }
-        } while ($normalTradeQuantity > 0);
-    }
-
-    private function processDayTradesWithBalance(): void
+    private function transformDayTradeWithBalanceIntoNormalTrade(): void
     {
         $processDayTradesWithBalance = $this->positionRepository->findDayTradeNegotiationsWithBalance();
 
