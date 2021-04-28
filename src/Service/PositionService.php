@@ -234,6 +234,10 @@ class PositionService
 
         /** @var Position $buy */
         foreach ($buys as $buy) {
+            if ($buy->getQuantityBalance() === 0) {
+                continue;
+            }
+
             $boughtQuantity = $buy->getQuantity();
 
             if ($isEqualsOperator && ($boughtQuantity === $soldQuantity)) {
