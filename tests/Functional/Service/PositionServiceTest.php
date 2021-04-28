@@ -345,7 +345,7 @@ final class PositionServiceTest extends KernelTestCase
                     'averagePrice' => 94.946,
                     'averagePriceToIr' => 94.946,
                     'result' => .0,
-                    'accumulatedResult' => -5.568,
+                    'accumulatedResult' => .0,
                     'quantityBalance' => 2,
                 ],
             ],

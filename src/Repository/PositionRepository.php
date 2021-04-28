@@ -34,6 +34,7 @@ class PositionRepository implements PositionRepositoryInterface
     {
         $order = [
             'asset' => 'ASC',
+            'negotiationType' => 'DESC',
             'sequence' => 'ASC'
         ];
 
@@ -97,7 +98,7 @@ class PositionRepository implements PositionRepositoryInterface
         return $query->getResult();
     }
 
-    public function findByAsset(int $assetId)
+    public function findByAssetAndNegotiationType(int $assetId, string $negotiationType)
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -106,10 +107,14 @@ class PositionRepository implements PositionRepositoryInterface
             ->from(Position::class, 'p')
             ->innerJoin('p.asset', 'a')
             ->where(
-                $queryBuilder->expr()->eq('a.id', $assetId),
+                $queryBuilder->expr()->eq('a.id',':assetId'),
+                $queryBuilder->expr()->eq('p.negotiationType', ':negotiationType'),
             )
+            ->setParameters(new ArrayCollection([
+                new Parameter('assetId', $assetId),
+                new Parameter('negotiationType', $negotiationType),
+            ]))
             ->addOrderBy('p.date', 'ASC')
-            ->addOrderBy('lower(p.negotiationType)', 'ASC')
             ->addOrderBy('p.type', 'ASC')
             ->getQuery();
 

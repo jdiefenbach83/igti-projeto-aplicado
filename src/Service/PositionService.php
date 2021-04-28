@@ -285,104 +285,110 @@ class PositionService
 
     private function calculatePositions(): void
     {
-        $this->positionRepository->startWorkUnit();
-
         $assetIds = $this->positionRepository->findAllAssets();
+
+        $this->positionRepository->startWorkUnit();
 
         foreach ($assetIds as $assetId)
         {
-            $positions = $this->positionRepository->findByAsset($assetId['id']);
+            $negotiationTypes = Position::getNegotiationTypes();
 
-            $lastPositionAccumulatedQuantity = 0;
-            $lastPositionAccumulatedTotal = 0;
-            $lastPositionAccumulatedCosts = 0;
-            $lastAveragePrice = 0;
-            $lastAveragePriceToIr = 0;
-            $lastPositionAccumulatedResult = 0;
+            foreach ($negotiationTypes as $negotiationType) {
 
-            /**
-             * @var int $current
-             * @var Position $currentValue */
-            foreach ($positions as $current => $currentValue) {
-                $position = $currentValue;
+                $positions = $this->positionRepository->findByAssetAndNegotiationType($assetId['id'], $negotiationType);
 
-                $sequence = $current + 1;
-                $position->setSequence($sequence);
+                $lastPositionAccumulatedQuantity = 0;
+                $lastPositionAccumulatedTotal = 0;
+                $lastPositionAccumulatedCosts = 0;
+                $lastAveragePrice = 0;
+                $lastAveragePriceToIr = 0;
+                $lastPositionAccumulatedResult = 0;
 
-                $signal = ($position->getType() === Position::TYPE_BUY) ? 1 : -1;
+                /**
+                 * @var int $current
+                 * @var Position $currentValue
+                 */
+                foreach ($positions as $current => $currentValue) {
+                    $position = $currentValue;
 
-                $positionPrice = bcadd($position->getTotalOperation(), ($position->getTotalCosts() * $signal), 6);
-                $positionPrice = bcdiv($positionPrice, $position->getQuantity(), 6);
+                    $sequence = $current + 1;
+                    $position->setSequence($sequence);
 
-                $result = .0;
-                $accumulatedResult = .0;
+                    $signal = ($position->getType() === Position::TYPE_BUY) ? 1 : -1;
 
-                if ($sequence === 1) {
-                    $accumulatedQuantity = $position->getQuantity();
-                    $accumulatedTotal = $position->getTotalOperation();
-                    $accumulatedCosts = $position->getTotalCosts();
+                    $positionPrice = bcadd($position->getTotalOperation(), ($position->getTotalCosts() * $signal), 6);
+                    $positionPrice = bcdiv($positionPrice, $position->getQuantity(), 6);
 
-                    $averagePrice = $positionPrice;
-                    $averagePriceToIr = $positionPrice;
+                    $result = .0;
+                    $accumulatedResult = .0;
 
-                } else {
-                    $accumulatedQuantity = bcadd(($position->getQuantity() * $signal), $lastPositionAccumulatedQuantity, 6);
+                    if ($sequence === 1) {
+                        $accumulatedQuantity = $position->getQuantity();
+                        $accumulatedTotal = $position->getTotalOperation();
+                        $accumulatedCosts = $position->getTotalCosts();
 
-                    $accumulatedTotal = .0;
-                    $accumulatedCosts = .0;
+                        $averagePrice = $positionPrice;
+                        $averagePriceToIr = $positionPrice;
 
-                    if ($accumulatedQuantity > 0) {
-                        $accumulatedTotal = bcadd(($position->getTotalOperation() * $signal), $lastPositionAccumulatedTotal, 6);
-                        $accumulatedCosts = bcadd(($position->getTotalCosts() * $signal), $lastPositionAccumulatedCosts, 6);
-                    }
+                    } else {
+                        $accumulatedQuantity = bcadd(($position->getQuantity() * $signal), $lastPositionAccumulatedQuantity, 6);
 
-                    if ($position->getType() === Position::TYPE_BUY) {
-                        $averagePrice = bcadd($accumulatedTotal, $accumulatedCosts, 6);
-
-                        $totalLine = bcmul($positionPrice, $position->getQuantity(), 6);
-
-                        $averagePriceToIr = bcmul($lastPositionAccumulatedQuantity, $lastAveragePriceToIr, 6);
-                        $averagePriceToIr = bcadd($averagePriceToIr, $totalLine, 6);
+                        $accumulatedTotal = .0;
+                        $accumulatedCosts = .0;
 
                         if ($accumulatedQuantity > 0) {
-                            $averagePrice = bcdiv($averagePrice, $accumulatedQuantity, 6);
-                            $averagePriceToIr = bcdiv($averagePriceToIr, $accumulatedQuantity, 6);
-                        } else {
-                            $averagePrice = .0;
-                            $averagePriceToIr = .0;
+                            $accumulatedTotal = bcadd(($position->getTotalOperation() * $signal), $lastPositionAccumulatedTotal, 6);
+                            $accumulatedCosts = bcadd(($position->getTotalCosts() * $signal), $lastPositionAccumulatedCosts, 6);
                         }
-                    } else {
-                        $averagePrice = $lastAveragePrice;
-                        $averagePriceToIr = $lastAveragePriceToIr;
 
-                        $result = bcsub($positionPrice, $averagePriceToIr, 4);
-                        $result = bcmul($result, $position->getQuantity(), 6);
+                        if ($position->getType() === Position::TYPE_BUY) {
+                            $averagePrice = bcadd($accumulatedTotal, $accumulatedCosts, 6);
+
+                            $totalLine = bcmul($positionPrice, $position->getQuantity(), 6);
+
+                            $averagePriceToIr = bcmul($lastPositionAccumulatedQuantity, $lastAveragePriceToIr, 6);
+                            $averagePriceToIr = bcadd($averagePriceToIr, $totalLine, 6);
+
+                            if ($accumulatedQuantity > 0) {
+                                $averagePrice = bcdiv($averagePrice, $accumulatedQuantity, 6);
+                                $averagePriceToIr = bcdiv($averagePriceToIr, $accumulatedQuantity, 6);
+                            } else {
+                                $averagePrice = .0;
+                                $averagePriceToIr = .0;
+                            }
+                        } else {
+                            $averagePrice = $lastAveragePrice;
+                            $averagePriceToIr = $lastAveragePriceToIr;
+
+                            $result = bcsub($positionPrice, $averagePriceToIr, 4);
+                            $result = bcmul($result, $position->getQuantity(), 6);
+                        }
+
+                        $accumulatedResult = bcadd($lastPositionAccumulatedResult, $result, 4);
                     }
 
-                    $accumulatedResult = bcadd($lastPositionAccumulatedResult, $result, 4);
+                    $position->setPositionPrice($this->adjustDecimalValues($positionPrice));
+                    $position->setAccumulatedQuantity($accumulatedQuantity);
+                    $position->setAccumulatedTotal($this->adjustDecimalValues($accumulatedTotal));
+                    $position->setAccumulatedCosts($this->adjustDecimalValues($accumulatedCosts));
+                    $position->setAveragePrice($this->adjustDecimalValues($averagePrice));
+                    $position->setAveragePriceToIr($this->adjustDecimalValues($averagePriceToIr));
+                    $position->setResult($result);
+                    $position->setAccumulatedResult($accumulatedResult);
+
+                    if ($sequence === count($positions)) {
+                        $position->setIsLast(true);
+                    }
+
+                    $this->positionRepository->update($position);
+
+                    $lastPositionAccumulatedQuantity = $accumulatedQuantity;
+                    $lastPositionAccumulatedTotal = $accumulatedTotal;
+                    $lastPositionAccumulatedCosts = $accumulatedCosts;
+                    $lastAveragePrice = $averagePrice;
+                    $lastAveragePriceToIr = $averagePriceToIr;
+                    $lastPositionAccumulatedResult = $accumulatedResult;
                 }
-
-                $position->setPositionPrice($this->adjustDecimalValues($positionPrice));
-                $position->setAccumulatedQuantity($accumulatedQuantity);
-                $position->setAccumulatedTotal($this->adjustDecimalValues($accumulatedTotal));
-                $position->setAccumulatedCosts($this->adjustDecimalValues($accumulatedCosts));
-                $position->setAveragePrice($this->adjustDecimalValues($averagePrice));
-                $position->setAveragePriceToIr($this->adjustDecimalValues($averagePriceToIr));
-                $position->setResult($result);
-                $position->setAccumulatedResult($accumulatedResult);
-
-                if ($sequence === count($positions)) {
-                    $position->setIsLast(true);
-                }
-
-                $this->positionRepository->update($position);
-
-                $lastPositionAccumulatedQuantity = $accumulatedQuantity;
-                $lastPositionAccumulatedTotal = $accumulatedTotal;
-                $lastPositionAccumulatedCosts = $accumulatedCosts;
-                $lastAveragePrice = $averagePrice;
-                $lastAveragePriceToIr = $averagePriceToIr;
-                $lastPositionAccumulatedResult = $accumulatedResult;
             }
         }
 
