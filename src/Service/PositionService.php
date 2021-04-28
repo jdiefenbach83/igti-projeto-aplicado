@@ -334,14 +334,19 @@ class PositionService
 
                     if ($position->getType() === Position::TYPE_BUY) {
                         $averagePrice = bcadd($accumulatedTotal, $accumulatedCosts, 6);
-                        $averagePrice = bcdiv($averagePrice, $accumulatedQuantity, 6);
 
                         $totalLine = bcmul($positionPrice, $position->getQuantity(), 6);
 
                         $averagePriceToIr = bcmul($lastPositionAccumulatedQuantity, $lastAveragePriceToIr, 6);
                         $averagePriceToIr = bcadd($averagePriceToIr, $totalLine, 6);
-                        $averagePriceToIr = bcdiv($averagePriceToIr, $accumulatedQuantity, 6);
 
+                        if ($accumulatedQuantity > 0) {
+                            $averagePrice = bcdiv($averagePrice, $accumulatedQuantity, 6);
+                            $averagePriceToIr = bcdiv($averagePriceToIr, $accumulatedQuantity, 6);
+                        } else {
+                            $averagePrice = .0;
+                            $averagePriceToIr = .0;
+                        }
                     } else {
                         $averagePrice = $lastAveragePrice;
                         $averagePriceToIr = $lastAveragePriceToIr;
