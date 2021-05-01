@@ -13,6 +13,8 @@
       sear
       :loading="isLoadingPositions"
       loading-text="Carregando..."
+      :expanded.sync="expanded"
+      show-expand
     >
       <template v-slot:top>
         <v-row>
@@ -74,6 +76,31 @@
           </v-btn>
         </td>
       </template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <v-simple-table flat>
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-end">Quantidade acumulada</th>
+                  <th class="text-end">Custos acumulado</th>
+                  <th class="text-end">Total acumulado</th>
+                  <th class="text-end">Resultado acumulado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-end">{{ item.accumulated_quantity }}</td>
+                  <td class="text-end">{{ item.accumulated_costs }}</td>
+                  <td class="text-end">{{ item.accumulated_total }}</td>
+                  <td class="text-end"><strong>{{ item.accumulated_result }}</strong></td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+          <hr>
+        </td>
+      </template>
     </v-data-table>
   </div>
 </template>
@@ -103,6 +130,7 @@
       return {
         search: '',
         lastPositionFilter: true,
+        expanded: [],
       };
     },
     methods: {
@@ -144,18 +172,19 @@
             asset: asset?.code,
             original_type: position.type,
             original_negotiation_type: position.negotiation_type,
-            type: position.type === POSITION_TYPES.POSITION_TYPE_BUY ? 'C' : 'V',
+            type: position.type === POSITION_TYPES.POSITION_TYPE_BUY ? 'Compra' : 'Venda',
             negotiation_type: position.negotiation_type === NEGOTIATION_TYPES.NEGOTIATION_TYPE_NORMAL ? 'Normal' : 'Daytrade',
             date: brazilianDateFormatter(position.date),
+            quantity: numberFormatter(position.quantity),
+            position_price:  currencyFormatter(position.position_price),
+            total_costs:  currencyFormatter(position.total_costs),
+            total_operation:  currencyFormatter(position.total_operation),
+            average_price_to_ir: currencyFormatter(position.average_price_to_ir),
+            result:  currencyFormatter(position.result),
             accumulated_quantity: numberFormatter(position.accumulated_quantity),
             accumulated_total: currencyFormatter(position.accumulated_total),
             accumulated_costs: currencyFormatter(position.accumulated_costs),
-            average_price: currencyFormatter(position.average_price),
-            average_price_to_ir: currencyFormatter(position.average_price_to_ir),
             accumulated_result: currencyFormatter(position.accumulated_result),
-            position_price:  currencyFormatter(position.position_price),
-            quantity: numberFormatter(position.quantity),
-            result:  currencyFormatter(position.result),
           }
         });
       },
@@ -197,14 +226,28 @@
             groupable: false,
           },
           {
-            text: 'Preço',
+            text: 'Preço negociação',
             align: 'end',
             sortable: true,
             value: 'position_price',
             groupable: false,
           },
           {
-            text: 'Preço (IR)',
+            text: 'Custos',
+            align: 'end',
+            sortable: true,
+            value: 'total_costs',
+            groupable: false,
+          },
+          {
+            text: 'Total',
+            align: 'end',
+            sortable: true,
+            value: 'total_operation',
+            groupable: false,
+          },
+          {
+            text: 'Preço médio',
             align: 'end',
             sortable: true,
             value: 'average_price_to_ir',
@@ -218,24 +261,9 @@
             groupable: false,
           },
           {
-            text: 'Quantidade acumulada',
-            align: 'end',
-            sortable: true,
-            value: 'accumulated_quantity',
-            groupable: false,
-          },
-          {
-            text: 'Total acumulado',
-            align: 'end',
-            sortable: true,
-            value: 'accumulated_total',
-            groupable: false,
-          },
-          {
-            text: 'Resultado acumulado',
-            align: 'end',
-            sortable: true,
-            value: 'accumulated_result',
+            text: 'Detalhes',
+            align: 'center',
+            value: 'data-table-expand',
             groupable: false,
           },
         ]
@@ -243,3 +271,9 @@
     }
   }
 </script>
+
+<style>
+  .v-data-table > .v-data-table__wrapper tbody tr.v-data-table__expanded__content {
+    box-shadow: none;
+  }
+</style>
