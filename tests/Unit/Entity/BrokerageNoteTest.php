@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Entity\Entity;
+namespace App\Tests\Unit\Entity;
 
 use App\Entity\Asset;
 use App\Entity\Broker;

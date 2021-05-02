@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Entity;
+namespace App\Tests\Unit\Entity\Entity;
 
 use App\Entity\Asset;
 use App\Entity\Company;
@@ -28,13 +28,8 @@ class PositionTest extends TestCase
             ->setCnpj($cnpj)
             ->setName($name);
 
-        $types = [
-            Asset::TYPE_STOCK,
-            Asset::TYPE_FUTURE_CONTRACT
-        ];
-
         $code = $this->faker->text(10);
-        $type = $this->faker->randomElement($types);
+        $type = $this->faker->randomElement(Asset::getTypes());
 
         $asset = new Asset();
         $asset
@@ -45,7 +40,7 @@ class PositionTest extends TestCase
         return $asset;
     }
 
-    public function testAsset_ShouldSetAndGetSuccessfully(): void
+    public function testPosition_shouldSetAndGetSuccessfully(): void
     {
        $asset = $this->buildAsset();
        $sequence = $this->faker->numberBetween(1, 100);
@@ -88,5 +83,25 @@ class PositionTest extends TestCase
        self::assertEquals($averagePrice, $position->getAveragePrice());
        self::assertEquals($quantityBalance, $position->getQuantityBalance());
        self::assertNull($position->getOperation());
+    }
+
+    public function testPosition_shouldFailWhenAnIncorrectTypeIsSet(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid type');
+
+        $position = new Position();
+        $position
+            ->setType('TEST');
+    }
+
+    public function testPosition_shouldFailWhenAnIncorrectNegotiationTypeIsSet(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid negotiation type');
+
+        $position = new Position();
+        $position
+            ->setNegotiationType('TEST');
     }
 }

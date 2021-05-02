@@ -120,6 +120,10 @@ class Position implements EntityInterface, JsonSerializable
      */
     public function setType(string $type): Position
     {
+        if (!in_array($type, self::getTypes(), true)) {
+            throw new \InvalidArgumentException('Invalid type');
+        }
+
         $this->type = $type;
 
         return $this;
@@ -140,7 +144,7 @@ class Position implements EntityInterface, JsonSerializable
     public function setNegotiationType(string $negotiationType): Position
     {
         if (!in_array($negotiationType, self::getNegotiationTypes(), true)){
-            throw new \InvalidArgumentException("Invalid negotiation type");
+            throw new \InvalidArgumentException('Invalid negotiation type');
         }
 
         $this->negotiationType = $negotiationType;

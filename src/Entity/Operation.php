@@ -42,7 +42,7 @@ class Operation implements EntityInterface, JsonSerializable
     public function __construct(int $line, string $type, Asset $asset, int $quantity, float $price, BrokerageNote $brokerageNote)
     {
         $this->line = $line;
-        $this->type = $type;
+        $this->setType($type);
         $this->asset = $asset;
         $this->quantity = $quantity;
         $this->price = $price;
