@@ -13,28 +13,44 @@ class Position implements EntityInterface, JsonSerializable
     public const TYPE_BUY = 'BUY';
     public const TYPE_SELL = 'SELL';
 
+    public const NEGOTIATION_TYPE_NORMAL = 'NORMAL';
+    public const NEGOTIATION_TYPE_DAYTRADE = 'DAYTRADE';
+
     private ?int $id;
     private Asset $asset;
     private int $sequence;
     private string $type;
+    private ?string $negotiationType;
     private DateTimeImmutable $date;
     private int $quantity;
     private float $unitPrice;
     private int $accumulatedQuantity;
     private float $totalOperation;
     private float $totalCosts;
+    private float $positionPrice;
     private float $accumulatedTotal;
     private float $accumulatedCosts;
     private float $averagePrice;
     private float $averagePriceToIr;
+    private float $result;
+    private float $accumulatedResult;
     private ?Operation $operation;
     private bool $isLast;
+    private int $quantityBalance;
 
     public static function getTypes(): array
     {
         return [
             self::TYPE_BUY,
             self::TYPE_SELL,
+        ];
+    }
+
+    public static function getNegotiationTypes(): array
+    {
+        return [
+            self::NEGOTIATION_TYPE_NORMAL,
+            self::NEGOTIATION_TYPE_DAYTRADE,
         ];
     }
 
@@ -104,7 +120,34 @@ class Position implements EntityInterface, JsonSerializable
      */
     public function setType(string $type): Position
     {
+        if (!in_array($type, self::getTypes(), true)) {
+            throw new \InvalidArgumentException('Invalid type');
+        }
+
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNegotiationType(): ?string
+    {
+        return $this->negotiationType;
+    }
+
+    /**
+     * @param string $negotiationType
+     * @return Position
+     */
+    public function setNegotiationType(string $negotiationType): Position
+    {
+        if (!in_array($negotiationType, self::getNegotiationTypes(), true)){
+            throw new \InvalidArgumentException('Invalid negotiation type');
+        }
+
+        $this->negotiationType = $negotiationType;
 
         return $this;
     }
@@ -225,6 +268,25 @@ class Position implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
+    public function getPositionPrice(): float
+    {
+        return $this->positionPrice;
+    }
+
+    /**
+     * @param float $positionPrice
+     * @return Position
+     */
+    public function setPositionPrice(float $positionPrice): Position
+    {
+        $this->positionPrice = $positionPrice;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
     public function getAccumulatedTotal(): float
     {
         return $this->accumulatedTotal;
@@ -293,6 +355,44 @@ class Position implements EntityInterface, JsonSerializable
     public function setAveragePriceToIr(float $averagePriceToIr): Position
     {
         $this->averagePriceToIr = $averagePriceToIr;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getResult(): float
+    {
+        return $this->result;
+    }
+
+    /**
+     * @param float $result
+     * @return Position
+     */
+    public function setResult(float $result): Position
+    {
+        $this->result = $result;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAccumulatedResult(): float
+    {
+        return $this->accumulatedResult;
+    }
+
+    /**
+     * @param float $accumulatedResult
+     * @return Position
+     */
+    public function setAccumulatedResult(float $accumulatedResult): Position
+    {
+        $this->accumulatedResult = $accumulatedResult;
+
         return $this;
     }
 
@@ -334,6 +434,25 @@ class Position implements EntityInterface, JsonSerializable
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getQuantityBalance(): int
+    {
+        return $this->quantityBalance;
+    }
+
+    /**
+     * @param int $quantityBalance
+     * @return Position
+     */
+    public function setQuantityBalance(int $quantityBalance): Position
+    {
+        $this->quantityBalance = $quantityBalance;
+
+        return $this;
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -341,16 +460,21 @@ class Position implements EntityInterface, JsonSerializable
             'asset_id' => $this->asset->getId(),
             'sequence' => $this->sequence,
             'type' => $this->type,
+            'negotiation_type' => $this->negotiationType,
             'date' => $this->date->format('Y-m-d'),
             'quantity' => $this->quantity,
             'unit_price' => $this->unitPrice,
             'total_operation' => $this->totalOperation,
             'total_costs' => $this->totalCosts,
+            'position_price' => $this->positionPrice,
             'accumulated_quantity' => $this->accumulatedQuantity,
             'accumulated_total' => $this->accumulatedTotal,
             'accumulated_costs' => $this->accumulatedCosts,
             'average_price' => $this->averagePrice,
             'average_price_to_ir' => $this->averagePriceToIr,
+            'result' => $this->result,
+            'accumulated_result' => $this->accumulatedResult,
+            'quantity_balance' => $this->quantityBalance,
             'is_last' => $this->isLast,
         ];
     }

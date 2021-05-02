@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit;
+namespace App\Tests\Unit\Entity\Entity;
 
 use App\Entity\Asset;
 use App\Entity\Company;
@@ -28,13 +28,8 @@ class PositionTest extends TestCase
             ->setCnpj($cnpj)
             ->setName($name);
 
-        $types = [
-            Asset::TYPE_STOCK,
-            Asset::TYPE_FUTURE_CONTRACT
-        ];
-
         $code = $this->faker->text(10);
-        $type = $this->faker->randomElement($types);
+        $type = $this->faker->randomElement(Asset::getTypes());
 
         $asset = new Asset();
         $asset
@@ -45,11 +40,12 @@ class PositionTest extends TestCase
         return $asset;
     }
 
-    public function testAsset_ShouldSetAndGetSuccessfully(): void
+    public function testPosition_shouldSetAndGetSuccessfully(): void
     {
        $asset = $this->buildAsset();
        $sequence = $this->faker->numberBetween(1, 100);
        $type = $this->faker->randomElement(Position::getTypes());
+       $negotiationType = $this->faker->randomElement(Position::getNegotiationTypes());
        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
        $quantity = $this->faker->numberBetween(1, 100);
        $unitCost = $this->faker->randomFloat(2, 1, 500);
@@ -57,23 +53,27 @@ class PositionTest extends TestCase
        $totalOperation = $this->faker->randomFloat(2, 1, 50_000);
        $accumulatedTotal = $this->faker->numberBetween(1, 10_000);
        $averagePrice = $this->faker->randomFloat(2, 1, 500);
+       $quantityBalance = $this->faker->numberBetween(1, 100);
 
        $position = new Position();
        $position
            ->setAsset($asset)
            ->setSequence($sequence)
            ->setType($type)
+           ->setNegotiationType($negotiationType)
            ->setDate($date)
            ->setQuantity($quantity)
            ->setUnitPrice($unitCost)
            ->setAccumulatedQuantity($accumulatedQuantity)
            ->setTotalOperation($totalOperation)
            ->setAccumulatedTotal($accumulatedTotal)
-           ->setAveragePrice($averagePrice);
+           ->setAveragePrice($averagePrice)
+           ->setQuantityBalance($quantityBalance);
 
        self::assertEquals($asset, $position->getAsset());
        self::assertEquals($sequence, $position->getSequence());
        self::assertEquals($type, $position->getType());
+       self::assertEquals($negotiationType, $position->getNegotiationType());
        self::assertEquals($date, $position->getDate());
        self::assertEquals($quantity, $position->getQuantity());
        self::assertEquals($unitCost, $position->getUnitPrice());
@@ -81,6 +81,27 @@ class PositionTest extends TestCase
        self::assertEquals($totalOperation, $position->getTotalOperation());
        self::assertEquals($accumulatedTotal, $position->getAccumulatedTotal());
        self::assertEquals($averagePrice, $position->getAveragePrice());
+       self::assertEquals($quantityBalance, $position->getQuantityBalance());
        self::assertNull($position->getOperation());
+    }
+
+    public function testPosition_shouldFailWhenAnIncorrectTypeIsSet(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid type');
+
+        $position = new Position();
+        $position
+            ->setType('TEST');
+    }
+
+    public function testPosition_shouldFailWhenAnIncorrectNegotiationTypeIsSet(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid negotiation type');
+
+        $position = new Position();
+        $position
+            ->setNegotiationType('TEST');
     }
 }

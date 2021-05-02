@@ -10,8 +10,8 @@ class Operation implements EntityInterface, JsonSerializable
 {
     use Timestampable;
 
-    const TYPE_BUY = 'BUY';
-    const TYPE_SELL = 'SELL';
+    public const TYPE_BUY = 'BUY';
+    public const TYPE_SELL = 'SELL';
 
     private ?int $id;
     private int $line;
@@ -42,7 +42,7 @@ class Operation implements EntityInterface, JsonSerializable
     public function __construct(int $line, string $type, Asset $asset, int $quantity, float $price, BrokerageNote $brokerageNote)
     {
         $this->line = $line;
-        $this->type = $type;
+        $this->setType($type);
         $this->asset = $asset;
         $this->quantity = $quantity;
         $this->price = $price;
@@ -97,7 +97,7 @@ class Operation implements EntityInterface, JsonSerializable
      */
     public function setType(string $type): Operation
     {
-        if (!in_array($type, array(self::TYPE_BUY, self::TYPE_SELL))) {
+        if (!in_array($type, self::getTypes(), true)) {
             throw new InvalidArgumentException("Invalid type");
         }
 

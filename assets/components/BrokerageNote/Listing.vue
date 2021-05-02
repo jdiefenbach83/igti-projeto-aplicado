@@ -108,7 +108,7 @@
         });
 
         return brokerageNotesForListing.sort(function(a, b){
-          return new Date(a.date_to_order) - new Date(b.date_to_order);
+          return new Date(b.date_to_order) - new Date(a.date_to_order);
         });
       },
       headers () {

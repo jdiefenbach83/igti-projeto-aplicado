@@ -1,0 +1,32 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                   https://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
+
+    <entity name="App\Entity\PreConsolidation" table="pre_consolidation">
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <field name="year" type="smallint" nullable="false"/>
+        <field name="month" type="smallint" nullable="false"/>
+        <many-to-one field="asset" target-entity="App\Entity\Asset" >
+            <join-column name="asset_id" referenced-column-name="id" nullable="false"/>
+        </many-to-one>
+        <field name="negotiationType" column="negotiation_type" column-definition="ENUM('NORMAL', 'DAYTRADE')" nullable="false"/>
+        <field name="result" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="negativeResultLastMonth" column="negative_result_last_month" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="calculationBasis" column="calculation_basis" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="lossToCompensate" column="loss_to_compensate" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="withholdingTax" column="withholding_tax" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="taxRate" column="tax_rate" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="taxDue" column="tax_due" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="createdAt" column="created_at" type="datetime" nullable="false">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="false">
+            <gedmo:timestampable on="update"/>
+        </field>
+    </entity>
+</doctrine-mapping>

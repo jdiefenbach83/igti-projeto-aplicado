@@ -461,16 +461,6 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         return $this->operations->removeElement($operation);
     }
 
-    public function validate(): void
-    {
-        $total_moviments = abs($this->total_moviments);
-        $total_operations = abs($this->total_operations);
-
-        if ($total_operations > $total_moviments) {
-            throw new ValidatorException('The total of operations is greater than total of moviments');
-        }
-    }
-
     public function hasOperationsCompleted(): bool
     {
         $total_moviments = $this->total_moviments;
@@ -498,7 +488,7 @@ class BrokerageNote implements EntityInterface, JsonSerializable
 
         /** @var Operation $operation */
         foreach ($this->operations as $operation) {
-            $qtdeTotal += $operation->getQuantity();
+            $qtdeTotal = bcadd($qtdeTotal, $operation->getQuantity());
         }
 
         $totalProratedOperationalFee = .0;
@@ -507,78 +497,77 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $totalProratedBrokerage = .0;
         $totalProratedIssPisCofins = .0;
 
+        $proportionOperationalFee = bcdiv($this->getOperationalFee(), $qtdeTotal, 6);
+        $proportionRegistrationFee = bcdiv($this->getRegistrationFee(), $qtdeTotal, 6);
+        $proportionEmolumentFee = bcdiv($this->getEmolumentFee(), $qtdeTotal, 6);
+        $proportionBrokerage = bcdiv($this->getBrokerage(), $qtdeTotal, 6);
+        $proportionIssPisCofins = bcdiv($this->getIssPisCofins(), $qtdeTotal, 6);
+
         /** @var Operation $operation */
         foreach ($this->operations as $operation) {
-            $proportionOperationalFee = bcdiv($this->getOperationalFee(), $qtdeTotal, 2);
-            $proratedOperationalFee = bcmul($operation->getQuantity(), $proportionOperationalFee, 2);
-
-            $proportionRegistrationFee = bcdiv($this->getRegistrationFee(), $qtdeTotal, 2);
-            $proratedRegistrationFee = bcmul($operation->getQuantity(), $proportionRegistrationFee, 2);
-
-            $proportionEmolumentFee = bcdiv($this->getEmolumentFee(), $qtdeTotal, 2);
-            $proratedEmolumentFee = bcmul($operation->getQuantity(), $proportionEmolumentFee, 2);
-
-            $proportionBrokerage = bcdiv($this->getBrokerage(), $qtdeTotal, 2);
-            $proratedBrokerage = bcmul($operation->getQuantity(), $proportionBrokerage, 2);
-
-            $proportionIssPisCofins = bcdiv($this->getIssPisCofins(), $qtdeTotal, 2);
-            $proratedIssPisCofins = bcmul($operation->getQuantity(), $proportionIssPisCofins, 2);
+            $OperationQuantity = $operation->getQuantity();
+            
+            $proratedOperationalFee = bcmul($OperationQuantity, $proportionOperationalFee, 4);
+            $proratedRegistrationFee = bcmul($OperationQuantity, $proportionRegistrationFee, 4);
+            $proratedEmolumentFee = bcmul($OperationQuantity, $proportionEmolumentFee, 4);
+            $proratedBrokerage = bcmul($OperationQuantity, $proportionBrokerage, 4);
+            $proratedIssPisCofins = bcmul($OperationQuantity, $proportionIssPisCofins, 4);
 
             $operation->setOperationalFee($proratedOperationalFee);
-            $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $proratedOperationalFee, 2);
+            $totalProratedOperationalFee = bcadd($totalProratedOperationalFee, $proratedOperationalFee, 4);
 
             $operation->setRegistrationFee($proratedRegistrationFee);
-            $totalProratedRegistrationFee = bcadd($totalProratedRegistrationFee, $proratedRegistrationFee, 2);
+            $totalProratedRegistrationFee = bcadd($totalProratedRegistrationFee, $proratedRegistrationFee, 4);
 
             $operation->setEmolumentFee($proratedEmolumentFee);
-            $totalProratedEmolumentFee = bcadd($totalProratedEmolumentFee, $proratedEmolumentFee, 2);
+            $totalProratedEmolumentFee = bcadd($totalProratedEmolumentFee, $proratedEmolumentFee, 4);
 
             $operation->setBrokerage($proratedBrokerage);
-            $totalProratedBrokerage = bcadd($totalProratedBrokerage, $proratedBrokerage, 2);
+            $totalProratedBrokerage = bcadd($totalProratedBrokerage, $proratedBrokerage, 4);
 
             $operation->setIssPisCofins($proratedIssPisCofins);
-            $totalProratedIssPisCofins = bcadd($totalProratedIssPisCofins, $proratedIssPisCofins, 2);
+            $totalProratedIssPisCofins = bcadd($totalProratedIssPisCofins, $proratedIssPisCofins, 4);
         }
 
         if ($totalProratedOperationalFee !== $this->getOperationalFee()) {
-            $diff = bcsub($this->getOperationalFee(), $totalProratedOperationalFee, 2);
+            $diff = bcsub($this->getOperationalFee(), $totalProratedOperationalFee, 4);
 
             $lastOperation = $this->operations->last();
-            $fixedValue = bcadd($lastOperation->getOperationalFee(), $diff, 2);
+            $fixedValue = bcadd($lastOperation->getOperationalFee(), $diff, 4);
             $lastOperation->setOperationalFee($fixedValue);
         }
 
         if ($totalProratedRegistrationFee !== $this->getRegistrationFee()) {
-            $diff = bcsub($this->getRegistrationFee(), $totalProratedRegistrationFee, 2);
+            $diff = bcsub($this->getRegistrationFee(), $totalProratedRegistrationFee, 4);
 
             $lastOperation = $this->operations->last();
-            $fixedValue = bcadd($lastOperation->getRegistrationFee(), $diff, 2);
+            $fixedValue = bcadd($lastOperation->getRegistrationFee(), $diff, 4);
             $lastOperation->setRegistrationFee($fixedValue);
         }
 
         if ($totalProratedEmolumentFee !== $this->getEmolumentFee()) {
-            $diff = bcsub($this->getEmolumentFee(), $totalProratedEmolumentFee, 2);
+            $diff = bcsub($this->getEmolumentFee(), $totalProratedEmolumentFee, 4);
 
             $lastOperation = $this->operations->last();
-            $fixedValue = bcadd($lastOperation->getEmolumentFee(), $diff, 2);
+            $fixedValue = bcadd($lastOperation->getEmolumentFee(), $diff, 4);
 
             $lastOperation->setEmolumentFee($fixedValue);
         }
 
         if ($totalProratedBrokerage !== $this->getBrokerage()) {
-            $diff = bcsub($this->getBrokerage(), $totalProratedBrokerage, 2);
+            $diff = bcsub($this->getBrokerage(), $totalProratedBrokerage, 4);
 
             $lastOperation = $this->operations->last();
-            $fixedValue = bcadd($lastOperation->getBrokerage(), $diff, 2);
+            $fixedValue = bcadd($lastOperation->getBrokerage(), $diff, 4);
 
             $lastOperation->setBrokerage($fixedValue);
         }
 
         if ($totalProratedIssPisCofins !== $this->getIssPisCofins()) {
-            $diff = bcsub($this->getIssPisCofins(), $totalProratedIssPisCofins, 2);
+            $diff = bcsub($this->getIssPisCofins(), $totalProratedIssPisCofins, 4);
 
             $lastOperation = $this->operations->last();
-            $fixedValue = bcadd($lastOperation->getIssPisCofins(), $diff, 2);
+            $fixedValue = bcadd($lastOperation->getIssPisCofins(), $diff, 4);
 
             $lastOperation->setIssPisCofins($fixedValue);
         }

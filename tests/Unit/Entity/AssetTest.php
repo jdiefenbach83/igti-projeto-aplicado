@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit;
+namespace App\Tests\Unit\Entity;
 
 use App\Entity\Asset;
 use App\Entity\Company;
@@ -17,7 +17,7 @@ class AssetTest extends TestCase
         $this->faker = Factory::create();
     }
     
-    public function testAsset_ShouldSetAndGetSuccessfully(): void
+    public function testAsset_shouldSetAndGetSuccessfully(): void
     {
         $cnpj = $this->faker->text(18);
         $name = $this->faker->text(255);
@@ -27,13 +27,8 @@ class AssetTest extends TestCase
             ->setCnpj($cnpj)
             ->setName($name);
 
-        $types = [
-            Asset::TYPE_STOCK,
-            Asset::TYPE_FUTURE_CONTRACT
-        ];
-
         $code = $this->faker->text(10);
-        $type = $this->faker->randomElement($types);
+        $type = $this->faker->randomElement(Asset::getTypes());
 
         $asset = new Asset();
         $asset
@@ -44,5 +39,15 @@ class AssetTest extends TestCase
         self::assertEquals($code, $asset->getCode());
         self::assertEquals($type, $asset->getType());
         self::assertEquals($company, $asset->getCompany());
+    }
+
+    public function testAsset_shouldFailWhenSetAnIncorrectType(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid type');
+        
+        $asset = new Asset();
+        $asset
+            ->setType('TEST');
     }
 }
