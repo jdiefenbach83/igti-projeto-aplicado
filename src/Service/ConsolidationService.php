@@ -2,85 +2,59 @@
 
 namespace App\Service;
 
-use App\Entity\Asset;
-use App\Entity\Position;
 use App\Entity\PreConsolidation;
-use App\Repository\PositionRepositoryInterface;
+use App\Repository\AssetRepositoryInterface;
+use App\Repository\PreConsolidationRepositoryInterface;
 
 class ConsolidationService implements CalculationInterface
 {
-    /**
-     * @var PositionRepositoryInterface
-     */
-    private PositionRepositoryInterface $positionRepository;
-    private array $preConsolidations = [];
+    private PreConsolidationRepositoryInterface $preConsolidationRepository;
+    private AssetRepositoryInterface $assetRepository;
 
-    public function __construct(PositionRepositoryInterface $positionRepository)
+    public function __construct(
+        PreConsolidationRepositoryInterface $preConsolidationRepository,
+        AssetRepositoryInterface $assetRepository
+    )
     {
-        $this->positionRepository = $positionRepository;
+        $this->preConsolidationRepository = $preConsolidationRepository;
+        $this->assetRepository = $assetRepository;
     }
 
     public function process(): void
     {
+        $this->preConsolidationRepository->startWorkUnit();
+
+        $this->removePreConsolidations();
         $this->calculatePreConsolidation();
+
+        $this->preConsolidationRepository->endWorkUnit();
+    }
+
+    private function removePreConsolidations(): void
+    {
+        $preConsolidations = $this->preConsolidationRepository->findAll();
+
+        foreach ($preConsolidations as $preConsolidation){
+            $this->preConsolidationRepository->remove($preConsolidation);
+        }
     }
 
     private function calculatePreConsolidation(): void
     {
-        $positions = $this->positionRepository->findAll();
+        $summarizedPositions = $this->preConsolidationRepository->findPreConsolidatePositions();
 
-        /** @var Position $position */
-        foreach($positions as $position){
-            $year = $position->getDate()->format('Y');
-            $month = $position->getDate()->format('m');
-            $asset = $position->getAsset();
-            $type = $position->getType();
+        foreach ($summarizedPositions as $position) {
+            $asset = $this->assetRepository->findById($position['assetId']);
 
-            $preConsolidation = $this->getOrBuildPreConsolidation($year, $month, $asset, $type);
+            $preConsolidation = new PreConsolidation();
+            $preConsolidation
+                ->setAsset($asset)
+                ->setNegotiationType($position['negotiationType'])
+                ->setYear($position['year'])
+                ->setMonth($position['month'])
+                ->setResult($position['result']);
 
-            $quantity = bcadd($preConsolidation->getQuantity(), $position->getQuantity(), 4);
-            $totalOperations = bcadd($preConsolidation->getTotalOperation(), $position->getTotalOperation(), 4);
-            $totalCosts = bcadd($preConsolidation->getTotalCosts(), $position->getTotalCosts(), 4);
-
-            $preConsolidation->setQuantity($quantity);
-            $preConsolidation->setTotalOperation($totalOperations);
-            $preConsolidation->setTotalCosts($totalCosts);
-
-            $this->addPreConsolidation($preConsolidation);
+            $this->preConsolidationRepository->add($preConsolidation);
         }
-    }
-
-    private function getOrBuildPreConsolidation(int $year, int $month, Asset $asset, string $type): PreConsolidation
-    {
-        /** @var PreConsolidation $filteredPreConsolidation */
-        $filteredPreConsolidation = array_filter($this->preConsolidations, static function($preConsolidation) use ($year, $month, $asset, $type){
-            return
-                $preConsolidation->getAsset()->getId() === $asset->getId() &&
-                $preConsolidation->getYear() === $year &&
-                $preConsolidation->getMonth() === $month &&
-                $preConsolidation->getType() === $type;
-        });
-
-        return $filteredPreConsolidation[0] ?? (new PreConsolidation())
-            ->setYear($year)
-            ->setMonth($month)
-            ->setAsset($asset)
-            ->setType($type)
-            ->setQuantity(0)
-            ->setTotalOperation(.0)
-            ->setTotalCosts(.0);
-    }
-
-    private function addPreConsolidation(PreConsolidation $preConsolidation): void
-    {
-        /** @var PreConsolidation $filteredPreConsolidation */
-        $filteredPreConsolidation = array_filter($this->preConsolidations, static function($item) use ($preConsolidation){
-            return $preConsolidation->getAsset()->getId() !== $item->getAsset()->getId() ||
-                $preConsolidation->getYear() !== $item->getYear() ||
-                $preConsolidation->getMonth() !== $item->getMonth() ||
-                $preConsolidation->getType() !== $item->getType();
-        });
-
-        $this->preConsolidations = array_merge($filteredPreConsolidation, [$preConsolidation]);
     }
 }
