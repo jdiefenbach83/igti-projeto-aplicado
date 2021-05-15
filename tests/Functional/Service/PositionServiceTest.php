@@ -524,8 +524,6 @@ final class PositionServiceTest extends KernelTestCase
         $this->brokerageNoteService->addOperation($brokerageNoteId, $operationDTO);
     }
 
-
-
     public function getBrokerageNotesForShortSales(): iterable
     {
         yield 'Short sales' => [
