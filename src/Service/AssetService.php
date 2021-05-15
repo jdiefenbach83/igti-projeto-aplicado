@@ -46,6 +46,11 @@ class AssetService implements ServiceInterface
         return $this->assetRepository->findById($id);
     }
 
+    public function getByCode(string $code): ?Asset
+    {
+        return $this->assetRepository->findByCode($code);
+    }
+
     public function add(DTOInterface $dto): ?Asset
     {
         $errors = $this->validator->validate($dto);

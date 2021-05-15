@@ -29,9 +29,14 @@ class AssetRepository implements AssetRepositoryInterface
         return $this->objectRepository->findAll();
     }
 
-    public function findById(int $id)
+    public function findById(int $id): ?Asset
     {
         return $this->objectRepository->find($id);
+    }
+
+    public function findByCode(string $code): ?Asset
+    {
+        return $this->objectRepository->findOneBy(['code' => $code]);
     }
 
     public function add(Asset $asset): void
