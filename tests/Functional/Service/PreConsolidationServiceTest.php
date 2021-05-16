@@ -7,18 +7,18 @@ use App\Entity\PreConsolidation;
 use App\Repository\PositionRepository;
 use App\Repository\PreConsolidationRepository;
 use App\Service\AssetService;
-use App\Service\ConsolidationService;
+use App\Service\PreConsolidationService;
 use App\Service\PositionService;
 use DateTimeImmutable;
 use Faker\Factory;
 use Faker\Generator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class ConsolidationServiceTest extends KernelTestCase
+class PreConsolidationServiceTest extends KernelTestCase
 {
     private $positionRepository;
     private $positionService;
-    private $consolidationService;
+    private $preConsolidationService;
     private $preConsolidationRepository;
     private $assetService;
 
@@ -29,7 +29,7 @@ class ConsolidationServiceTest extends KernelTestCase
         self::bootKernel();
         $this->positionRepository = self::$container->get(PositionRepository::class);
         $this->positionService = self::$container->get(PositionService::class);
-        $this->consolidationService = self::$container->get(ConsolidationService::class);
+        $this->preConsolidationService = self::$container->get(PreConsolidationService::class);
         $this->preConsolidationRepository = self::$container->get(PreConsolidationRepository::class);
         $this->assetService = self::$container->get(AssetService::class);
 
@@ -210,13 +210,13 @@ class ConsolidationServiceTest extends KernelTestCase
      * @dataProvider getPositionsToPreConsolidate
      * @param array $positions
      */
-    public function testConsolidationService_shouldPreConsolidatePositions(array $positions): void
+    public function testPreConsolidationService_shouldPreConsolidatePositions(array $positions): void
     {
         $this->buildPositionsToPreConsolidate($positions['Positions']);
         $positionsTotal = count($positions['Positions']);
         $insertedPositions = count($this->positionService->getAll());
 
-        $this->consolidationService->process();
+        $this->preConsolidationService->process();
 
         /** @var PreConsolidation $preConsolidation */
         $preConsolidation = $this->preConsolidationRepository->findAll()[0];
