@@ -9,25 +9,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Parameter;
 use Doctrine\Persistence\ObjectRepository;
 
-class PositionRepository implements PositionRepositoryInterface
+class PositionRepository extends AbstratctRepository implements PositionRepositoryInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * @var ObjectRepository
-     */
-    private ObjectRepository $objectRepository;
-
-    private bool $isTransaction;
-
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
-        $this->objectRepository = $this->entityManager->getRepository(Position::class);
-        $this->isTransaction = false;
+        parent::__construct($entityManager, Position::class);
     }
 
     public function findAll(): array
@@ -62,26 +48,6 @@ class PositionRepository implements PositionRepositoryInterface
     {
         $this->entityManager->remove($position);
         $this->processWorkUnit();
-    }
-
-    public function startWorkUnit(): void
-    {
-        $this->isTransaction = true;
-    }
-
-    public function endWorkUnit(): void
-    {
-        $this->isTransaction = false;
-        $this->processWorkUnit();
-    }
-
-    private function processWorkUnit() : void
-    {
-        if ($this->isTransaction) {
-            return;
-        }
-
-        $this->entityManager->flush();
     }
 
     public function findAllAssets(): array

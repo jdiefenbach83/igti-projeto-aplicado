@@ -5,47 +5,12 @@ namespace App\Repository;
 use App\Entity\Position;
 use App\Entity\PreConsolidation;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
 
-class PreConsolidationRepository implements PreConsolidationRepositoryInterface
+class PreConsolidationRepository extends AbstratctRepository implements PreConsolidationRepositoryInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * @var ObjectRepository
-     */
-    private ObjectRepository $objectRepository;
-
-    private bool $isTransaction;
-
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
-        $this->objectRepository = $this->entityManager->getRepository(PreConsolidation::class);
-        $this->isTransaction = false;
-    }
-
-    public function startWorkUnit(): void
-    {
-        $this->isTransaction = true;
-    }
-
-    public function endWorkUnit(): void
-    {
-        $this->isTransaction = false;
-        $this->processWorkUnit();
-    }
-
-    private function processWorkUnit() : void
-    {
-        if ($this->isTransaction) {
-            return;
-        }
-
-        $this->entityManager->flush();
+        parent::__construct($entityManager, PreConsolidation::class);
     }
 
     public function findAll()
