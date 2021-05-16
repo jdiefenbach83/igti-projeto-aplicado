@@ -11,20 +11,15 @@
 
         <field name="year" type="smallint" nullable="false"/>
         <field name="month" type="smallint" nullable="false"/>
-        <field name="assetType" column="asset_type" column-definition="ENUM('STOCK', 'FUTURE_CONTRACT')" nullable="false"/>
         <field name="negotiationType" column="negotiation_type" column-definition="ENUM('NORMAL', 'DAYTRADE')" nullable="false"/>
-        <field name="totalBought" column="total_bought" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="totalBoughtCosts" column="total_bought_costs" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="totalQuantitySold" column="total_quantity_sold" type="integer" scale="4" nullable="false"/>
-        <field name="totalSold" column="total_sold" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="totalSoldCosts" column="total_sold_costs" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="marketType" column="market_type" column-definition="ENUM('SPOT', 'FUTURE')" nullable="false"/>
+        <field name="result" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="accumulatedLoss" column="accumulated_loss" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="balance" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="totalCosts" column="total_costs" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="compesatedLoss" column="compesated_loss" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="irrfCharged" column="irrf_charged" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="irrfCalculated" column="irrf_calculated" type="decimal" precision="14" scale="4" nullable="false"/>
-        <field name="irToPay" column="ir_to_pay" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="basisToIr" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="aliquot" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="irrf" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="irToPay" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>
         </field>
@@ -33,7 +28,7 @@
         </field>
 
         <indexes>
-            <index name="UK_CONSOLIDATION" columns="year,month,asset_type,negotiation_type"/>
+            <index name="UK_CONSOLIDATION" columns="year,month,negotiation_type,market_type"/>
         </indexes>
     </entity>
 </doctrine-mapping>
