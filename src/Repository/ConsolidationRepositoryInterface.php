@@ -2,14 +2,12 @@
 
 namespace App\Repository;
 
-use App\Entity\PreConsolidation;
+use App\Entity\Consolidation;
 
-interface PreConsolidationRepositoryInterface
+interface ConsolidationRepositoryInterface
 {
-    public function startWorkUnit(): void;
-    public function endWorkUnit(): void;
-    public function findAll();
-    public function findPreConsolidatePositions(): array;
-    public function add(PreConsolidation $preConsolidation): void;
-    public function remove(PreConsolidation $preConsolidation): void;
+    public function findAll(): array;
+    public function findConsolidatePositions(): array;
+    public function add(Consolidation $consolidation): void;
+    public function remove(Consolidation $consolidation): void;
 }
