@@ -119,7 +119,8 @@ class PreConsolidationServiceTest extends KernelTestCase
                     'year' => 2021,
                     'month' => 4,
                     'negotiationType' => PreConsolidation::NEGOTIATION_TYPE_NORMAL,
-                    'result' => 18.34
+                    'result' => 18.34,
+                    'marketType' => PreConsolidation::MARKET_TYPE_SPOT,
                 ],
             ],
         ];
@@ -168,7 +169,8 @@ class PreConsolidationServiceTest extends KernelTestCase
                     'year' => 2021,
                     'month' => 4,
                     'negotiationType' => PreConsolidation::NEGOTIATION_TYPE_DAYTRADE,
-                    'result' => -110.84
+                    'result' => -110.84,
+                    'marketType' => PreConsolidation::MARKET_TYPE_SPOT,
                 ],
             ],
         ];
@@ -227,5 +229,6 @@ class PreConsolidationServiceTest extends KernelTestCase
         self::assertEquals($positions['PreConsolidation']['month'], $preConsolidation->getMonth());
         self::assertEquals($positions['PreConsolidation']['negotiationType'], $preConsolidation->getNegotiationType());
         self::assertEquals($positions['PreConsolidation']['result'], $preConsolidation->getResult());
+        self::assertEquals($positions['PreConsolidation']['marketType'], $preConsolidation->getMarketType());
     }
 }

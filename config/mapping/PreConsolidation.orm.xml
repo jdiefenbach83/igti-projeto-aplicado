@@ -12,6 +12,7 @@
             <join-column name="asset_id" referenced-column-name="id" nullable="false"/>
         </many-to-one>
         <field name="negotiationType" column="negotiation_type" column-definition="ENUM('NORMAL', 'DAYTRADE')" nullable="false"/>
+        <field name="marketType" column="market_type" column-definition="ENUM('SPOT', 'FUTURE')" nullable="false"/>
         <field name="year" type="smallint" nullable="false"/>
         <field name="month" type="smallint" nullable="false"/>
         <field name="result" type="decimal" precision="14" scale="4" nullable="false"/>

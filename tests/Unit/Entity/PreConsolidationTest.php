@@ -4,7 +4,7 @@ namespace App\Tests\Unit;
 
 use App\Entity\Asset;
 use App\Entity\Company;
-use App\Entity\Position;
+use App\Entity\Consolidation;
 use App\Entity\PreConsolidation;
 use Faker\Factory;
 use Faker\Generator;
@@ -64,5 +64,15 @@ class PreConsolidationTest extends TestCase
         $preConsolidation = new PreConsolidation();
         $preConsolidation
             ->setNegotiationType('TEST');
+    }
+
+    public function testAsset_shouldFailWhenSetAnIncorrectMarketType(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid market type');
+
+        $preConsolidation = new PreConsolidation();
+        $preConsolidation
+            ->setMarketType('TEST');
     }
 }
