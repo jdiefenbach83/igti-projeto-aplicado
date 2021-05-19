@@ -7,7 +7,8 @@ use App\Entity\Consolidation;
 interface ConsolidationRepositoryInterface
 {
     public function findAll(): array;
-    public function findConsolidatePositions(): array;
+    public function findYearsToConsolidate(): array;
+    public function findConsolidatePositions(int $year, int $month, string $market, string $negotiation): array;
     public function add(Consolidation $consolidation): void;
     public function remove(Consolidation $consolidation): void;
 }

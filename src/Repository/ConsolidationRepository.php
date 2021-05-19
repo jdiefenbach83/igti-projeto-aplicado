@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Consolidation;
 use App\Entity\PreConsolidation;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Parameter;
 
 class ConsolidationRepository extends AbstratctRepository implements ConsolidationRepositoryInterface
 {
@@ -25,29 +27,45 @@ class ConsolidationRepository extends AbstratctRepository implements Consolidati
         return $this->objectRepository->findBy([], $order);
     }
 
-    public function findConsolidatePositions(): array
+    public function findYearsToConsolidate(): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
         $query = $queryBuilder
             ->select([
-                'pc.negotiationType',
-                'a.type as assetType',
-                'pc.year',
-                'pc.month',
+                'pc.year'
+            ])
+            ->from(PreConsolidation::class, 'pc')
+            ->distinct()
+            ->addOrderBy('pc.year', 'ASC')
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
+    public function findConsolidatePositions(int $year, int $month, string $market, string $negotiation): array
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $query = $queryBuilder
+            ->select([
                 'SUM(pc.result) as result',
             ])
             ->from(PreConsolidation::class, 'pc')
             ->innerJoin('pc.asset', 'a')
-            ->addGroupBy('pc.negotiationType')
-            ->addGroupBy('a.type')
-            ->addGroupBy('pc.year')
-            ->addGroupBy('pc.month')
+            ->where(
+                $queryBuilder->expr()->eq('pc.year',':year'),
+                $queryBuilder->expr()->eq('pc.month',':month'),
+                $queryBuilder->expr()->eq('pc.marketType',':market'),
+                $queryBuilder->expr()->eq('pc.negotiationType',':negotiation'),
+            )
+            ->setParameters(new ArrayCollection([
+                new Parameter('year', $year),
+                new Parameter('month', $month),
+                new Parameter('market', $market),
+                new Parameter('negotiation', $negotiation),
+            ]))
             ->having('SUM(pc.result) <> 0')
-            ->addOrderBy('pc.negotiationType', 'ASC')
-            ->addOrderBy('a.type', 'ASC')
-            ->addOrderBy('pc.year', 'ASC')
-            ->addOrderBy('pc.month', 'ASC')
             ->getQuery();
 
         return $query->getResult();

@@ -39,35 +39,78 @@ class ConsolidationService implements CalculationInterface
 
     private function calculateConsolidation(): void
     {
-        $summarizedPositions = $this->consolidationRepository->findConsolidatePositions();
+        $years = $this->consolidationRepository->findYearsToConsolidate();
+        $markets = Consolidation::getMarketTypes();
+        $negotiations = Consolidation::getNegotiationTypes();
 
-        foreach ($summarizedPositions as $position) {
+        foreach($years as $year)
+        {
+            foreach($markets as $market)
+            {
+                foreach ($negotiations as $negotiation)
+                {
+                    $accumulatedLoss = .0;
 
-            $marketType = $this->mapConsolitationToMarketType($position['assetType']);
+                    for ($month = 1; $month <= 12; $month++)
+                    {
+                        $summarizedPositions = $this->consolidationRepository
+                            ->findConsolidatePositions(
+                                $year['year'],
+                                $month,
+                                $market,
+                                $negotiation
+                            );
 
-            $consolidation = new Consolidation();
-            $consolidation
-                ->setNegotiationType($position['negotiationType'])
-                ->setMarketType($marketType)
-                ->setYear($position['year'])
-                ->setMonth($position['month'])
-                ->setResult($position['result'])
-                ->setAccumulatedLoss(.0)
-                ->setCompesatedLoss(.0)
-                ->setBasisToIr(.0)
-                ->setAliquot(.0)
-                ->setIrrf(.0)
-                ->setIrToPay(.0);
+                        $consolidation = new Consolidation();
+                        $consolidation
+                            ->setNegotiationType($negotiation)
+                            ->setMarketType($market)
+                            ->setYear($year['year'])
+                            ->setMonth($month)
+                            ->setResult(.0)
+                            ->setAccumulatedLoss($accumulatedLoss)
+                            ->setCompesatedLoss(.0)
+                            ->setBasisToIr(.0)
+                            ->setAliquot(.0)
+                            ->setIrrf(.0)
+                            ->setIrToPay(.0);
 
-            $this->consolidationRepository->add($consolidation);
+                        foreach ($summarizedPositions as $position) {
+                            $result = (float)$position['result'];
+                            $compesadatedLoss = .0;
+                            $basisToIr = $result;
+
+                            if ($result < .0) {
+                                $accumulatedLoss += $result * -1;
+                            }
+
+                            if ($result > .0 && $accumulatedLoss > .0) {
+                               if ($result > $accumulatedLoss) {
+                                   $compesadatedLoss = $accumulatedLoss;
+                                   $accumulatedLoss = .0;
+                                   $basisToIr = $result - $compesadatedLoss;
+                               } elseif ($result === $accumulatedLoss) {
+                                   $compesadatedLoss = .0;
+                                   $accumulatedLoss = .0;
+                                   $basisToIr = .0;
+                               } else {
+                                   $compesadatedLoss = $accumulatedLoss - $result;
+                                   $accumulatedLoss -= $compesadatedLoss;
+                                   $basisToIr = .0;
+                               }
+                            }
+
+                            $consolidation
+                                ->setResult($result)
+                                ->setAccumulatedLoss($accumulatedLoss)
+                                ->setCompesatedLoss($compesadatedLoss)
+                                ->setBasisToIr($basisToIr);
+                        }
+
+                        $this->consolidationRepository->add($consolidation);
+                    }
+                }
+            }
         }
-    }
-
-    private function mapConsolitationToMarketType(string $consolidationType): ?string
-    {
-        $map[Asset::TYPE_STOCK] = Consolidation::MARKET_TYPE_SPOT;
-        $map[Asset::TYPE_FUTURE_CONTRACT] = Consolidation::MARKET_TYPE_FUTURE;
-
-        return $map[$consolidationType];
     }
 }
