@@ -61,7 +61,7 @@ class AssetService implements ServiceInterface
         }
 
         $asset_entity = (new AssetFactory($this->companyRepository))->makeEntityFromDTO($dto);
-        $this->assetRepository->add($asset_entity);
+        $this->assetRepository->save($asset_entity);
 
         return $asset_entity;
     }
@@ -87,7 +87,7 @@ class AssetService implements ServiceInterface
         $existing_entity->setType($asset_entity->getType());
         $existing_entity->setCompany($asset_entity->getCompany());
 
-        $this->assetRepository->update($existing_entity);
+        $this->assetRepository->save($existing_entity);
 
         return $existing_entity;
     }

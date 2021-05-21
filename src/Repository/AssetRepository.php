@@ -39,13 +39,7 @@ class AssetRepository implements AssetRepositoryInterface
         return $this->objectRepository->findOneBy(['code' => $code]);
     }
 
-    public function add(Asset $asset): void
-    {
-        $this->entityManager->persist($asset);
-        $this->entityManager->flush();
-    }
-
-    public function update(Asset $asset): void
+    public function save(Asset $asset): void
     {
         $this->entityManager->persist($asset);
         $this->entityManager->flush();
