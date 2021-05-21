@@ -34,13 +34,7 @@ class BrokerRepository implements BrokerRepositoryInterface
         return $this->objectRepository->find($id);
     }
 
-    public function add(Broker $broker): void
-    {
-        $this->entityManager->persist($broker);
-        $this->entityManager->flush();
-    }
-
-    public function update(Broker $broker): void
+    public function save(Broker $broker): void
     {
         $this->entityManager->persist($broker);
         $this->entityManager->flush();

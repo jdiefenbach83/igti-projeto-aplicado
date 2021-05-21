@@ -46,7 +46,7 @@ class BrokerService implements ServiceInterface
         }
 
         $broker_entity = (new BrokerFactory())->makeEntityFromDTO($dto);
-        $this->brokerRepository->add($broker_entity);
+        $this->brokerRepository->save($broker_entity);
 
         return $broker_entity;
     }
@@ -73,7 +73,7 @@ class BrokerService implements ServiceInterface
         $existing_entity->setCnpj($broker_entity->getCnpj());
         $existing_entity->setSite($broker_entity->getSite());
 
-        $this->brokerRepository->update($existing_entity);
+        $this->brokerRepository->save($existing_entity);
 
         return $existing_entity;
     }
