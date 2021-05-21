@@ -76,6 +76,7 @@ class ConsolidationService implements CalculationInterface
                             ->setAccumulatedIrrf(.0)
                             ->setCompesatedIrrf(.0)
                             ->setIrrfToPay(.0)
+                            ->setIr(.0)
                             ->setIrToPay(.0);
 
                         foreach ($summarizedPositions as $position) {

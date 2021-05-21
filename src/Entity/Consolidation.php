@@ -29,6 +29,7 @@ class Consolidation implements EntityInterface, JsonSerializable
     private float $accumulatedIrrf;
     private float $compesatedIrrf;
     private float $irrfToPay;
+    private float $ir;
     private float $irToPay;
 
     public static function getNegotiationTypes(): array
@@ -304,6 +305,26 @@ class Consolidation implements EntityInterface, JsonSerializable
     public function setIrrfToPay(float $irrfToPay): Consolidation
     {
         $this->irrfToPay = $irrfToPay;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getIr(): float
+    {
+        return $this->ir;
+    }
+
+    /**
+     * @param float $ir
+     * @return Consolidation
+     */
+    public function setIr(float $ir): Consolidation
+    {
+        $this->ir = $ir;
+
         return $this;
     }
 
@@ -343,6 +364,7 @@ class Consolidation implements EntityInterface, JsonSerializable
             'accumulated_irrf' => $this->accumulatedIrrf,
             'compesated_irrf' => $this->compesatedIrrf,
             'irrf_to_pay' => $this->irrfToPay,
+            'ir' => $this->ir,
             'ir_to_pay' => $this->irToPay,
             '_links' => [
                 [
