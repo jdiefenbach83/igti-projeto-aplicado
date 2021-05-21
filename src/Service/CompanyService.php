@@ -46,7 +46,7 @@ class CompanyService implements ServiceInterface
         }
 
         $company_entity = (new CompanyFactory())->makeEntityFromDTO($dto);
-        $this->companyRepository->add($company_entity);
+        $this->companyRepository->save($company_entity);
 
         return $company_entity;
     }
@@ -71,7 +71,7 @@ class CompanyService implements ServiceInterface
         $existing_entity->setName($company_entity->getName());
         $existing_entity->setCnpj($company_entity->getCnpj());
 
-        $this->companyRepository->update($existing_entity);
+        $this->companyRepository->save($existing_entity);
 
         return $existing_entity;
     }

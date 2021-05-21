@@ -34,13 +34,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         return $this->objectRepository->find($id);
     }
 
-    public function add(Company $company): void
-    {
-        $this->entityManager->persist($company);
-        $this->entityManager->flush();
-    }
-
-    public function update(Company $company): void
+    public function save(Company $company): void
     {
         $this->entityManager->persist($company);
         $this->entityManager->flush();
