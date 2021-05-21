@@ -19,6 +19,9 @@
         <field name="basisToIr" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="aliquot" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="irrf" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="accumulatedIrrf" column="accumulated_irrf" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="compesatedIrrf" column="compesated_irrf" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="irrfToPay" column="irrf_to_pay" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="irToPay" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>

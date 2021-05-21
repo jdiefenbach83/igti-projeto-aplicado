@@ -29,6 +29,9 @@ class ConsolidationTest extends TestCase
         $basisToIr = $this->faker->randomFloat(4, 1, 1_000);
         $aliquot = $this->faker->randomFloat(4, 1, 1_000);
         $irrf = $this->faker->randomFloat(4, 1, 1_000);
+        $accumulatedIrrf = $this->faker->randomFloat(4, 1, 1_000);
+        $compesatedIrrf = $this->faker->randomFloat(4, 1, 1_000);
+        $irrfToPay = $this->faker->randomFloat(4, 1, 1_000);
         $irToPay = $this->faker->randomFloat(4, 1, 1_000);
 
         $consolidation = new Consolidation();
@@ -43,6 +46,9 @@ class ConsolidationTest extends TestCase
             ->setBasisToIr($basisToIr)
             ->setAliquot($aliquot)
             ->setIrrf($irrf)
+            ->setAccumulatedIrrf($accumulatedIrrf)
+            ->setCompesatedIrrf($compesatedIrrf)
+            ->setIrrfToPay($irrfToPay)
             ->setIrToPay($irToPay);
 
         self::assertEquals($year, $consolidation->getYear());
@@ -54,6 +60,10 @@ class ConsolidationTest extends TestCase
         self::assertEquals($compesatedLoss, $consolidation->getCompesatedLoss());
         self::assertEquals($basisToIr, $consolidation->getBasisToIr());
         self::assertEquals($aliquot, $consolidation->getAliquot());
+        self::assertEquals($irrf, $consolidation->getIrrf());
+        self::assertEquals($accumulatedIrrf, $consolidation->getAccumulatedIrrf());
+        self::assertEquals($compesatedIrrf, $consolidation->getCompesatedIrrf());
+        self::assertEquals($irrfToPay, $consolidation->getIrrfToPay());
         self::assertEquals($irrf, $consolidation->getIrrf());
         self::assertEquals($irToPay, $consolidation->getIrToPay());
     }

@@ -26,6 +26,9 @@ class Consolidation implements EntityInterface, JsonSerializable
     private float $basisToIr;
     private float $aliquot;
     private float $irrf;
+    private float $accumulatedIrrf;
+    private float $compesatedIrrf;
+    private float $irrfToPay;
     private float $irToPay;
 
     public static function getNegotiationTypes(): array
@@ -272,6 +275,62 @@ class Consolidation implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
+    public function getAccumulatedIrrf(): float
+    {
+        return $this->accumulatedIrrf;
+    }
+
+    /**
+     * @param float $accumulatedIrrf
+     * @return Consolidation
+     */
+    public function setAccumulatedIrrf(float $accumulatedIrrf): Consolidation
+    {
+        $this->accumulatedIrrf = $accumulatedIrrf;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCompesatedIrrf(): float
+    {
+        return $this->compesatedIrrf;
+    }
+
+    /**
+     * @param float $compesatedIrrf
+     * @return Consolidation
+     */
+    public function setCompesatedIrrf(float $compesatedIrrf): Consolidation
+    {
+        $this->compesatedIrrf = $compesatedIrrf;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getIrrfToPay(): float
+    {
+        return $this->irrfToPay;
+    }
+
+    /**
+     * @param float $irrfToPay
+     * @return Consolidation
+     */
+    public function setIrrfToPay(float $irrfToPay): Consolidation
+    {
+        $this->irrfToPay = $irrfToPay;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
     public function getIrToPay(): float
     {
         return $this->irToPay;
@@ -302,6 +361,9 @@ class Consolidation implements EntityInterface, JsonSerializable
             'basis_to_ir' => $this->basisToIr,
             'aliquot' => $this->aliquot,
             'irrf' => $this->irrf,
+            'accumulated_irrf' => $this->accumulatedIrrf,
+            'compesated_irrf' => $this->compesatedIrrf,
+            'irrf_to_pay' => $this->irrfToPay,
             'ir_to_pay' => $this->irToPay,
             '_links' => [
                 [
