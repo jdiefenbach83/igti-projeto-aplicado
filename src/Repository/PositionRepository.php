@@ -32,13 +32,7 @@ class PositionRepository extends AbstratctRepository implements PositionReposito
         return $this->objectRepository->find($id);
     }
 
-    public function add(Position $position): void
-    {
-        $this->entityManager->persist($position);
-        $this->processWorkUnit();
-    }
-
-    public function update(Position $position): void
+    public function save(Position $position): void
     {
         $this->entityManager->persist($position);
         $this->processWorkUnit();

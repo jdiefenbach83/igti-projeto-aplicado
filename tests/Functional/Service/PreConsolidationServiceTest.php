@@ -204,7 +204,7 @@ class PreConsolidationServiceTest extends KernelTestCase
                 ->setNegotiationType($position['negotiationType'])
                 ->setSequence(++$index);
 
-            $this->positionRepository->add($newPosition);
+            $this->positionRepository->save($newPosition);
         }
     }
 
