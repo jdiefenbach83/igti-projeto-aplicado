@@ -8,6 +8,7 @@ use App\Entity\PreConsolidation;
 use App\Repository\AssetRepositoryInterface;
 use App\Repository\ConsolidationRepositoryInterface;
 use App\Repository\PreConsolidationRepositoryInterface;
+use App\Service\IrCalculator\IrCalculatorFactory;
 
 class ConsolidationService implements CalculationInterface
 {
@@ -109,9 +110,25 @@ class ConsolidationService implements CalculationInterface
                                 ->setAccumulatedLoss($accumulatedLoss)
                                 ->setCompesatedLoss($compesadatedLoss)
                                 ->setBasisToIr($basisToIr);
+
+                            if ($basisToIr > .0) {
+                                $calculator = IrCalculatorFactory::getCalculatorMethod($consolidation);
+
+                                $aliquot = $calculator->getAliquot();
+                                $irrf = $calculator->calculateIrrf();
+                                $ir = $calculator->calculateIr();
+                                $irToPay = bcsub($ir, $irrf, 4);
+
+                                $consolidation
+                                    ->setAliquot($aliquot)
+                                    ->setIrrf($irrf)
+                                    ->setIrrfToPay($irrf)
+                                    ->setIr($ir)
+                                    ->setIrToPay($irToPay);
+                            }
                         }
 
-                        $this->consolidationRepository->add($consolidation);
+                        $this->consolidationRepository->save($consolidation);
                     }
                 }
             }

@@ -71,7 +71,7 @@ class ConsolidationRepository extends AbstratctRepository implements Consolidati
         return $query->getResult();
     }
 
-    public function add(Consolidation $consolidation): void
+    public function save(Consolidation $consolidation): void
     {
         $this->entityManager->persist($consolidation);
         $this->processWorkUnit();
