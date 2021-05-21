@@ -34,13 +34,7 @@ class BrokerageNoteRepository implements BrokerageNoteRepositoryInterface
         return $this->objectRepository->find($id);
     }
 
-    public function add(BrokerageNote $brokerage_note): void
-    {
-        $this->entityManager->persist($brokerage_note);
-        $this->entityManager->flush();
-    }
-
-    public function update(BrokerageNote $brokerage_note): void
+    public function save(BrokerageNote $brokerage_note): void
     {
         $this->entityManager->persist($brokerage_note);
         $this->entityManager->flush();
