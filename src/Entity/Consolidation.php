@@ -199,25 +199,6 @@ class Consolidation implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getTotalQuantitySold(): float
-    {
-        return $this->totalQuantitySold;
-    }
-
-    /**
-     * @param float $totalQuantitySold
-     * @return Consolidation
-     */
-    public function setTotalQuantitySold(float $totalQuantitySold): Consolidation
-    {
-        $this->totalQuantitySold = $totalQuantitySold;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
     public function getBasisToIr(): float
     {
         return $this->basisToIr;
@@ -287,7 +268,6 @@ class Consolidation implements EntityInterface, JsonSerializable
     public function setAccumulatedIrrf(float $accumulatedIrrf): Consolidation
     {
         $this->accumulatedIrrf = $accumulatedIrrf;
-
         return $this;
     }
 
@@ -306,7 +286,6 @@ class Consolidation implements EntityInterface, JsonSerializable
     public function setCompesatedIrrf(float $compesatedIrrf): Consolidation
     {
         $this->compesatedIrrf = $compesatedIrrf;
-
         return $this;
     }
 
