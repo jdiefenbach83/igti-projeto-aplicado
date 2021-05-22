@@ -24,6 +24,7 @@ CREATE TABLE good (
     asset_id INT NOT NULL,
     year SMALLINT NOT NULL,
     cnpj VARCHAR(18) NOT NULL,
+    description TEXT NOT NULL,
     situation_year_before NUMERIC(14, 4) NOT NULL,
     situation_current_year NUMERIC(14, 4) NOT NULL,
     created_at DATETIME NOT NULL,
