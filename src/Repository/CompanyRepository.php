@@ -6,22 +6,11 @@ use App\Entity\Company;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 
-class CompanyRepository implements CompanyRepositoryInterface
+class CompanyRepository extends AbstratctRepository implements CompanyRepositoryInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * @var ObjectRepository
-     */
-    private ObjectRepository $objectRepository;
-
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
-        $this->objectRepository = $this->entityManager->getRepository(Company::class);
+        parent::__construct($entityManager,Company::class);
     }
 
     public function findAll()
@@ -37,13 +26,13 @@ class CompanyRepository implements CompanyRepositoryInterface
     public function save(Company $company): void
     {
         $this->entityManager->persist($company);
-        $this->entityManager->flush();
+        $this->processWorkUnit();
     }
 
     public function remove(Company $company): void
     {
         $this->entityManager->remove($company);
-        $this->entityManager->flush();
+        $this->processWorkUnit();
     }
 
     public function findByCnpj(string $cnpj)
