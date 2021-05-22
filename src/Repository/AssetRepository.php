@@ -4,24 +4,12 @@ namespace App\Repository;
 
 use App\Entity\Asset;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
 
-class AssetRepository implements AssetRepositoryInterface
+class AssetRepository extends AbstratctRepository implements AssetRepositoryInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * @var ObjectRepository
-     */
-    private ObjectRepository $objectRepository;
-
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
-        $this->objectRepository = $this->entityManager->getRepository(Asset::class);
+        parent::__construct($entityManager, Asset::class);
     }
 
     public function findAll()
@@ -42,12 +30,12 @@ class AssetRepository implements AssetRepositoryInterface
     public function save(Asset $asset): void
     {
         $this->entityManager->persist($asset);
-        $this->entityManager->flush();
+        $this->processWorkUnit();
     }
 
     public function remove(Asset $asset): void
     {
         $this->entityManager->remove($asset);
-        $this->entityManager->flush();
+        $this->processWorkUnit();
     }
 }
