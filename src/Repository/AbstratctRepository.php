@@ -5,7 +5,7 @@ namespace App\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 
-abstract class AbstratctRepository
+abstract class AbstratctRepository implements WorkUnitInterface
 {
     /**
      * @var EntityManagerInterface
@@ -30,7 +30,7 @@ abstract class AbstratctRepository
         $this->processWorkUnit();
     }
 
-    protected function processWorkUnit() : void
+    public function processWorkUnit() : void
     {
         if ($this->isTransaction) {
             return;
