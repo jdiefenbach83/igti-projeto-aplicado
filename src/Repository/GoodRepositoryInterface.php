@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Good;
 
-interface GoodRepositoryInterface
+interface GoodRepositoryInterface extends WorkUnitInterface
 {
     public function findAll(): array;
     public function save(Good $good): void;
