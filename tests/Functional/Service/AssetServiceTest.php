@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AssetServiceTest extends KernelTestCase
 {
-    private $assetService;
+    private ?AssetService $assetService;
 
     private Generator $faker;
 
