@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Broker;
 
-interface BrokerRepositoryInterface
+interface BrokerRepositoryInterface extends WorkUnitInterface
 {
     public function findAll();
     public function findById(int $id);

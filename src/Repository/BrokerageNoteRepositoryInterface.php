@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\BrokerageNote;
 
-interface BrokerageNoteRepositoryInterface
+interface BrokerageNoteRepositoryInterface extends WorkUnitInterface
 {
     public function findAll();
     public function findById(int $id);

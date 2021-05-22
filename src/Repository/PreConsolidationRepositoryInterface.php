@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\PreConsolidation;
 
-interface PreConsolidationRepositoryInterface
+interface PreConsolidationRepositoryInterface extends WorkUnitInterface
 {
     public function findAll();
     public function findPreConsolidatePositions(): array;

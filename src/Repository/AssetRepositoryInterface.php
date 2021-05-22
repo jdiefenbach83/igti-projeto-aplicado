@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Asset;
 
-interface AssetRepositoryInterface
+interface AssetRepositoryInterface extends WorkUnitInterface
 {
     public function findAll();
     public function findById(int $id): ?Asset;

@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Consolidation;
 
-interface ConsolidationRepositoryInterface
+interface ConsolidationRepositoryInterface extends WorkUnitInterface
 {
     public function findAll(): array;
     public function findYearsToConsolidate(): array;

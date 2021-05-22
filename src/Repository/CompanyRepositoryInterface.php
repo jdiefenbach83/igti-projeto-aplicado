@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Company;
 
-interface CompanyRepositoryInterface
+interface CompanyRepositoryInterface extends WorkUnitInterface
 {
     public function findAll();
     public function findById(int $id);
