@@ -1,0 +1,30 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                   https://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
+
+    <entity name="App\Entity\Good" table="good">
+        <id name="id" column="id" type="integer">
+            <generator strategy="AUTO"/>
+        </id>
+        <many-to-one field="asset" target-entity="App\Entity\Asset" >
+            <join-column name="asset_id" referenced-column-name="id" nullable="false"/>
+        </many-to-one>
+        <field name="year" type="smallint" nullable="false"/>
+        <field name="cnpj" type="string" length="18" nullable="false"/>
+        <field name="description" type="text" nullable="false"/>
+        <field name="situationYearBefore" column="situation_year_before" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="situationCurrentYear" column="situation_current_year" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="createdAt" column="created_at" type="datetime" nullable="false">
+            <gedmo:timestampable on="create"/>
+        </field>
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="false">
+            <gedmo:timestampable on="update"/>
+        </field>
+
+        <unique-constraints>
+            <unique-constraint columns="asset_id,year" name="UK_GOOD" />
+        </unique-constraints>
+    </entity>
+</doctrine-mapping>
