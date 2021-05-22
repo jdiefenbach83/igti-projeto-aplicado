@@ -105,9 +105,19 @@
           sm="3"
         >
           <input-numeric
-            :value="note_irrf_tax"
-            label="IRRF"
-            @changeValue="note_irrf_tax = $event"
+            :value="irrf_normal_tax"
+            label="IRRF - Normal"
+            @changeValue="irrf_normal_tax = $event"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+        >
+          <input-numeric
+            :value="irrf_daytrade_tax"
+            label="IRRF - Daytrade"
+            @changeValue="irrf_daytrade_tax = $event"
           />
         </v-col>
         <v-col
@@ -144,15 +154,6 @@
           <input-calculated
             :value="getResult"
             label="Resultado"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="3"
-        >
-          <input-calculated
-            :value="getBasisIr"
-            label="Base de cáculo para IR"
           />
         </v-col>
       </v-row>
@@ -205,7 +206,8 @@ export default {
         emolument_fee: null,
         brokerage: null,
         iss_pis_cofins: null,
-        note_irrf_tax: null,
+        irrf_normal_tax: null,
+        irrf_daytrade_tax: null,
 
         is_valid_form: false,
         is_disabled_form: false,
@@ -245,27 +247,31 @@ export default {
         const total_fees = parseFloat(this.getTotalFees);
         const brokerage = parseFloat(this.brokerage);
         const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
-        const note_irrf_tax = parseFloat(this.note_irrf_tax);
+        const irrf_normal_tax = parseFloat(this.irrf_normal_tax);
+        const irrf_daytrade_tax = parseFloat(this.irrf_daytrade_tax);
 
         return (
           (isNaN(total_moviments) ? .0 : total_moviments) -
           (isNaN(brokerage) ? .0 : brokerage) -
           (isNaN(total_fees) ? .0 : total_fees) -
           (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins) -
-          (isNaN(note_irrf_tax) ? .0 : note_irrf_tax)
+          (isNaN(irrf_normal_tax) ? .0 : irrf_normal_tax) -
+          (isNaN(irrf_daytrade_tax) ? .0 : irrf_daytrade_tax)
         ).toFixed(2);
       },
       getTotalCosts() {
         const total_fees = parseFloat(this.getTotalFees);
         const brokerage = parseFloat(this.brokerage);
         const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
-        const note_irrf_tax = parseFloat(this.note_irrf_tax);
+        const irrf_normal_tax = parseFloat(this.irrf_normal_tax);
+        const irrf_daytrade_tax = parseFloat(this.irrf_daytrade_tax);
 
         return (
           (isNaN(total_fees) ? .0 : total_fees) +
           (isNaN(brokerage) ? .0 : brokerage) +
           (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins) +
-          (isNaN(note_irrf_tax) ? .0 : note_irrf_tax)
+          (isNaN(irrf_normal_tax) ? .0 : irrf_normal_tax) +
+          (isNaN(irrf_daytrade_tax) ? .0 : irrf_daytrade_tax)
         ).toFixed(2);
       },
       getResult() {
@@ -273,16 +279,17 @@ export default {
         const total_fees = parseFloat(this.getTotalFees);
         const brokerage = parseFloat(this.brokerage);
         const iss_pis_cofins = parseFloat(this.iss_pis_cofins);
+        const irrf_normal_tax = parseFloat(this.irrf_normal_tax);
+        const irrf_daytrade_tax = parseFloat(this.irrf_daytrade_tax);
 
         return (
           (isNaN(total_moviments) ? .0 : total_moviments) -
           (isNaN(total_fees) ? .0 : total_fees) -
           (isNaN(brokerage) ? .0 : brokerage) -
-          (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins)
+          (isNaN(iss_pis_cofins) ? .0 : iss_pis_cofins) -
+          (isNaN(irrf_normal_tax) ? .0 : irrf_normal_tax) -
+          (isNaN(irrf_daytrade_tax) ? .0 : irrf_daytrade_tax)
         ).toFixed(2);
-      },
-      getBasisIr() {
-        return this.getResult < .0 ? 0 : this.getResult;
       },
     },
     methods: {
@@ -307,7 +314,8 @@ export default {
         this.emolument_fee = brokerageNote.emolument_fee;
         this.brokerage = brokerageNote.brokerage;
         this.iss_pis_cofins = brokerageNote.iss_pis_cofins;
-        this.note_irrf_tax = brokerageNote.note_irrf_tax;
+        this.irrf_normal_tax = brokerageNote.irrf_normal_tax;
+        this.irrf_daytrade_tax = brokerageNote.irrf_daytrade_tax;
 
         this.is_editing = true;
       },
@@ -340,7 +348,8 @@ export default {
           emolument_fee: parseFloat(this.emolument_fee).toFixed(2),
           brokerage: parseFloat(this.brokerage).toFixed(2),
           iss_pis_cofins: parseFloat(this.iss_pis_cofins).toFixed(2),
-          note_irrf_tax: parseFloat(this.note_irrf_tax).toFixed(2),
+          irrf_normal_tax: parseFloat(this.irrf_normal_tax).toFixed(2),
+          irrf_daytrade_tax: parseFloat(this.irrf_daytrade_tax).toFixed(2),
         }
 
         let result = null;
