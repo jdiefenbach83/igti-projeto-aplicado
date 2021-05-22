@@ -55,7 +55,7 @@ class PreConsolidationService implements CalculationInterface
                 ->setMonth($position['month'])
                 ->setResult($position['result']);
 
-            $this->preConsolidationRepository->add($preConsolidation);
+            $this->preConsolidationRepository->save($preConsolidation);
         }
     }
 

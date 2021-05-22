@@ -52,7 +52,7 @@ class PreConsolidationRepository extends AbstratctRepository implements PreConso
         return $query->getResult();
     }
 
-    public function add(PreConsolidation $preConsolidation): void
+    public function save(PreConsolidation $preConsolidation): void
     {
         $this->entityManager->persist($preConsolidation);
         $this->processWorkUnit();

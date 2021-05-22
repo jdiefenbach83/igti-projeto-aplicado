@@ -8,6 +8,6 @@ interface PreConsolidationRepositoryInterface
 {
     public function findAll();
     public function findPreConsolidatePositions(): array;
-    public function add(PreConsolidation $preConsolidation): void;
+    public function save(PreConsolidation $preConsolidation): void;
     public function remove(PreConsolidation $preConsolidation): void;
 }
