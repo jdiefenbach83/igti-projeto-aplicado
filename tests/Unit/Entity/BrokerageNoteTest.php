@@ -43,7 +43,8 @@ class BrokerageNoteTest extends TestCase
         $emolument_fee = $this->faker->randomFloat(4, 1, 100_000);
         $brokerage = $this->faker->randomFloat(4, 1, 100_000);
         $iss_pis_cofins = $this->faker->randomFloat(4, 1, 100_000);
-        $note_irrf_tax = $this->faker->randomFloat(4, 1, 100_000);
+        $irrfNormalTax = $this->faker->randomFloat(4, 1, 100_000);
+        $irrfDaytradeTax = $this->faker->randomFloat(4, 1, 100_000);
 
         $brokerageNote = new BrokerageNote();
         $brokerageNote
@@ -56,7 +57,8 @@ class BrokerageNoteTest extends TestCase
             ->setEmolumentFee($emolument_fee)
             ->setBrokerage($brokerage)
             ->setIssPisCofins($iss_pis_cofins)
-            ->setNoteIrrfTax($note_irrf_tax);
+            ->setIrrfNormalTax($irrfNormalTax)
+            ->setIrrfDaytradeTax($irrfDaytradeTax);
 
         self::assertEquals($this->broker, $brokerageNote->getBroker());
         self::assertEquals($date, $brokerageNote->getDate());
@@ -67,7 +69,8 @@ class BrokerageNoteTest extends TestCase
         self::assertEquals($emolument_fee, $brokerageNote->getEmolumentFee());
         self::assertEquals($brokerage, $brokerageNote->getBrokerage());
         self::assertEquals($iss_pis_cofins, $brokerageNote->getIssPisCofins());
-        self::assertEquals($note_irrf_tax, $brokerageNote->getNoteIrrfTax());
+        self::assertEquals($irrfNormalTax, $brokerageNote->getIrrfNormalTax());
+        self::assertEquals($irrfDaytradeTax, $brokerageNote->getIrrfDaytradeTax());
     }
 
     public function testBrokerageNote_ShouldCalculareCorrectly(): void
@@ -80,7 +83,8 @@ class BrokerageNoteTest extends TestCase
         $emolument_fee = $this->faker->randomFloat(4, 1, 100_000);
         $brokerage = $this->faker->randomFloat(4, 1, 100_000);
         $iss_pis_cofins = $this->faker->randomFloat(4, 1, 100_000);
-        $note_irrf_tax = $this->faker->randomFloat(4, 1, 100_000);
+        $irrfNormalTax = $this->faker->randomFloat(4, 1, 100_000);
+        $irrfDaytradeTax = $this->faker->randomFloat(4, 1, 100_000);
 
         $brokerageNote = new BrokerageNote();
         $brokerageNote
@@ -93,81 +97,29 @@ class BrokerageNoteTest extends TestCase
             ->setEmolumentFee($emolument_fee)
             ->setBrokerage($brokerage)
             ->setIssPisCofins($iss_pis_cofins)
-            ->setNoteIrrfTax($note_irrf_tax);
+            ->setIrrfNormalTax($irrfNormalTax)
+            ->setIrrfDaytradeTax($irrfDaytradeTax);
 
         $total_fees = bcadd($operational_fee, $registration_fee, 4);
         $total_fees = bcadd($total_fees, $emolument_fee, 4);
 
         $total_costs = bcadd($total_fees, $brokerage, 4);
         $total_costs = bcadd($total_costs, $iss_pis_cofins, 4);
-        $total_costs = bcadd($total_costs, $note_irrf_tax, 4);
+        $total_costs = bcadd($total_costs, $irrfNormalTax, 4);
+        $total_costs = bcadd($total_costs, $irrfDaytradeTax, 4);
 
         $net_total = bcsub($total_moviments, $total_costs, 4);
 
         $result = bcsub($total_moviments, $total_fees, 4);
         $result = bcsub($result, $iss_pis_cofins, 4);
         $result = bcsub($result, $brokerage, 4);
+        $result = bcsub($result, $irrfNormalTax, 4);
+        $result = bcsub($result, $irrfDaytradeTax, 4);
 
         self::assertEquals($total_fees, $brokerageNote->getTotalFees());
         self::assertEquals($total_costs, $brokerageNote->getTotalCosts());
         self::assertEquals($net_total, $brokerageNote->getNetTotal());
         self::assertEquals($result, $brokerageNote->getResult());
-    }
-
-    public function testBrokerageNote_ShouldCalculareBasisIrCorrectly(): void
-    {
-        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
-        $number = $this->faker->numberBetween(1, 100_000);
-        $total_moviments = 10.0;
-        $operational_fee = 1.0;
-        $registration_fee = 1.0;
-        $emolument_fee = 1.0;
-        $brokerage = 1.0;
-        $iss_pis_cofins = 1.0;
-        $note_irrf_tax = 1.0;
-
-        $brokerageNote = new BrokerageNote();
-        $brokerageNote
-            ->setBroker($this->broker)
-            ->setDate($date)
-            ->setNumber($number)
-            ->setTotalMoviments($total_moviments)
-            ->setOperationalFee($operational_fee)
-            ->setRegistrationFee($registration_fee)
-            ->setEmolumentFee($emolument_fee)
-            ->setBrokerage($brokerage)
-            ->setIssPisCofins($iss_pis_cofins)
-            ->setNoteIrrfTax($note_irrf_tax);
-
-        self::assertEquals($brokerageNote->getResult(), $brokerageNote->getCalculationBasisIr());
-    }
-
-    public function testBrokerageNote_ShouldCalculareBasisIrZeroCorrectly(): void
-    {
-        $date = \DateTimeImmutable::createFromMutable($this->faker->dateTime());
-        $number = $this->faker->numberBetween(1, 100_000);
-        $total_moviments = -10.0;
-        $operational_fee = 1.0;
-        $registration_fee = 1.0;
-        $emolument_fee = 1.0;
-        $brokerage = 1.0;
-        $iss_pis_cofins = 1.0;
-        $note_irrf_tax = 1.0;
-
-        $brokerageNote = new BrokerageNote();
-        $brokerageNote
-            ->setBroker($this->broker)
-            ->setDate($date)
-            ->setNumber($number)
-            ->setTotalMoviments($total_moviments)
-            ->setOperationalFee($operational_fee)
-            ->setRegistrationFee($registration_fee)
-            ->setBrokerage($brokerage)
-            ->setEmolumentFee($emolument_fee)
-            ->setIssPisCofins($iss_pis_cofins)
-            ->setNoteIrrfTax($note_irrf_tax);
-
-        self::assertEquals(0.0, $brokerageNote->getCalculationBasisIr());
     }
 
     public function testBrokerageNote_ShouldAddOperationSuccessfully(): void

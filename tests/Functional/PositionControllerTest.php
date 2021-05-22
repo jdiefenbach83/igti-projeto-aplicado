@@ -22,7 +22,8 @@ class PositionControllerTest extends BaseTest
             'registration_fee' => 1,
             'emolument_fee' => 1,
             'iss_pis_cofins' => 1,
-            'note_irrf_tax' => 1,
+            'irrf_normal_tax' => 1,
+            'irrf_daytrade_tax' => 1,
         ];
     }
 

@@ -101,7 +101,8 @@ class BrokerageNoteService implements ServiceInterface
         $existing_entity->setRegistrationFee($brokerage_note_entity->getRegistrationFee());
         $existing_entity->setEmolumentFee($brokerage_note_entity->getEmolumentFee());
         $existing_entity->setIssPisCofins($brokerage_note_entity->getIssPisCofins());
-        $existing_entity->setNoteIrrfTax($brokerage_note_entity->getNoteIrrfTax());
+        $existing_entity->setIrrfNormalTax($brokerage_note_entity->getIrrfNormalTax());
+        $existing_entity->setIrrfDaytradeTax($brokerage_note_entity->getIrrfDaytradeTax());
 
         $this->brokerageNoteRepository->save($existing_entity);
         $this->calculationService->process();
