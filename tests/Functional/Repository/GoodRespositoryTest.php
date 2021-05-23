@@ -17,9 +17,9 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class GoodRespositoryTest extends KernelTestCase
 {
-    private CompanyRepositoryInterface $companyRepository;
-    private AssetRepositoryInterface $assetRepository;
-    private GoodRepositoryInterface $goodRepository;
+    private $companyRepository;
+    private $assetRepository;
+    private $goodRepository;
 
     private Generator $faker;
 
@@ -27,13 +27,9 @@ class GoodRespositoryTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $entityManager = self::$container
-            ->get('doctrine')
-            ->getManager();
-
-        $this->companyRepository = new CompanyRepository($entityManager);
-        $this->assetRepository = new AssetRepository($entityManager);
-        $this->goodRepository = new GoodRepository($entityManager);
+        $this->companyRepository = self::$container->get(CompanyRepository::class);
+        $this->assetRepository = self::$container->get(AssetRepository::class);
+        $this->goodRepository = self::$container->get(GoodRepository::class);
 
         $this->faker = Factory::create();
     }
