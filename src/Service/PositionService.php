@@ -100,7 +100,7 @@ class PositionService
                 ->setAccumulatedResult(.0)
                 ->setQuantityBalance($operation->getQuantity());
 
-            $this->positionRepository->add($position);
+            $this->positionRepository->save($position);
         }
     }
 
@@ -154,7 +154,7 @@ class PositionService
                 ->setNegotiationType(Position::NEGOTIATION_TYPE_DAYTRADE)
                 ->setQuantityBalance(0);
 
-            $this->positionRepository->update($position);
+            $this->positionRepository->save($position);
         }
 
         return true;
@@ -223,7 +223,7 @@ class PositionService
             $sell
                 ->setNegotiationType($negotiationType)
                 ->setQuantityBalance(.0);
-            $this->positionRepository->update($sell);
+            $this->positionRepository->save($sell);
         }
     }
 
@@ -256,7 +256,7 @@ class PositionService
             $buy
                 ->setNegotiationType($negotiationType)
                 ->setQuantityBalance($balance);
-            $this->positionRepository->update($buy);
+            $this->positionRepository->save($buy);
 
             $soldQuantity -= $controlBalance;
             break;
@@ -276,7 +276,7 @@ class PositionService
         {
             if ($position->getQuantity() === $position->getQuantityBalance()) {
                 $position->setNegotiationType(Position::NEGOTIATION_TYPE_NORMAL);
-                $this->positionRepository->update($position);
+                $this->positionRepository->save($position);
             }
         }
 
@@ -380,7 +380,7 @@ class PositionService
                         $position->setIsLast(true);
                     }
 
-                    $this->positionRepository->update($position);
+                    $this->positionRepository->save($position);
 
                     $lastPositionAccumulatedQuantity = $accumulatedQuantity;
                     $lastPositionAccumulatedTotal = $accumulatedTotal;

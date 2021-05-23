@@ -35,7 +35,8 @@ class BrokerageNoteFactory
             $dto->getRegistrationFee(),
             $dto->getEmolumentFee(),
             $dto->getIssPisCofins(),
-            $dto->getNoteIrrfTax()
+            $dto->getIrrfNormalTax(),
+            $dto->getIrrfDaytradeTax(),
         );
     }
 
@@ -48,7 +49,7 @@ class BrokerageNoteFactory
      * @param string $registration_fee
      * @param string $emolument_fee
      * @param string $iss_pis_cofins
-     * @param string $note_irrf_tax
+     * @param string $irrfNormalTax
      * @return BrokerageNote
      */
     public function makeEntity(
@@ -60,7 +61,8 @@ class BrokerageNoteFactory
         string $registration_fee,
         string $emolument_fee,
         string $iss_pis_cofins,
-        string $note_irrf_tax
+        string $irrfNormalTax,
+        string $irrfDaytradeTax
     ): BrokerageNote
     {
         return (new BrokerageNote())
@@ -72,6 +74,7 @@ class BrokerageNoteFactory
             ->setRegistrationFee($registration_fee)
             ->setEmolumentFee($emolument_fee)
             ->setIssPisCofins($iss_pis_cofins)
-            ->setNoteIrrfTax($note_irrf_tax);
+            ->setIrrfNormalTax($irrfNormalTax)
+            ->setIrrfDaytradeTax($irrfDaytradeTax);
     }
 }

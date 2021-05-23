@@ -22,7 +22,8 @@ class BrokerageNoteDTOFactory implements DTOFactoryInterface
             ->setRegistrationFee($content['registration_fee'] ?? null)
             ->setEmolumentFee($content['emolument_fee'] ?? null)
             ->setIssPisCofins($content['iss_pis_cofins'] ?? null)
-            ->setNoteIrrfTax($content['note_irrf_tax'] ?? null)
+            ->setIrrfNormalTax($content['irrf_normal_tax'] ?? null)
+            ->setIrrfDaytradeTax($content['irrf_daytrade_tax'] ?? null)
             ->setOperations($operations);
     }
 

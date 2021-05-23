@@ -4,7 +4,7 @@ namespace App\Tests\Unit;
 
 use App\Entity\Asset;
 use App\Entity\Company;
-use App\Entity\Position;
+use App\Entity\Consolidation;
 use App\Entity\PreConsolidation;
 use Faker\Factory;
 use Faker\Generator;
@@ -19,7 +19,7 @@ class PreConsolidationTest extends TestCase
         $this->faker = Factory::create();
     }
     
-    public function testAsset_ShouldSetAndGetSuccessfully(): void
+    public function testPreConsolidation_ShouldSetAndGetSuccessfully(): void
     {
         $year = $this->faker->numberBetween(1000, 3000);
         $month = $this->faker->numberBetween(1, 12);
@@ -40,12 +40,6 @@ class PreConsolidationTest extends TestCase
         $negotiationType = $this->faker->randomElement(PreConsolidation::getNegotiationTypes());
 
         $result = $this->faker->randomFloat(4, 1, 100_000);
-        $negativeResultLastMonth = $this->faker->randomFloat(4, 1, 100_000);
-        $calculationBasis = $this->faker->randomFloat(4, 1, 100_000);
-        $lossToCompensate = $this->faker->randomFloat(4, 1, 100_000);
-        $withholdingTax = $this->faker->randomFloat(4, 1, 100_000);
-        $taxRate = $this->faker->randomFloat(4, 1, 100_000);
-        $taxDue = $this->faker->randomFloat(4, 1, 100_000);
 
         $preConsolidation = new PreConsolidation();
         $preConsolidation
@@ -53,24 +47,32 @@ class PreConsolidationTest extends TestCase
             ->setMonth($month)
             ->setAsset($asset)
             ->setNegotiationType($negotiationType)
-            ->setResult($result)
-            ->setNegativeResultLastMonth($negativeResultLastMonth)
-            ->setCalculationBasis($calculationBasis)
-            ->setLossToCompensate($lossToCompensate)
-            ->setWithholdingTax($withholdingTax)
-            ->setTaxRate($taxRate)
-            ->setTaxDue($taxDue);
+            ->setResult($result);
 
         self::assertEquals($year, $preConsolidation->getYear());
         self::assertEquals($month, $preConsolidation->getMonth());
         self::assertEquals($asset, $preConsolidation->getAsset());
         self::assertEquals($negotiationType, $preConsolidation->getNegotiationType());
         self::assertEquals($result, $preConsolidation->getResult());
-        self::assertEquals($negativeResultLastMonth, $preConsolidation->getNegativeResultLastMonth());
-        self::assertEquals($calculationBasis, $preConsolidation->getCalculationBasis());
-        self::assertEquals($lossToCompensate, $preConsolidation->getLossToCompensate());
-        self::assertEquals($withholdingTax, $preConsolidation->getWithholdingTax());
-        self::assertEquals($taxRate, $preConsolidation->getTaxRate());
-        self::assertEquals($taxDue, $preConsolidation->getTaxDue());
+    }
+
+    public function testAsset_shouldFailWhenSetAnIncorrectNegotiationType(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid negotiation type');
+
+        $preConsolidation = new PreConsolidation();
+        $preConsolidation
+            ->setNegotiationType('TEST');
+    }
+
+    public function testAsset_shouldFailWhenSetAnIncorrectMarketType(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid market type');
+
+        $preConsolidation = new PreConsolidation();
+        $preConsolidation
+            ->setMarketType('TEST');
     }
 }

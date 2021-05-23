@@ -19,5 +19,5 @@ doctrine:
                 prefix: 'App\Entity'
                 alias: App
         dql:
-            string_functions:
-                ifelse: DoctrineExtensions\Query\Mysql\IfElse
+            datetime_functions:
+                extract: DoctrineExtensions\Query\Mysql\Extract

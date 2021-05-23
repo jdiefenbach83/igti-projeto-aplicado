@@ -24,13 +24,11 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     private float $brokerage;
     private float $iss_pis_cofins;
     private float $total_fees;
-    private float $note_irrf_tax;
-    private float $calculated_irrf_tax;
+    private float $irrfNormalTax;
+    private float $irrfDaytradeTax;
     private float $net_total;
     private float $total_costs;
     private float $result;
-    private float $calculation_basis_ir;
-    private float $calculated_ir;
     private Collection $operations;
     private float $total_operations;
     private int $version;
@@ -45,13 +43,11 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->brokerage = .0;
         $this->iss_pis_cofins = .0;
         $this->total_fees = .0;
-        $this->note_irrf_tax = .0;
-        $this->calculated_irrf_tax = .0;
+        $this->irrfNormalTax = .0;
+        $this->irrfDaytradeTax = .0;
         $this->net_total = .0;
         $this->total_costs = .0;
         $this->result = .0;
-        $this->calculation_basis_ir = .0;
-        $this->calculated_ir = .0;
         $this->total_operations = .0;
 
         $this->operations = new ArrayCollection();
@@ -253,18 +249,18 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getNoteIrrfTax(): float
+    public function getIrrfNormalTax(): float
     {
-        return $this->note_irrf_tax;
+        return $this->irrfNormalTax;
     }
 
     /**
-     * @param float $note_irrf_tax
+     * @param float $irrfNormalTax
      * @return BrokerageNote
      */
-    public function setNoteIrrfTax(float $note_irrf_tax): BrokerageNote
+    public function setIrrfNormalTax(float $irrfNormalTax): BrokerageNote
     {
-        $this->note_irrf_tax = $note_irrf_tax;
+        $this->irrfNormalTax = $irrfNormalTax;
         $this->calculate();
 
         return $this;
@@ -273,9 +269,21 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getCalculatedIrrfTax(): float
+    public function getIrrfDaytradeTax(): float
     {
-        return $this->calculated_irrf_tax;
+        return $this->irrfDaytradeTax;
+    }
+
+    /**
+     * @param float $irrfDaytradeTax
+     * @return BrokerageNote
+     */
+    public function setIrrfDaytradeTax(float $irrfDaytradeTax): BrokerageNote
+    {
+        $this->irrfDaytradeTax = $irrfDaytradeTax;
+        $this->calculate();
+
+        return $this;
     }
 
     /**
@@ -305,22 +313,6 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getCalculationBasisIr(): float
-    {
-        return $this->calculation_basis_ir;
-    }
-
-    /**
-     * @return float
-     */
-    public function getCalculatedIr(): float
-    {
-        return $this->calculated_ir;
-    }
-
-    /**
-     * @return float
-     */
     public function getTotalOperations(): float
     {
         return $this->total_operations;
@@ -340,7 +332,6 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->calculateTotalCosts();
         $this->calculateNetTotal();
         $this->calculateResult();
-        $this->calculateBasisIr();
         $this->prorateValues();
     }
 
@@ -354,7 +345,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
     {
         $this->total_costs = bcadd($this->total_fees, $this->brokerage, 4);
         $this->total_costs = bcadd($this->total_costs, $this->iss_pis_cofins, 4);
-        $this->total_costs = bcadd($this->total_costs, $this->note_irrf_tax, 4);
+        $this->total_costs = bcadd($this->total_costs, $this->irrfNormalTax, 4);
+        $this->total_costs = bcadd($this->total_costs, $this->irrfDaytradeTax, 4);
     }
 
     private function calculateNetTotal(): void
@@ -367,15 +359,8 @@ class BrokerageNote implements EntityInterface, JsonSerializable
         $this->result = bcsub($this->total_moviments, $this->total_fees, 4);
         $this->result = bcsub($this->result, $this->brokerage, 4);
         $this->result = bcsub($this->result, $this->iss_pis_cofins, 4);
-    }
-
-    private function calculateBasisIr(): void
-    {
-        $this->calculation_basis_ir = .0;
-
-        if ($this->result > .0) {
-            $this->calculation_basis_ir = $this->result;
-        }
+        $this->result = bcsub($this->result, $this->irrfNormalTax, 4);
+        $this->result = bcsub($this->result, $this->irrfDaytradeTax, 4);
     }
 
     public function addOperation(string $type, Asset $asset, int $quantity, float $price): Operation
@@ -607,13 +592,11 @@ class BrokerageNote implements EntityInterface, JsonSerializable
             'brokerage' => $this->brokerage,
             'iss_pis_cofins' => $this->iss_pis_cofins,
             'total_fees' => $this->total_fees,
-            'note_irrf_tax' => $this->note_irrf_tax,
-            'calculated_irrf_tax' => $this->calculated_irrf_tax,
+            'irrf_normal_tax' => $this->irrfNormalTax,
+            'irrf_daytrade_tax' => $this->irrfDaytradeTax,
             'net_total' => $this->net_total,
             'total_costs' => $this->total_costs,
             'result' => $this->result,
-            'calculation_basis_ir' => $this->calculation_basis_ir,
-            'calculated_ir' => $this->calculated_ir,
             'operations' => $operations,
             'total_operations' => $this->total_operations,
             '_links' => [

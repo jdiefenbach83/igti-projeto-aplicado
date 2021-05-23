@@ -81,7 +81,6 @@ class AssetControllerTest extends BaseTest
             'Code - Invalid length' => ['code', 'ABCDEF123456',  'This value is too long. It should have 10 characters or less.'],
             'Type - Empty' => ['type', '',  'This value should not be blank.'],
             'Type - Invalid length' => ['type', 'ABCDEF', 'The value you selected is not a valid choice.'],
-            'Company Id - Empty' => ['company_id', '',  'This value should not be blank.'],
         ];
     }
 

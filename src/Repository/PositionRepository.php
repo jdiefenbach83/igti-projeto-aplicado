@@ -4,30 +4,15 @@ namespace App\Repository;
 
 use App\Entity\Position;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Parameter;
-use Doctrine\Persistence\ObjectRepository;
 
-class PositionRepository implements PositionRepositoryInterface
+class PositionRepository extends AbstratctRepository implements PositionRepositoryInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * @var ObjectRepository
-     */
-    private ObjectRepository $objectRepository;
-
-    private bool $isTransaction;
-
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
-        $this->objectRepository = $this->entityManager->getRepository(Position::class);
-        $this->isTransaction = false;
+        parent::__construct($entityManager, Position::class);
     }
 
     public function findAll(): array
@@ -46,13 +31,7 @@ class PositionRepository implements PositionRepositoryInterface
         return $this->objectRepository->find($id);
     }
 
-    public function add(Position $position): void
-    {
-        $this->entityManager->persist($position);
-        $this->processWorkUnit();
-    }
-
-    public function update(Position $position): void
+    public function save(Position $position): void
     {
         $this->entityManager->persist($position);
         $this->processWorkUnit();
@@ -64,26 +43,6 @@ class PositionRepository implements PositionRepositoryInterface
         $this->processWorkUnit();
     }
 
-    public function startWorkUnit(): void
-    {
-        $this->isTransaction = true;
-    }
-
-    public function endWorkUnit(): void
-    {
-        $this->isTransaction = false;
-        $this->processWorkUnit();
-    }
-
-    private function processWorkUnit() : void
-    {
-        if ($this->isTransaction) {
-            return;
-        }
-
-        $this->entityManager->flush();
-    }
-
     public function findAllAssets(): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
@@ -91,7 +50,7 @@ class PositionRepository implements PositionRepositoryInterface
         $query = $queryBuilder
             ->select('a.id')
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->distinct()
             ->getQuery();
 
@@ -105,7 +64,7 @@ class PositionRepository implements PositionRepositoryInterface
         $query = $queryBuilder
             ->select(array('p'))
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->where(
                 $queryBuilder->expr()->eq('a.id',':assetId'),
                 $queryBuilder->expr()->eq('p.negotiationType', ':negotiationType'),
@@ -131,7 +90,7 @@ class PositionRepository implements PositionRepositoryInterface
                 'a.id as asset_id'
             ])
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->groupBy('p.date, a.id')
             ->having('COUNT(DISTINCT p.type) = 2')
             ->orderBy('p.date', 'ASC')
@@ -149,7 +108,7 @@ class PositionRepository implements PositionRepositoryInterface
                 'a.id as asset_id'
             ])
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->where(
                 $queryBuilder->expr()->eq('p.negotiationType', ':negotiationType'),
             )
@@ -170,7 +129,7 @@ class PositionRepository implements PositionRepositoryInterface
         $query = $queryBuilder
             ->select(array('p'))
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->where(
                 $queryBuilder->expr()->eq('a.id', ':assetId'),
                 $queryBuilder->expr()->eq('p.type', ':type'),

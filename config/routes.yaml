@@ -127,6 +127,18 @@ positions:
   methods:
     - GET
 
+consolidations:
+  path: /api/consolidations
+  controller: App\Controller\ConsolidationController::getAll
+  methods:
+    - GET
+
+goods:
+  path: /api/goods
+  controller: App\Controller\GoodController::getAll
+  methods:
+    - GET
+
 index:
   path: /{resource?}
   requirements:

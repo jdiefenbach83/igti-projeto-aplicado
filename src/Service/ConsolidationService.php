@@ -3,84 +3,140 @@
 namespace App\Service;
 
 use App\Entity\Asset;
-use App\Entity\Position;
+use App\Entity\Consolidation;
 use App\Entity\PreConsolidation;
-use App\Repository\PositionRepositoryInterface;
+use App\Repository\AssetRepositoryInterface;
+use App\Repository\ConsolidationRepositoryInterface;
+use App\Repository\PreConsolidationRepositoryInterface;
+use App\Service\IrCalculator\IrCalculatorFactory;
 
 class ConsolidationService implements CalculationInterface
 {
-    /**
-     * @var PositionRepositoryInterface
-     */
-    private PositionRepositoryInterface $positionRepository;
-    private array $preConsolidations = [];
+    private ConsolidationRepositoryInterface $consolidationRepository;
 
-    public function __construct(PositionRepositoryInterface $positionRepository)
+    public function __construct(
+        ConsolidationRepositoryInterface $consolidationRepository
+    )
     {
-        $this->positionRepository = $positionRepository;
+        $this->consolidationRepository = $consolidationRepository;
     }
 
     public function process(): void
     {
-        $this->calculatePreConsolidation();
+        $this->consolidationRepository->startWorkUnit();
+        $this->removeConsolidations();
+        $this->calculateConsolidation();
+        $this->consolidationRepository->endWorkUnit();
     }
 
-    private function calculatePreConsolidation(): void
+    private function removeConsolidations(): void
     {
-        $positions = $this->positionRepository->findAll();
+        $consolidations = $this->consolidationRepository->findAll();
 
-        /** @var Position $position */
-        foreach($positions as $position){
-            $year = $position->getDate()->format('Y');
-            $month = $position->getDate()->format('m');
-            $asset = $position->getAsset();
-            $type = $position->getType();
-
-            $preConsolidation = $this->getOrBuildPreConsolidation($year, $month, $asset, $type);
-
-            $quantity = bcadd($preConsolidation->getQuantity(), $position->getQuantity(), 4);
-            $totalOperations = bcadd($preConsolidation->getTotalOperation(), $position->getTotalOperation(), 4);
-            $totalCosts = bcadd($preConsolidation->getTotalCosts(), $position->getTotalCosts(), 4);
-
-            $preConsolidation->setQuantity($quantity);
-            $preConsolidation->setTotalOperation($totalOperations);
-            $preConsolidation->setTotalCosts($totalCosts);
-
-            $this->addPreConsolidation($preConsolidation);
+        foreach ($consolidations as $consolidation){
+            $this->consolidationRepository->remove($consolidation);
         }
     }
 
-    private function getOrBuildPreConsolidation(int $year, int $month, Asset $asset, string $type): PreConsolidation
+    private function calculateConsolidation(): void
     {
-        /** @var PreConsolidation $filteredPreConsolidation */
-        $filteredPreConsolidation = array_filter($this->preConsolidations, static function($preConsolidation) use ($year, $month, $asset, $type){
-            return
-                $preConsolidation->getAsset()->getId() === $asset->getId() &&
-                $preConsolidation->getYear() === $year &&
-                $preConsolidation->getMonth() === $month &&
-                $preConsolidation->getType() === $type;
-        });
+        $years = $this->consolidationRepository->findYearsToConsolidate();
+        $markets = Consolidation::getMarketTypes();
+        $negotiations = Consolidation::getNegotiationTypes();
 
-        return $filteredPreConsolidation[0] ?? (new PreConsolidation())
-            ->setYear($year)
-            ->setMonth($month)
-            ->setAsset($asset)
-            ->setType($type)
-            ->setQuantity(0)
-            ->setTotalOperation(.0)
-            ->setTotalCosts(.0);
+        foreach($years as $year)
+        {
+            foreach($markets as $market)
+            {
+                foreach ($negotiations as $negotiation)
+                {
+                    $accumulatedLoss = .0;
+
+                    for ($month = 1; $month <= 12; $month++)
+                    {
+                        $summarizedPositions = $this->consolidationRepository
+                            ->findConsolidatePositions(
+                                $year['year'],
+                                $month,
+                                $market,
+                                $negotiation
+                            );
+
+                        $consolidation = new Consolidation();
+                        $consolidation
+                            ->setNegotiationType($negotiation)
+                            ->setMarketType($market)
+                            ->setYear($year['year'])
+                            ->setMonth($month)
+                            ->setResult(.0)
+                            ->setAccumulatedLoss($accumulatedLoss)
+                            ->setCompesatedLoss(.0)
+                            ->setBasisToIr(.0)
+                            ->setAliquot(.0)
+                            ->setIrrf(.0)
+                            ->setAccumulatedIrrf(.0)
+                            ->setCompesatedIrrf(.0)
+                            ->setIrrfToPay(.0)
+                            ->setIr(.0)
+                            ->setIrToPay(.0);
+
+                        foreach ($summarizedPositions as $position) {
+                            $result = (float)$position['result'];
+                            $compesadatedLoss = .0;
+                            $basisToIr = $result;
+
+                            if ($result < .0) {
+                                $accumulatedLoss += $result * -1;
+                            }
+
+                            if ($result > .0 && $accumulatedLoss > .0) {
+                               if ($result > $accumulatedLoss) {
+                                   $compesadatedLoss = $accumulatedLoss;
+                                   $accumulatedLoss = .0;
+                                   $basisToIr = $result - $compesadatedLoss;
+                               } elseif ($result === $accumulatedLoss) {
+                                   $compesadatedLoss = .0;
+                                   $accumulatedLoss = .0;
+                                   $basisToIr = .0;
+                               } else {
+                                   $compesadatedLoss = $accumulatedLoss - $result;
+                                   $accumulatedLoss -= $compesadatedLoss;
+                                   $basisToIr = .0;
+                               }
+                            }
+
+                            $consolidation
+                                ->setResult($result)
+                                ->setAccumulatedLoss($accumulatedLoss)
+                                ->setCompesatedLoss($compesadatedLoss)
+                                ->setBasisToIr($basisToIr);
+
+                            if ($basisToIr > .0) {
+                                $calculator = IrCalculatorFactory::getCalculatorMethod($consolidation);
+
+                                $aliquot = $calculator->getAliquot();
+                                $irrf = $calculator->calculateIrrf();
+                                $ir = $calculator->calculateIr();
+                                $irToPay = bcsub($ir, $irrf, 4);
+
+                                $consolidation
+                                    ->setAliquot($aliquot)
+                                    ->setIrrf($irrf)
+                                    ->setIrrfToPay($irrf)
+                                    ->setIr($ir)
+                                    ->setIrToPay($irToPay);
+                            }
+                        }
+
+                        $this->consolidationRepository->save($consolidation);
+                    }
+                }
+            }
+        }
     }
 
-    private function addPreConsolidation(PreConsolidation $preConsolidation): void
+    public function getAll(): array
     {
-        /** @var PreConsolidation $filteredPreConsolidation */
-        $filteredPreConsolidation = array_filter($this->preConsolidations, static function($item) use ($preConsolidation){
-            return $preConsolidation->getAsset()->getId() !== $item->getAsset()->getId() ||
-                $preConsolidation->getYear() !== $item->getYear() ||
-                $preConsolidation->getMonth() !== $item->getMonth() ||
-                $preConsolidation->getType() !== $item->getType();
-        });
-
-        $this->preConsolidations = array_merge($filteredPreConsolidation, [$preConsolidation]);
+        return $this->consolidationRepository->findAll();
     }
 }

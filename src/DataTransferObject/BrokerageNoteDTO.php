@@ -48,7 +48,11 @@ class BrokerageNoteDTO implements DTOInterface
     /**
      * @var mixed
      */
-    private $note_irrf_tax;
+    private $irrfNormalTax;
+    /**
+     * @var mixed
+     */
+    private $irrfDaytradeTax;
     /**
      * @var array
      */
@@ -178,18 +182,35 @@ class BrokerageNoteDTO implements DTOInterface
         return $this;
     }
 
-    public function getNoteIrrfTax()
+    public function getIrrfNormalTax()
     {
-        return $this->note_irrf_tax;
+        return $this->irrfNormalTax;
+    }
+
+    public function getIrrfDaytradeTax()
+    {
+        return $this->irrfDaytradeTax;
     }
 
     /**
-     * @param $note_irrf_tax
+     * @param $irrfNormalTax
      * @return BrokerageNoteDTO
      */
-    public function setNoteIrrfTax($note_irrf_tax): BrokerageNoteDTO
+    public function setIrrfNormalTax($irrfNormalTax): BrokerageNoteDTO
     {
-        $this->note_irrf_tax = $note_irrf_tax;
+        $this->irrfNormalTax = $irrfNormalTax;
+
+        return $this;
+    }
+
+    /**
+     * @param $irrfDaytradeTax
+     * @return BrokerageNoteDTO
+     */
+    public function setIrrfDaytradeTax($irrfDaytradeTax): BrokerageNoteDTO
+    {
+        $this->irrfDaytradeTax = $irrfDaytradeTax;
+
         return $this;
     }
 
@@ -231,7 +252,9 @@ class BrokerageNoteDTO implements DTOInterface
         $metadata->addPropertyConstraint('emolument_fee', new PositiveOrZero());
         $metadata->addPropertyConstraint('iss_pis_cofins', new NotBlank());
         $metadata->addPropertyConstraint('iss_pis_cofins', new PositiveOrZero());
-        $metadata->addPropertyConstraint('note_irrf_tax', new NotBlank());
-        $metadata->addPropertyConstraint('note_irrf_tax', new PositiveOrZero());
+        $metadata->addPropertyConstraint('irrfNormalTax', new NotBlank());
+        $metadata->addPropertyConstraint('irrfNormalTax', new PositiveOrZero());
+        $metadata->addPropertyConstraint('irrfDaytradeTax', new NotBlank());
+        $metadata->addPropertyConstraint('irrfDaytradeTax', new PositiveOrZero());
     }
 }

@@ -4,11 +4,10 @@ namespace App\Repository;
 
 use App\Entity\BrokerageNote;
 
-interface BrokerageNoteRepositoryInterface
+interface BrokerageNoteRepositoryInterface extends WorkUnitInterface
 {
     public function findAll();
     public function findById(int $id);
-    public function add(BrokerageNote $brokerage_note): void;
-    public function update(BrokerageNote $brokerage_note): void;
+    public function save(BrokerageNote $brokerage_note): void;
     public function remove(BrokerageNote $brokerage_note): void;
 }

@@ -9,43 +9,42 @@ class Consolidation implements EntityInterface, JsonSerializable
 {
     use Timestampable;
 
-    public const ASSET_TYPE_STOCK = 'STOCK';
-    public const ASSET_TYPE_FUTURE_CONTRACT = 'FUTURE_CONTRACT';
-
     public const NEGOTIATION_TYPE_NORMAL = 'NORMAL';
     public const NEGOTIATION_TYPE_DAYTRADE = 'DAYTRADE';
+
+    public const MARKET_TYPE_SPOT = 'SPOT';
+    public const MARKET_TYPE_FUTURE = 'FUTURE';
 
     private ?int $id;
     private int $year;
     private int $month;
-    private string $assetType;
     private string $negotiationType;
-    private float $totalBought;
-    private float $totalBoughtCosts;
-    private float $totalQuantitySold;
-    private float $totalSold;
-    private float $totalSoldCosts;
+    private string $marketType;
+    private float $result;
     private float $accumulatedLoss;
-    private float $balance;
-    private float $totalCosts;
     private float $compesatedLoss;
-    private float $irrfCharged;
-    private float $irrfCalculated;
+    private float $basisToIr;
+    private float $aliquot;
+    private float $irrf;
+    private float $accumulatedIrrf;
+    private float $compesatedIrrf;
+    private float $irrfToPay;
+    private float $ir;
     private float $irToPay;
-
-    public static function getAssetTypes(): array
-    {
-        return [
-            self::ASSET_TYPE_STOCK,
-            self::ASSET_TYPE_FUTURE_CONTRACT,
-        ];
-    }
 
     public static function getNegotiationTypes(): array
     {
         return [
             self::NEGOTIATION_TYPE_NORMAL,
             self::NEGOTIATION_TYPE_DAYTRADE,
+        ];
+    }
+
+    public static function getMarketTypes(): array
+    {
+        return [
+            self::MARKET_TYPE_SPOT,
+            self::MARKET_TYPE_FUTURE,
         ];
     }
 
@@ -98,29 +97,6 @@ class Consolidation implements EntityInterface, JsonSerializable
     /**
      * @return string
      */
-    public function getAssetType(): string
-    {
-        return $this->assetType;
-    }
-
-    /**
-     * @param string $assetType
-     * @return Consolidation
-     */
-    public function setAssetType(string $assetType): Consolidation
-    {
-        if (!in_array($assetType, self::getAssetTypes(), true)){
-            throw new \InvalidArgumentException("Invalid asset type");
-        }
-
-        $this->assetType = $assetType;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getNegotiationType(): string
     {
         return $this->negotiationType;
@@ -142,20 +118,24 @@ class Consolidation implements EntityInterface, JsonSerializable
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getTotalBought(): float
+    public function getMarketType(): string
     {
-        return $this->totalBought;
+        return $this->marketType;
     }
 
     /**
-     * @param float $totalBought
+     * @param string $marketType
      * @return Consolidation
      */
-    public function setTotalBought(float $totalBought): Consolidation
+    public function setMarketType(string $marketType): Consolidation
     {
-        $this->totalBought = $totalBought;
+        if (!in_array($marketType, self::getMarketTypes(), true)){
+            throw new \InvalidArgumentException("Invalid market type");
+        }
+
+        $this->marketType = $marketType;
 
         return $this;
     }
@@ -163,75 +143,18 @@ class Consolidation implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getTotalBoughtCosts(): float
+    public function getResult(): float
     {
-        return $this->totalBoughtCosts;
+        return $this->result;
     }
 
     /**
-     * @param float $totalBoughtCosts
+     * @param float $result
      * @return Consolidation
      */
-    public function setTotalBoughtCosts(float $totalBoughtCosts): Consolidation
+    public function setResult(float $result): Consolidation
     {
-        $this->totalBoughtCosts = $totalBoughtCosts;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getTotalQuantitySold(): float
-    {
-        return $this->totalQuantitySold;
-    }
-
-    /**
-     * @param float $totalQuantitySold
-     * @return Consolidation
-     */
-    public function setTotalQuantitySold(float $totalQuantitySold): Consolidation
-    {
-        $this->totalQuantitySold = $totalQuantitySold;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getTotalSold(): float
-    {
-        return $this->totalSold;
-    }
-
-    /**
-     * @param float $totalSold
-     * @return Consolidation
-     */
-    public function setTotalSold(float $totalSold): Consolidation
-    {
-        $this->totalSold = $totalSold;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getTotalSoldCosts(): float
-    {
-        return $this->totalSoldCosts;
-    }
-
-    /**
-     * @param float $totalSoldCosts
-     * @return Consolidation
-     */
-    public function setTotalSoldCosts(float $totalSoldCosts): Consolidation
-    {
-        $this->totalSoldCosts = $totalSoldCosts;
+        $this->result = $result;
 
         return $this;
     }
@@ -258,44 +181,6 @@ class Consolidation implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getBalance(): float
-    {
-        return $this->balance;
-    }
-
-    /**
-     * @param float $balance
-     * @return Consolidation
-     */
-    public function setBalance(float $balance): Consolidation
-    {
-        $this->balance = $balance;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
-    public function getTotalCosts(): float
-    {
-        return $this->totalCosts;
-    }
-
-    /**
-     * @param float $totalCosts
-     * @return Consolidation
-     */
-    public function setTotalCosts(float $totalCosts): Consolidation
-    {
-        $this->totalCosts = $totalCosts;
-
-        return $this;
-    }
-
-    /**
-     * @return float
-     */
     public function getCompesatedLoss(): float
     {
         return $this->compesatedLoss;
@@ -315,18 +200,18 @@ class Consolidation implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getIrrfCharged(): float
+    public function getBasisToIr(): float
     {
-        return $this->irrfCharged;
+        return $this->basisToIr;
     }
 
     /**
-     * @param float $irrfCharged
+     * @param float $basisToIr
      * @return Consolidation
      */
-    public function setIrrfCharged(float $irrfCharged): Consolidation
+    public function setBasisToIr(float $basisToIr): Consolidation
     {
-        $this->irrfCharged = $irrfCharged;
+        $this->basisToIr = $basisToIr;
 
         return $this;
     }
@@ -334,18 +219,111 @@ class Consolidation implements EntityInterface, JsonSerializable
     /**
      * @return float
      */
-    public function getIrrfCalculated(): float
+    public function getAliquot(): float
     {
-        return $this->irrfCalculated;
+        return $this->aliquot;
     }
 
     /**
-     * @param float $irrfCalculated
+     * @param float $aliquot
      * @return Consolidation
      */
-    public function setIrrfCalculated(float $irrfCalculated): Consolidation
+    public function setAliquot(float $aliquot): Consolidation
     {
-        $this->irrfCalculated = $irrfCalculated;
+        $this->aliquot = $aliquot;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getIrrf(): float
+    {
+        return $this->irrf;
+    }
+
+    /**
+     * @param float $irrf
+     * @return Consolidation
+     */
+    public function setIrrf(float $irrf): Consolidation
+    {
+        $this->irrf = $irrf;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAccumulatedIrrf(): float
+    {
+        return $this->accumulatedIrrf;
+    }
+
+    /**
+     * @param float $accumulatedIrrf
+     * @return Consolidation
+     */
+    public function setAccumulatedIrrf(float $accumulatedIrrf): Consolidation
+    {
+        $this->accumulatedIrrf = $accumulatedIrrf;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCompesatedIrrf(): float
+    {
+        return $this->compesatedIrrf;
+    }
+
+    /**
+     * @param float $compesatedIrrf
+     * @return Consolidation
+     */
+    public function setCompesatedIrrf(float $compesatedIrrf): Consolidation
+    {
+        $this->compesatedIrrf = $compesatedIrrf;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getIrrfToPay(): float
+    {
+        return $this->irrfToPay;
+    }
+
+    /**
+     * @param float $irrfToPay
+     * @return Consolidation
+     */
+    public function setIrrfToPay(float $irrfToPay): Consolidation
+    {
+        $this->irrfToPay = $irrfToPay;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getIr(): float
+    {
+        return $this->ir;
+    }
+
+    /**
+     * @param float $ir
+     * @return Consolidation
+     */
+    public function setIr(float $ir): Consolidation
+    {
+        $this->ir = $ir;
 
         return $this;
     }
@@ -375,16 +353,18 @@ class Consolidation implements EntityInterface, JsonSerializable
             'id' => $this->id,
             'year' => $this->year,
             'month' => $this->month,
-            'asset_type' => $this->assetType,
             'negotiation_type' => $this->negotiationType,
-            'total_bought' => $this->totalBought,
-            'total_sold' => $this->totalSold,
+            'market_type' => $this->marketType,
+            'result' => $this->result,
             'accumulated_loss' => $this->accumulatedLoss,
-            'balance' => $this->balance,
-            'total_costs' => $this->totalCosts,
             'compesated_loss' => $this->compesatedLoss,
-            'irrf_charged' => $this->irrfCharged,
-            'irrf_calculated' => $this->irrfCalculated,
+            'basis_to_ir' => $this->basisToIr,
+            'aliquot' => $this->aliquot,
+            'irrf' => $this->irrf,
+            'accumulated_irrf' => $this->accumulatedIrrf,
+            'compesated_irrf' => $this->compesatedIrrf,
+            'irrf_to_pay' => $this->irrfToPay,
+            'ir' => $this->ir,
             'ir_to_pay' => $this->irToPay,
             '_links' => [
                 [

@@ -11,38 +11,39 @@ final class Version20210418164030 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return 'Alter pre consolidation table';
+        return 'Create the pre-consolidation table';
     }
 
     public function up(Schema $schema) : void
     {
-        $this->addSql('ALTER TABLE pre_consolidation ADD negotiation_type ENUM(\'NORMAL\', \'DAYTRADE\')');
-        $this->addSql('ALTER TABLE pre_consolidation ADD result NUMERIC(14, 4) NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation ADD negative_result_last_month NUMERIC(14, 4) NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation ADD calculation_basis NUMERIC(14, 4) NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation ADD loss_to_compensate NUMERIC(14, 4) NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation ADD withholding_tax NUMERIC(14, 4) NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation ADD tax_rate NUMERIC(14, 4) NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation ADD tax_due NUMERIC(14, 4) NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation DROP type');
-        $this->addSql('ALTER TABLE pre_consolidation DROP quantity');
-        $this->addSql('ALTER TABLE pre_consolidation DROP total_operation');
-        $this->addSql('ALTER TABLE pre_consolidation DROP total_costs');
+        $this->validateDatabase();
+
+        $ddl = <<<SQL
+CREATE TABLE pre_consolidation (
+    id INT AUTO_INCREMENT NOT NULL,
+    asset_id INT NOT NULL,
+    year SMALLINT NOT NULL,
+    month SMALLINT NOT NULL,
+    negotiation_type ENUM('NORMAL', 'DAYTRADE'),
+    result NUMERIC(14, 4) NOT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
+    INDEX IDX_PRE_CONSOLIDATION_ASSET_ID (asset_id),
+     PRIMARY KEY(id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+SQL;
+
+        $this->addSql($ddl);
     }
 
     public function down(Schema $schema) : void
     {
-        $this->addSql('ALTER TABLE pre_consolidation ADD type ENUM(\'BUY\', \'SELL\')');
-        $this->addSql('ALTER TABLE pre_consolidation ADD quantity INT NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation ADD total_operation NUMERIC(14, 4) NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation ADD total_costs NUMERIC(14, 4) NOT NULL');
-        $this->addSql('ALTER TABLE pre_consolidation DROP negotiation_type');
-        $this->addSql('ALTER TABLE pre_consolidation DROP result');
-        $this->addSql('ALTER TABLE pre_consolidation DROP negative_result_last_month');
-        $this->addSql('ALTER TABLE pre_consolidation DROP calculation_basis');
-        $this->addSql('ALTER TABLE pre_consolidation DROP loss_to_compensate');
-        $this->addSql('ALTER TABLE pre_consolidation DROP withholding_tax');
-        $this->addSql('ALTER TABLE pre_consolidation DROP tax_rate');
-        $this->addSql('ALTER TABLE pre_consolidation DROP tax_due');
+        $this->validateDatabase();
+
+        $this->addSql('DROP TABLE pre_consolidation');
+    }
+
+    private function validateDatabase(): void {
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
     }
 }

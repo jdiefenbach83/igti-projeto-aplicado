@@ -23,7 +23,8 @@ class BrokerageNoteControllerTest extends BaseTest
             'registration_fee' => $this->faker->randomFloat(4, 1, 100_000),
             'emolument_fee' => $this->faker->randomFloat(4, 1, 100_000),
             'iss_pis_cofins' => $this->faker->randomFloat(4, 1, 100_000),
-            'note_irrf_tax' => $this->faker->randomFloat(4, 1, 100_000),
+            'irrf_normal_tax' => $this->faker->randomFloat(4, 1, 100_000),
+            'irrf_daytrade_tax' => $this->faker->randomFloat(4, 1, 100_000),
         ];
     }
 
@@ -65,7 +66,8 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($new_brokerage_note['registration_fee'], $response_body['content']['registration_fee']);
         $this->assertEquals($new_brokerage_note['emolument_fee'], $response_body['content']['emolument_fee']);
         $this->assertEquals($new_brokerage_note['iss_pis_cofins'], $response_body['content']['iss_pis_cofins']);
-        $this->assertEquals($new_brokerage_note['note_irrf_tax'], $response_body['content']['note_irrf_tax']);
+        $this->assertEquals($new_brokerage_note['irrf_normal_tax'], $response_body['content']['irrf_normal_tax']);
+        $this->assertEquals($new_brokerage_note['irrf_daytrade_tax'], $response_body['content']['irrf_daytrade_tax']);
         $this->assertNotNull($brokerage_note);
         $this->assertEquals($new_brokerage_note['date'], $brokerage_note->getDate()->format('Y-m-d'));
         $this->assertEquals($new_brokerage_note['number'], $brokerage_note->getNumber());
@@ -74,7 +76,8 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($new_brokerage_note['registration_fee'], $brokerage_note->getRegistrationFee());
         $this->assertEquals($new_brokerage_note['emolument_fee'], $brokerage_note->getEmolumentFee());
         $this->assertEquals($new_brokerage_note['iss_pis_cofins'], $brokerage_note->getIssPisCofins());
-        $this->assertEquals($new_brokerage_note['note_irrf_tax'], $brokerage_note->getNoteIrrfTax());
+        $this->assertEquals($new_brokerage_note['irrf_normal_tax'], $brokerage_note->getIrrfNormalTax());
+        $this->assertEquals($new_brokerage_note['irrf_daytrade_tax'], $brokerage_note->getIrrfDaytradeTax());
     }
 
     public function getInvalidValuesToCreateOrUpdateBrokerageNote(): iterable {
@@ -93,8 +96,10 @@ class BrokerageNoteControllerTest extends BaseTest
         yield 'emolument_fee - invalid' => [ 'emolument_fee', -123456 ];
         yield 'iss_pis_cofins - null' => [ 'iss_pis_cofins', null ];
         yield 'iss_pis_cofins - invalid' => [ 'iss_pis_cofins', -123456 ];
-        yield 'note_irrf_tax - null' => [ 'note_irrf_tax', null ];
-        yield 'note_irrf_tax - invalid' => [ 'note_irrf_tax', -123456 ];
+        yield 'irrf_normal_tax - null' => [ 'irrf_normal_tax', null ];
+        yield 'irrf_normal_tax - invalid' => [ 'irrf_normal_tax', -123456 ];
+        yield 'irrf_daytrade_tax - null' => [ 'irrf_daytrade_tax', null ];
+        yield 'irrf_daytrade_tax - invalid' => [ 'irrf_daytrade_tax', -123456 ];
     }
 
     /**
@@ -143,7 +148,8 @@ class BrokerageNoteControllerTest extends BaseTest
         $brokerage_note_to_update['registration_fee'] = $this->faker->randomFloat(4, 1, 100_000);
         $brokerage_note_to_update['emolument_fee'] = $this->faker->randomFloat(4, 1, 100_000);
         $brokerage_note_to_update['iss_pis_cofins'] = $this->faker->randomFloat(4, 1, 100_000);
-        $brokerage_note_to_update['note_irrf_tax'] = $this->faker->randomFloat(4, 1, 100_000);
+        $brokerage_note_to_update['irrf_normal_tax'] = $this->faker->randomFloat(4, 1, 100_000);
+        $brokerage_note_to_update['irrf_daytrade_tax'] = $this->faker->randomFloat(4, 1, 100_000);
 
         $request_body = json_encode($brokerage_note_to_update);
 
@@ -166,7 +172,8 @@ class BrokerageNoteControllerTest extends BaseTest
         $this->assertEquals($updated_brokerage_note->getRegistrationFee(), $update_response_body['content']['registration_fee']);
         $this->assertEquals($updated_brokerage_note->getEmolumentFee(), $update_response_body['content']['emolument_fee']);
         $this->assertEquals($updated_brokerage_note->getIssPisCofins(), $update_response_body['content']['iss_pis_cofins']);
-        $this->assertEquals($updated_brokerage_note->getNoteIrrfTax(), $update_response_body['content']['note_irrf_tax']);
+        $this->assertEquals($updated_brokerage_note->getIrrfNormalTax(), $update_response_body['content']['irrf_normal_tax']);
+        $this->assertEquals($updated_brokerage_note->getIrrfDaytradeTax(), $update_response_body['content']['irrf_daytrade_tax']);
     }
 
     /**
@@ -535,7 +542,8 @@ class BrokerageNoteControllerTest extends BaseTest
         $new_brokerage_note['registration_fee'] = $this->faker->randomFloat(4, 1, 100_000);
         $new_brokerage_note['emolument_fee'] = $this->faker->randomFloat(4, 1, 100_000);
         $new_brokerage_note['iss_pis_cofins'] = $this->faker->randomFloat(4, 1, 100_000);
-        $new_brokerage_note['note_irrf_tax'] = $this->faker->randomFloat(4, 1, 100_000);
+        $new_brokerage_note['irrf_normal_tax'] = $this->faker->randomFloat(4, 1, 100_000);
+        $new_brokerage_note['irrf_daytrade_tax'] = $this->faker->randomFloat(4, 1, 100_000);
 
         $request_body = json_encode($new_brokerage_note);
 
@@ -552,44 +560,20 @@ class BrokerageNoteControllerTest extends BaseTest
         $total_fees = bcadd($total_fees, $new_brokerage_note['emolument_fee'], 4);
 
         $total_costs = bcadd($total_fees, $new_brokerage_note['iss_pis_cofins'], 4);
-        $total_costs = bcadd($total_costs, $new_brokerage_note['note_irrf_tax'], 4);
+        $total_costs = bcadd($total_costs, $new_brokerage_note['irrf_normal_tax'], 4);
+        $total_costs = bcadd($total_costs, $new_brokerage_note['irrf_daytrade_tax'], 4);
 
         $net_total = bcsub($new_brokerage_note['total_moviments'], $total_costs, 4);
 
         $result = bcsub($new_brokerage_note['total_moviments'], $total_fees, 4);
         $result = bcsub($result, $new_brokerage_note['iss_pis_cofins'], 4);
+        $result = bcsub($result, $new_brokerage_note['irrf_normal_tax'], 4);
+        $result = bcsub($result, $new_brokerage_note['irrf_daytrade_tax'], 4);
 
         $this->assertEquals($status_code_expected, $response->getStatusCode());
         $this->assertEquals($total_fees, $brokerage_note->getTotalFees());
         $this->assertEquals($total_costs, $brokerage_note->getTotalCosts());
         $this->assertEquals($net_total, $brokerage_note->getNetTotal());
         $this->assertEquals($result, $brokerage_note->getResult());
-    }
-
-    public function testAddBrokerageNote_ShouldCalculateBaisIrCorretly()
-    {
-        $status_code_expected = 201;
-
-        $new_brokerage_note = $this->createBrokerageNote();
-        $new_brokerage_note['total_moviments'] = 10.0;
-        $new_brokerage_note['operational_fee'] = 1.0;
-        $new_brokerage_note['registration_fee'] = 1.0;
-        $new_brokerage_note['emolument_fee'] = 1.0;
-        $new_brokerage_note['iss_pis_cofins'] = 1.0;
-        $new_brokerage_note['note_irrf_tax'] = 1.0;
-
-        $request_body = json_encode($new_brokerage_note);
-
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
-
-        $brokerage_note = $this->entityManager
-            ->getRepository(BrokerageNote::class)
-            ->findOneBy(['id' => $response_body['content']['id']]);
-
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEquals($brokerage_note->getResult(), $brokerage_note->getCalculationBasisIr());
     }
 }

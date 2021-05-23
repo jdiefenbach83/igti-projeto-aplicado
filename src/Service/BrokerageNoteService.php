@@ -72,7 +72,7 @@ class BrokerageNoteService implements ServiceInterface
         $brokerage_note_factory = new BrokerageNoteFactory($this->brokerRepository);
         $brokerage_note_entity = $brokerage_note_factory->makeEntityFromDTO($dto);
 
-        $this->brokerageNoteRepository->add($brokerage_note_entity);
+        $this->brokerageNoteRepository->save($brokerage_note_entity);
 
         return $brokerage_note_entity;
     }
@@ -101,9 +101,10 @@ class BrokerageNoteService implements ServiceInterface
         $existing_entity->setRegistrationFee($brokerage_note_entity->getRegistrationFee());
         $existing_entity->setEmolumentFee($brokerage_note_entity->getEmolumentFee());
         $existing_entity->setIssPisCofins($brokerage_note_entity->getIssPisCofins());
-        $existing_entity->setNoteIrrfTax($brokerage_note_entity->getNoteIrrfTax());
+        $existing_entity->setIrrfNormalTax($brokerage_note_entity->getIrrfNormalTax());
+        $existing_entity->setIrrfDaytradeTax($brokerage_note_entity->getIrrfDaytradeTax());
 
-        $this->brokerageNoteRepository->update($existing_entity);
+        $this->brokerageNoteRepository->save($existing_entity);
         $this->calculationService->process();
 
         return $existing_entity;
@@ -154,7 +155,7 @@ class BrokerageNoteService implements ServiceInterface
             $dto->getPrice()
         );
 
-        $this->brokerageNoteRepository->update($existingBrokerageNote);
+        $this->brokerageNoteRepository->save($existingBrokerageNote);
         $this->calculationService->process();
 
         return $newOperation;
@@ -191,7 +192,7 @@ class BrokerageNoteService implements ServiceInterface
             return null;
         }
 
-        $this->brokerageNoteRepository->update($existingBrokerageNote);
+        $this->brokerageNoteRepository->save($existingBrokerageNote);
         $this->calculationService->process();
 
         return $updatedOperation;
@@ -216,7 +217,7 @@ class BrokerageNoteService implements ServiceInterface
             throw new \DomainException('Error to remove operation');
         }
 
-        $this->brokerageNoteRepository->update($existingBrokerageNote);
+        $this->brokerageNoteRepository->save($existingBrokerageNote);
         $this->calculationService->process();
     }
 

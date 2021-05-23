@@ -4,11 +4,11 @@ namespace App\Repository;
 
 use App\Entity\Asset;
 
-interface AssetRepositoryInterface
+interface AssetRepositoryInterface extends WorkUnitInterface
 {
     public function findAll();
-    public function findById(int $id);
-    public function add(Asset $asset): void;
-    public function update(Asset $asset): void;
+    public function findById(int $id): ?Asset;
+    public function findByCode(string $code): ?Asset;
+    public function save(Asset $asset): void;
     public function remove(Asset $asset): void;
 }

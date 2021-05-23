@@ -508,7 +508,8 @@ final class PositionServiceTest extends KernelTestCase
             ->setRegistrationFee(.0)
             ->setEmolumentFee(.0)
             ->setIssPisCofins(.0)
-            ->setNoteIrrfTax(.0);
+            ->setIrrfNormalTax(.0)
+            ->setIrrfDaytradeTax(.0);
 
         return $this->brokerageNoteService->add($brokerageNoteDTO);
     }
@@ -523,8 +524,6 @@ final class PositionServiceTest extends KernelTestCase
 
         $this->brokerageNoteService->addOperation($brokerageNoteId, $operationDTO);
     }
-
-
 
     public function getBrokerageNotesForShortSales(): iterable
     {
