@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use JsonSerializable;
 
@@ -14,6 +15,7 @@ class Broker implements EntityInterface, JsonSerializable
     private string $name;
     private string $cnpj;
     private ?string $site;
+    private Collection $brokerageNotes;
 
     /**
      * @return int|null
@@ -91,6 +93,24 @@ class Broker implements EntityInterface, JsonSerializable
     public function setSite(?string $site): Broker
     {
         $this->site = $site;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getBrokerageNotes(): Collection
+    {
+        return $this->brokerageNotes;
+    }
+
+    /**
+     * @param Collection $brokerageNotes
+     * @return Broker
+     */
+    public function setBrokerageNotes(Collection $brokerageNotes): Broker
+    {
+        $this->brokerageNotes = $brokerageNotes;
         return $this;
     }
 

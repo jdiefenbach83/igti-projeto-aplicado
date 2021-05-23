@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Position;
 use App\Entity\PreConsolidation;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 
 class PreConsolidationRepository extends AbstratctRepository implements PreConsolidationRepositoryInterface
 {
@@ -39,7 +40,7 @@ class PreConsolidationRepository extends AbstratctRepository implements PreConso
                 'SUM(p.result) as result',
             ])
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->addGroupBy('assetId')
             ->addGroupBy('p.negotiationType')
             ->addGroupBy('year')

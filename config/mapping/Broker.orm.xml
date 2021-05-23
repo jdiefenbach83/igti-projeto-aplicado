@@ -12,6 +12,7 @@
         <field name="name" type="string" length="255" nullable="false"/>
         <field name="cnpj" type="string" length="18" nullable="false"/>
         <field name="site" type="string" length="255" nullable="true"/>
+        <one-to-many field="brokerageNotes" target-entity="App\Entity\BrokerageNote" mapped-by="broker" fetch="EAGER"/>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>
         </field>

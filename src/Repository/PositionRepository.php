@@ -4,10 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Position;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Parameter;
-use Doctrine\Persistence\ObjectRepository;
 
 class PositionRepository extends AbstratctRepository implements PositionRepositoryInterface
 {
@@ -51,7 +50,7 @@ class PositionRepository extends AbstratctRepository implements PositionReposito
         $query = $queryBuilder
             ->select('a.id')
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->distinct()
             ->getQuery();
 
@@ -65,7 +64,7 @@ class PositionRepository extends AbstratctRepository implements PositionReposito
         $query = $queryBuilder
             ->select(array('p'))
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->where(
                 $queryBuilder->expr()->eq('a.id',':assetId'),
                 $queryBuilder->expr()->eq('p.negotiationType', ':negotiationType'),
@@ -91,7 +90,7 @@ class PositionRepository extends AbstratctRepository implements PositionReposito
                 'a.id as asset_id'
             ])
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->groupBy('p.date, a.id')
             ->having('COUNT(DISTINCT p.type) = 2')
             ->orderBy('p.date', 'ASC')
@@ -109,7 +108,7 @@ class PositionRepository extends AbstratctRepository implements PositionReposito
                 'a.id as asset_id'
             ])
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->where(
                 $queryBuilder->expr()->eq('p.negotiationType', ':negotiationType'),
             )
@@ -130,7 +129,7 @@ class PositionRepository extends AbstratctRepository implements PositionReposito
         $query = $queryBuilder
             ->select(array('p'))
             ->from(Position::class, 'p')
-            ->innerJoin('p.asset', 'a')
+            ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
             ->where(
                 $queryBuilder->expr()->eq('a.id', ':assetId'),
                 $queryBuilder->expr()->eq('p.type', ':type'),
