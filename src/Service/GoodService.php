@@ -78,4 +78,9 @@ class GoodService implements CalculationInterface
             $this->goodRepository->save($newGood);
         }
     }
+
+    public function getAll(): array
+    {
+        return $this->goodRepository->findAll();
+    }
 }

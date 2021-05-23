@@ -139,5 +139,4 @@ class ConsolidationService implements CalculationInterface
     {
         return $this->consolidationRepository->findAll();
     }
-
 }
