@@ -64,7 +64,7 @@ class GoodService implements CalculationInterface
             $price = number_format ((float)$good[0]['price'], 2, ',', '.');
             $currentSituation = bcmul($good[0]['quantity'], $good[0]['price'], 6);
 
-            $description = "Empresa: $companyName - Código da ação: $assetCode - Qtde: $quantity - Preço médio: $price - Corretora: $brokerName - CNPJ: $brokerCNPJ";
+            $description = "Empresa: $companyName - Código da ação: $assetCode - Qtde: $quantity - Preço médio: R$ $price - Corretora: $brokerName - CNPJ: $brokerCNPJ";
 
             $newGood = new Good();
             $newGood
