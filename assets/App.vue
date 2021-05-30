@@ -70,6 +70,13 @@
             </v-list-item-title>
           </v-list-item>
         </v-list>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/goods">Bens e direitos</router-link>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
       </v-menu>
 
       <v-menu offset-y>

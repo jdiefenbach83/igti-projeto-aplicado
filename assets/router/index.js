@@ -13,6 +13,7 @@ import OperationEdit from '@/views/Operation/Edit';
 import PositionListing from '@/views/Position/Listing';
 import ConsolidationListing from '@/views/Consolidation/Listing';
 import TaxListing from '@/views/Tax/Listing';
+import GoodListing from '@/views/Good/Listing';
 
 Vue.use(VueRouter);
 
@@ -31,6 +32,7 @@ export default new VueRouter({
     { name: 'PositionListing', path: '/positions', component: PositionListing },
     { name: 'ConsolidationListing', path: '/consolidations', component: ConsolidationListing },
     { name: 'TaxListing', path: '/taxes', component: TaxListing },
+    { name: 'GoodListing', path: '/goods', component: GoodListing },
     { path: '/home', component: Home },
     { path: '*', redirect: '/home' }
   ]
