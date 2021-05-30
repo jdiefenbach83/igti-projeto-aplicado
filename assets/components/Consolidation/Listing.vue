@@ -61,7 +61,7 @@ export default {
       market['SPOT'] = 'Mercado à Vista';
       market['FUTURE'] = 'Mercado Futuro';
 
-      return `${year} - ${monthNames[month]} - ${market[marketType]}`;
+      return `${year} - ${monthNames[month]} - ${market[marketType]} - Ações`;
     }
   },
   computed: {
