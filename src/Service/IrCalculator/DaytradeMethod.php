@@ -18,7 +18,7 @@ class DaytradeMethod implements IrCalculatorMethod
 
     public function getAliquot(): float
     {
-        if ($this->consolidation->getResult() <= .0) {
+        if ($this->shouldCalculate() === false) {
             return .0;
         }
 
@@ -27,19 +27,24 @@ class DaytradeMethod implements IrCalculatorMethod
 
     public function calculateIrrf(): float
     {
-        if ($this->consolidation->getResult() <= .0) {
+        if ($this->shouldCalculate() === false) {
             return .0;
         }
 
-        return bcmul($this->consolidation->getResult(), self::IRRF_ALIQUOT, 6);
+        return bcmul($this->consolidation->getBasisToIr(), self::IRRF_ALIQUOT, 6);
     }
 
     public function calculateIr(): float
     {
-        if ($this->consolidation->getResult() <= .0) {
+        if ($this->shouldCalculate() === false) {
             return .0;
         }
 
-        return bcmul($this->consolidation->getResult(), self::IR_ALIQUOT, 6);
+        return bcmul($this->consolidation->getBasisToIr(), self::IR_ALIQUOT, 6);
+    }
+
+    private function shouldCalculate(): bool
+    {
+        return $this->consolidation->getBasisToIr() > .0;
     }
 }
