@@ -30,6 +30,22 @@ class GoodRepository extends AbstratctRepository implements GoodRepositoryInterf
         return $this->objectRepository->findBy([], $order);
     }
 
+    public function findYearsToExtract(): ?array
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder();
+
+        $query = $queryBuilder
+            ->select([
+                'EXTRACT(YEAR FROM p.date) year'
+            ])
+            ->from(Position::class, 'p')
+            ->distinct()
+            ->addOrderBy('year', 'ASC')
+            ->getQuery();
+
+        return $query->getResult();
+    }
+
     public function findPositionsToExtractGoods(int $year): ?array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
