@@ -9,6 +9,10 @@ class Consolidation implements EntityInterface, JsonSerializable
 {
     use Timestampable;
 
+    public const ASSET_TYPE_STOCK = 'STOCK';
+    public const ASSET_TYPE_INDEX = 'INDEX';
+    public const ASSET_TYPE_DOLAR = 'DOLAR';
+
     public const NEGOTIATION_TYPE_NORMAL = 'NORMAL';
     public const NEGOTIATION_TYPE_DAYTRADE = 'DAYTRADE';
 
@@ -18,6 +22,7 @@ class Consolidation implements EntityInterface, JsonSerializable
     private ?int $id;
     private int $year;
     private int $month;
+    private string $assetType;
     private string $negotiationType;
     private string $marketType;
     private float $result;
@@ -31,6 +36,15 @@ class Consolidation implements EntityInterface, JsonSerializable
     private float $irrfToPay;
     private float $ir;
     private float $irToPay;
+
+    public static function getAssetTypes(): array
+    {
+        return [
+            self::ASSET_TYPE_STOCK,
+            self::ASSET_TYPE_INDEX,
+            self::ASSET_TYPE_DOLAR,
+        ];
+    }
 
     public static function getNegotiationTypes(): array
     {
@@ -90,6 +104,29 @@ class Consolidation implements EntityInterface, JsonSerializable
     public function setMonth(int $month): Consolidation
     {
         $this->month = $month;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssetType(): string
+    {
+        return $this->assetType;
+    }
+
+    /**
+     * @param string $assetType
+     * @return Consolidation
+     */
+    public function setAssetType(string $assetType): self
+    {
+        if (!in_array($assetType, self::getAssetTypes(), true)) {
+            throw new \InvalidArgumentException('Invalid asset type');
+        }
+
+        $this->assetType = $assetType;
 
         return $this;
     }
@@ -353,6 +390,7 @@ class Consolidation implements EntityInterface, JsonSerializable
             'id' => $this->id,
             'year' => $this->year,
             'month' => $this->month,
+            'asset_type' => $this->assetType,
             'negotiation_type' => $this->negotiationType,
             'market_type' => $this->marketType,
             'result' => $this->result,

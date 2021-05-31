@@ -11,6 +11,7 @@
 
         <field name="year" type="smallint" nullable="false"/>
         <field name="month" type="smallint" nullable="false"/>
+        <field name="assetType" column="asset_type" column-definition="ENUM('STOCK', 'INDEX', 'DOLAR')" nullable="false"/>
         <field name="negotiationType" column="negotiation_type" column-definition="ENUM('NORMAL', 'DAYTRADE')" nullable="false"/>
         <field name="marketType" column="market_type" column-definition="ENUM('SPOT', 'FUTURE')" nullable="false"/>
         <field name="result" type="decimal" precision="14" scale="4" nullable="false"/>

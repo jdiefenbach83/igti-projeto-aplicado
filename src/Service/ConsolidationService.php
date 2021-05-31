@@ -42,6 +42,7 @@ class ConsolidationService implements CalculationInterface
     {
         $years = $this->consolidationRepository->findYearsToConsolidate();
         $markets = Consolidation::getMarketTypes();
+        $assets = Consolidation::getAssetTypes();
         $negotiations = Consolidation::getNegotiationTypes();
 
         foreach($years as $year)
@@ -52,83 +53,88 @@ class ConsolidationService implements CalculationInterface
                 {
                     $accumulatedLoss = .0;
 
-                    for ($month = 1; $month <= 12; $month++)
+                    foreach($assets as $asset)
                     {
-                        $summarizedPositions = $this->consolidationRepository
-                            ->findConsolidatePositions(
-                                $year['year'],
-                                $month,
-                                $market,
-                                $negotiation
-                            );
 
-                        $consolidation = new Consolidation();
-                        $consolidation
-                            ->setNegotiationType($negotiation)
-                            ->setMarketType($market)
-                            ->setYear($year['year'])
-                            ->setMonth($month)
-                            ->setResult(.0)
-                            ->setAccumulatedLoss($accumulatedLoss)
-                            ->setCompesatedLoss(.0)
-                            ->setBasisToIr(.0)
-                            ->setAliquot(.0)
-                            ->setIrrf(.0)
-                            ->setAccumulatedIrrf(.0)
-                            ->setCompesatedIrrf(.0)
-                            ->setIrrfToPay(.0)
-                            ->setIr(.0)
-                            ->setIrToPay(.0);
+                        for ($month = 1; $month <= 12; $month++) {
+                            $summarizedPositions = $this->consolidationRepository
+                                ->findConsolidatePositions(
+                                    $year['year'],
+                                    $month,
+                                    $market,
+                                    $negotiation,
+                                    $asset
+                                );
 
-                        foreach ($summarizedPositions as $position) {
-                            $result = (float)$position['result'];
-                            $compesadatedLoss = .0;
-                            $basisToIr = $result;
-
-                            if ($result < .0) {
-                                $accumulatedLoss += $result * -1;
-                            }
-
-                            if ($result > .0 && $accumulatedLoss > .0) {
-                               if ($result > $accumulatedLoss) {
-                                   $compesadatedLoss = $accumulatedLoss;
-                                   $accumulatedLoss = .0;
-                                   $basisToIr = $result - $compesadatedLoss;
-                               } elseif ($result === $accumulatedLoss) {
-                                   $compesadatedLoss = .0;
-                                   $accumulatedLoss = .0;
-                                   $basisToIr = .0;
-                               } else {
-                                   $compesadatedLoss = $accumulatedLoss - $result;
-                                   $accumulatedLoss -= $compesadatedLoss;
-                                   $basisToIr = .0;
-                               }
-                            }
-
+                            $consolidation = new Consolidation();
                             $consolidation
-                                ->setResult($result)
+                                ->setAssetType($asset)
+                                ->setNegotiationType($negotiation)
+                                ->setMarketType($market)
+                                ->setYear($year['year'])
+                                ->setMonth($month)
+                                ->setResult(.0)
                                 ->setAccumulatedLoss($accumulatedLoss)
-                                ->setCompesatedLoss($compesadatedLoss)
-                                ->setBasisToIr($basisToIr);
+                                ->setCompesatedLoss(.0)
+                                ->setBasisToIr(.0)
+                                ->setAliquot(.0)
+                                ->setIrrf(.0)
+                                ->setAccumulatedIrrf(.0)
+                                ->setCompesatedIrrf(.0)
+                                ->setIrrfToPay(.0)
+                                ->setIr(.0)
+                                ->setIrToPay(.0);
 
-                            if ($basisToIr > .0) {
-                                $calculator = IrCalculatorFactory::getCalculatorMethod($consolidation);
+                            foreach ($summarizedPositions as $position) {
+                                $result = (float)$position['result'];
+                                $compesadatedLoss = .0;
+                                $basisToIr = $result;
 
-                                $aliquot = $calculator->getAliquot();
-                                $irrf = $calculator->calculateIrrf();
-                                $ir = $calculator->calculateIr();
-                                $irToPay = bcsub($ir, $irrf, 4);
+                                if ($result < .0) {
+                                    $accumulatedLoss += $result * -1;
+                                }
+
+                                if ($result > .0 && $accumulatedLoss > .0) {
+                                    if ($result > $accumulatedLoss) {
+                                        $compesadatedLoss = $accumulatedLoss;
+                                        $accumulatedLoss = .0;
+                                        $basisToIr = $result - $compesadatedLoss;
+                                    } elseif ($result === $accumulatedLoss) {
+                                        $compesadatedLoss = .0;
+                                        $accumulatedLoss = .0;
+                                        $basisToIr = .0;
+                                    } else {
+                                        $compesadatedLoss = $accumulatedLoss - $result;
+                                        $accumulatedLoss -= $compesadatedLoss;
+                                        $basisToIr = .0;
+                                    }
+                                }
 
                                 $consolidation
-                                    ->setAliquot($aliquot)
-                                    ->setIrrf($irrf)
-                                    ->setIrrfToPay($irrf)
-                                    ->setIr($ir)
-                                    ->setIrToPay($irToPay);
-                            }
-                        }
+                                    ->setResult($result)
+                                    ->setAccumulatedLoss($accumulatedLoss)
+                                    ->setCompesatedLoss($compesadatedLoss)
+                                    ->setBasisToIr($basisToIr);
 
-                        $this->consolidationRepository->save($consolidation);
+                                if ($basisToIr > .0) {
+                                    $calculator = IrCalculatorFactory::getCalculatorMethod($consolidation);
+
+                                    $aliquot = $calculator->getAliquot();
+                                    $irrf = $calculator->calculateIrrf();
+                                    $ir = $calculator->calculateIr();
+                                    $irToPay = bcsub($ir, $irrf, 4);
+
+                                    $consolidation
+                                        ->setAliquot($aliquot)
+                                        ->setIrrf($irrf)
+                                        ->setIrrfToPay($irrf)
+                                        ->setIr($ir)
+                                        ->setIrToPay($irToPay);
+                                }
+                            }
+
+                            $this->consolidationRepository->save($consolidation);
+                        }
                     }
                 }
             }

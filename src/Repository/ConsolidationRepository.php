@@ -19,6 +19,7 @@ class ConsolidationRepository extends AbstratctRepository implements Consolidati
     public function findAll(): array
     {
         $order = [
+            'assetType' => 'ASC',
             'negotiationType' => 'ASC',
             'marketType' => 'ASC',
             'year' => 'ASC',
@@ -44,7 +45,7 @@ class ConsolidationRepository extends AbstratctRepository implements Consolidati
         return $query->getResult();
     }
 
-    public function findConsolidatePositions(int $year, int $month, string $market, string $negotiation): array
+    public function findConsolidatePositions(int $year, int $month, string $market, string $negotiation, string $asset): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder();
 
@@ -59,12 +60,14 @@ class ConsolidationRepository extends AbstratctRepository implements Consolidati
                 $queryBuilder->expr()->eq('pc.month',':month'),
                 $queryBuilder->expr()->eq('pc.marketType',':market'),
                 $queryBuilder->expr()->eq('pc.negotiationType',':negotiation'),
+                $queryBuilder->expr()->eq('pc.assetType',':asset'),
             )
             ->setParameters(new ArrayCollection([
                 new Parameter('year', $year),
                 new Parameter('month', $month),
                 new Parameter('market', $market),
                 new Parameter('negotiation', $negotiation),
+                new Parameter('asset', $asset),
             ]))
             ->having('SUM(pc.result) <> 0')
             ->getQuery();
