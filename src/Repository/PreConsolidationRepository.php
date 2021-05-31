@@ -18,6 +18,7 @@ class PreConsolidationRepository extends AbstratctRepository implements PreConso
     {
         $order = [
             'asset' => 'ASC',
+            'assetType' => 'ASC',
             'negotiationType' => 'ASC',
             'marketType' => 'ASC',
             'year' => 'ASC',
