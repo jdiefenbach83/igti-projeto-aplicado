@@ -13,6 +13,7 @@ class AssetDTO implements DTOInterface
 {
     private $code;
     private $type;
+    private $market_type;
     private $company_id;
 
     public function getCode()
@@ -47,6 +48,22 @@ class AssetDTO implements DTOInterface
         return $this;
     }
 
+    public function getMarketType()
+    {
+        return $this->market_type;
+    }
+
+    /**
+     * @param $marketType
+     * @return AssetDTO
+     */
+    public function setMarketType($marketType): self
+    {
+        $this->market_type = $marketType;
+
+        return $this;
+    }
+
     /**
      * @return mixed
      */
@@ -62,6 +79,7 @@ class AssetDTO implements DTOInterface
     public function setCompanyId($company_id)
     {
         $this->company_id = $company_id;
+
         return $this;
     }
 
@@ -71,6 +89,8 @@ class AssetDTO implements DTOInterface
         $metadata->addPropertyConstraint('code', new Length(null, null, 10, null, 'trim'));
         $metadata->addPropertyConstraint('type', new NotBlank(null, null, false, 'trim'));
         $metadata->addPropertyConstraint('type', new Choice(['callback' => [Asset::class, 'getTypes']]));
+        $metadata->addPropertyConstraint('market_type', new NotBlank(null, null, false, 'trim'));
+        $metadata->addPropertyConstraint('market_type', new Choice(['callback' => [Asset::class, 'getMarketTypes']]));
         $metadata->addPropertyConstraint('company_id', new Length(null, null, 255, null, 'trim'));
         $metadata->addPropertyConstraint('company_id', new CompanyExists());
     }

@@ -62,7 +62,8 @@ class PreConsolidationService implements CalculationInterface
     private function mapConsolitationToMarketType(string $consolidationType): ?string
     {
         $map[Asset::TYPE_STOCK] = PreConsolidation::MARKET_TYPE_SPOT;
-        $map[Asset::TYPE_FUTURE_CONTRACT] = PreConsolidation::MARKET_TYPE_FUTURE;
+        $map[Asset::TYPE_INDEX] = PreConsolidation::MARKET_TYPE_FUTURE;
+        $map[Asset::TYPE_DOLAR] = PreConsolidation::MARKET_TYPE_FUTURE;
 
         return $map[$consolidationType];
     }

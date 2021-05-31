@@ -29,15 +29,18 @@ class AssetTest extends TestCase
 
         $code = $this->faker->text(10);
         $type = $this->faker->randomElement(Asset::getTypes());
+        $marketType = $this->faker->randomElement(Asset::getMarketTypes());
 
         $asset = new Asset();
         $asset
             ->setCode($code)
             ->setType($type)
+            ->setMarketType($marketType)
             ->setCompany($company);
 
         self::assertEquals($code, $asset->getCode());
         self::assertEquals($type, $asset->getType());
+        self::assertEquals($marketType, $asset->getMarketType());
         self::assertEquals($company, $asset->getCompany());
     }
 
@@ -49,5 +52,15 @@ class AssetTest extends TestCase
         $asset = new Asset();
         $asset
             ->setType('TEST');
+    }
+
+    public function testAsset_shouldFailWhenSetAnIncorrectMarketType(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid market type');
+
+        $asset = new Asset();
+        $asset
+            ->setMarketType('TEST');
     }
 }
