@@ -17,6 +17,7 @@
         <field name="year" type="smallint" nullable="false"/>
         <field name="month" type="smallint" nullable="false"/>
         <field name="result" type="decimal" precision="14" scale="4" nullable="false"/>
+        <field name="salesTotal" column="sales_total" type="decimal" precision="14" scale="4" nullable="false"/>
         <field name="createdAt" column="created_at" type="datetime" nullable="false">
             <gedmo:timestampable on="create"/>
         </field>

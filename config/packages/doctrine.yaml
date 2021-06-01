@@ -21,3 +21,5 @@ doctrine:
         dql:
             datetime_functions:
                 extract: DoctrineExtensions\Query\Mysql\Extract
+            string_functions:
+                ifelse: DoctrineExtensions\Query\Mysql\IfElse

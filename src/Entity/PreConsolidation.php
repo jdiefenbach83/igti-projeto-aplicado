@@ -26,6 +26,7 @@ class PreConsolidation implements EntityInterface
     private int $year;
     private int $month;
     private float $result;
+    private float $salesTotal;
 
     public static function getAssetTypes(): array
     {
@@ -201,6 +202,25 @@ class PreConsolidation implements EntityInterface
     public function setResult(float $result): PreConsolidation
     {
         $this->result = $result;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getSalesTotal(): float
+    {
+        return $this->salesTotal;
+    }
+
+    /**
+     * @param float $salesTotal
+     * @return PreConsolidation
+     */
+    public function setSalesTotal(float $salesTotal): PreConsolidation
+    {
+        $this->salesTotal = $salesTotal;
 
         return $this;
     }

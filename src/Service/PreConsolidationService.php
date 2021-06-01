@@ -53,7 +53,8 @@ class PreConsolidationService implements CalculationInterface
                 ->setMarketType($asset->getMarketType())
                 ->setYear($position['year'])
                 ->setMonth($position['month'])
-                ->setResult($position['result']);
+                ->setResult($position['result'])
+                ->setSalesTotal($position['sales_total']);
 
             $this->preConsolidationRepository->save($preConsolidation);
         }

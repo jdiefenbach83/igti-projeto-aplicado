@@ -41,6 +41,7 @@ class PreConsolidationTest extends TestCase
         $negotiationType = $this->faker->randomElement(PreConsolidation::getNegotiationTypes());
 
         $result = $this->faker->randomFloat(4, 1, 100_000);
+        $salesTotal = $this->faker->randomFloat(4, 1, 100_000);
 
         $preConsolidation = new PreConsolidation();
         $preConsolidation
@@ -50,7 +51,8 @@ class PreConsolidationTest extends TestCase
             ->setAssetType($asset->getType())
             ->setNegotiationType($negotiationType)
             ->setMarketType($asset->getMarketType())
-            ->setResult($result);
+            ->setResult($result)
+            ->setSalesTotal($salesTotal);
 
         self::assertEquals($year, $preConsolidation->getYear());
         self::assertEquals($month, $preConsolidation->getMonth());
@@ -59,6 +61,7 @@ class PreConsolidationTest extends TestCase
         self::assertEquals($negotiationType, $preConsolidation->getNegotiationType());
         self::assertEquals($asset->getMarketType(), $preConsolidation->getMarketType());
         self::assertEquals($result, $preConsolidation->getResult());
+        self::assertEquals($salesTotal, $preConsolidation->getSalesTotal());
     }
 
     public function testAsset_shouldFailWhenSetAnIncorrectAssetType(): void
