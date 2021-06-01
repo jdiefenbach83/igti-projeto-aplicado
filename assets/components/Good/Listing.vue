@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card v-for="good in goods" :key="good.cnpj" elevation="2">
+    <v-card v-for="(good, index) in goods" :key="`${good.cnpj}-${index}`" elevation="2">
       <v-card-text>
         <v-row>
           <v-col>
@@ -30,7 +30,7 @@
             <strong>Situação até 31/12/2020:</strong> {{ good.situationCurrentYear }}
           </v-col>
           <v-col>
-            &nbsp;
+            &nbsp
           </v-col>
         </v-row>
       </v-card-text>
