@@ -14,6 +14,7 @@ import PositionListing from '@/views/Position/Listing';
 import ConsolidationListing from '@/views/Consolidation/Listing';
 import TaxListing from '@/views/Tax/Listing';
 import GoodListing from '@/views/Good/Listing';
+import ExemptListing from '@/views/Exempt/Listing';
 
 Vue.use(VueRouter);
 
@@ -33,6 +34,7 @@ export default new VueRouter({
     { name: 'ConsolidationListing', path: '/consolidations', component: ConsolidationListing },
     { name: 'TaxListing', path: '/taxes', component: TaxListing },
     { name: 'GoodListing', path: '/goods', component: GoodListing },
+    { name: 'ExemptListing', path: '/exempts', component: ExemptListing },
     { path: '/home', component: Home },
     { path: '*', redirect: '/home' }
   ]

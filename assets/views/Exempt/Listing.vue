@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class='d-flex align-center'>
-      <h1>DARF</h1>
+      <h1>Rendimentos isentos e não tributáveis</h1>
       <v-spacer />
       <v-btn
-        color='green darken-2'
-        class='mb-2 white--text'
-        smalla
-        @click="refreshConsolidations()"
-        :disabled="isLoadingConsolidations"
+          color='green darken-2'
+          class='mb-2 white--text'
+          smalla
+          @click="refreshConsolidations()"
+          :disabled="isLoadingConsolidations"
       >
         <v-icon dark>
           mdi-refresh
@@ -16,17 +16,17 @@
       </v-btn>
     </div>
     <hr class='mb-3'/>
-    <tax-listing />
+    <exempt-listing />
   </div>
 </template>
 
 <script>
-import TaxListing from "@/components/Tax/Listing";
+import ExemptListing from "@/components/Exempt/Listing";
 import store from "@/store";
 
 export default {
-  name: "TaxListingView",
-  components: { TaxListing },
+  name: "ExemptListingView",
+  components: { ExemptListing },
   methods: {
     refreshConsolidations() {
       store.dispatch('consolidation/getAll');
@@ -39,7 +39,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-
-</style>
