@@ -52,6 +52,7 @@ class ConsolidationRepository extends AbstratctRepository implements Consolidati
         $query = $queryBuilder
             ->select([
                 'SUM(pc.result) as result',
+                'SUM(pc.salesTotal) as salesTotal'
             ])
             ->from(PreConsolidation::class, 'pc')
             ->innerJoin('pc.asset', 'a', Join::WITH, 'pc.asset = a.id')

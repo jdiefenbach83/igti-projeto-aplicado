@@ -26,6 +26,8 @@ class Consolidation implements EntityInterface, JsonSerializable
     private string $negotiationType;
     private string $marketType;
     private float $result;
+    private float $salesTotal;
+    private bool $isExempt;
     private float $accumulatedLoss;
     private float $compesatedLoss;
     private float $basisToIr;
@@ -192,6 +194,44 @@ class Consolidation implements EntityInterface, JsonSerializable
     public function setResult(float $result): Consolidation
     {
         $this->result = $result;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getSalesTotal(): float
+    {
+        return $this->salesTotal;
+    }
+
+    /**
+     * @param float $salesTotal
+     * @return Consolidation
+     */
+    public function setSalesTotal(float $salesTotal): Consolidation
+    {
+        $this->salesTotal = $salesTotal;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExempt(): bool
+    {
+        return $this->isExempt;
+    }
+
+    /**
+     * @param bool $isExempt
+     * @return Consolidation
+     */
+    public function setIsExempt(bool $isExempt): Consolidation
+    {
+        $this->isExempt = $isExempt;
 
         return $this;
     }
@@ -394,6 +434,8 @@ class Consolidation implements EntityInterface, JsonSerializable
             'negotiation_type' => $this->negotiationType,
             'market_type' => $this->marketType,
             'result' => $this->result,
+            'sales_total' => $this->salesTotal,
+            'is_exempt' => $this->isExempt,
             'accumulated_loss' => $this->accumulatedLoss,
             'compesated_loss' => $this->compesatedLoss,
             'basis_to_ir' => $this->basisToIr,

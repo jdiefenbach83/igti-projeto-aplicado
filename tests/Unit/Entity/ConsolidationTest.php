@@ -25,6 +25,7 @@ class ConsolidationTest extends TestCase
         $negocitionType = $this->faker->randomElement(Consolidation::getNegotiationTypes());
         $marketType = $this->faker->randomElement(Consolidation::getMarketTypes());
         $result = $this->faker->randomFloat(4, 1, 1_000);
+        $salesTotal = $this->faker->randomFloat(4, 1, 1_000);
         $accumulatedLoss = $this->faker->randomFloat(4, 1, 1_000);
         $compesatedLoss = $this->faker->randomFloat(4, 1, 1_000);
         $basisToIr = $this->faker->randomFloat(4, 1, 1_000);
@@ -44,6 +45,7 @@ class ConsolidationTest extends TestCase
             ->setNegotiationType($negocitionType)
             ->setMarketType($marketType)
             ->setResult($result)
+            ->setSalesTotal($salesTotal)
             ->setAccumulatedLoss($accumulatedLoss)
             ->setCompesatedLoss($compesatedLoss)
             ->setBasisToIr($basisToIr)
@@ -61,6 +63,7 @@ class ConsolidationTest extends TestCase
         self::assertEquals($negocitionType, $consolidation->getNegotiationType());
         self::assertEquals($marketType, $consolidation->getMarketType());
         self::assertEquals($result, $consolidation->getResult());
+        self::assertEquals($salesTotal, $consolidation->getSalesTotal());
         self::assertEquals($accumulatedLoss, $consolidation->getAccumulatedLoss());
         self::assertEquals($compesatedLoss, $consolidation->getCompesatedLoss());
         self::assertEquals($basisToIr, $consolidation->getBasisToIr());

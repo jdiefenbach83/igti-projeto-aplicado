@@ -79,64 +79,67 @@ export default {
 
       let consolidationsToShow = [];
 
-      consolidations.forEach((consolidation) => {
-        let toShow = consolidationsToShow.find(toShow => {
-          return (
-            consolidation.year === toShow.year &&
-            consolidation.month === toShow.month &&
-            consolidation.market_type === toShow.market_type &&
-            consolidation.asset_type === toShow.asset.type
-          );
-        });
-
-        let normal_value = (consolidation.negotiation_type === 'NORMAL') ? consolidation.basis_to_ir : .0;
-        normal_value = normal_value < 0 || normal_value > 20_000 ? normal_value : .0;
-        const daytrade_value = (consolidation.negotiation_type === 'DAYTRADE') ? consolidation.basis_to_ir : .0;
-        const irrf_normal_total = (consolidation.negotiation_type === 'NORMAL') ? consolidation.irrf_to_pay : .0;
-        const irrf_daytrade_total = (consolidation.negotiation_type === 'DAYTRADE') ? consolidation.irrf_to_pay : .0;
-        const ir = consolidation.ir_to_pay;
-
-        if (!!toShow === false) {
-          toShow = {
-            year: consolidation.year,
-            month: consolidation.month,
-            market_type: consolidation.market_type,
-            asset: {
-              type: consolidation.asset_type,
-              normal_value: normal_value,
-              daytrade_value: daytrade_value,
-            },
-            irrf_normal_total: irrf_normal_total,
-            irrf_daytrade_total: irrf_daytrade_total,
-            ir: ir
-          };
-        } else {
-          toShow = {
-            year: consolidation.year,
-            month: consolidation.month,
-            market_type: consolidation.market_type,
-            asset: {
-              type: consolidation.asset_type,
-              normal_value: toShow.asset.normal_value + normal_value,
-              daytrade_value: toShow.asset.daytrade_value + daytrade_value,
-            },
-            irrf_normal_total: toShow.irrf_normal_total + irrf_normal_total,
-            irrf_daytrade_total: toShow.irrf_daytrade_total + irrf_daytrade_total,
-            ir: toShow.ir + ir
-          };
-
-          consolidationsToShow = consolidationsToShow.filter((consolidationToShow) => {
+      consolidations
+        .filter((consolidation) => {
+          return consolidation.is_exempt === false
+        })
+        .forEach((consolidation) => {
+          let toShow = consolidationsToShow.find(toShow => {
             return (
-              consolidationToShow.year !== toShow.year ||
-              consolidationToShow.month !== toShow.month ||
-              consolidationToShow.market_type !== toShow.market_type ||
-              consolidationToShow.asset.type !== toShow.asset.type
+              consolidation.year === toShow.year &&
+              consolidation.month === toShow.month &&
+              consolidation.market_type === toShow.market_type &&
+              consolidation.asset_type === toShow.asset.type
             );
           });
-        }
 
-        consolidationsToShow.push(toShow);
-      });
+          const normal_value = (consolidation.negotiation_type === 'NORMAL') ? consolidation.basis_to_ir : .0;
+          const daytrade_value = (consolidation.negotiation_type === 'DAYTRADE') ? consolidation.basis_to_ir : .0;
+          const irrf_normal_total = (consolidation.negotiation_type === 'NORMAL') ? consolidation.irrf_to_pay : .0;
+          const irrf_daytrade_total = (consolidation.negotiation_type === 'DAYTRADE') ? consolidation.irrf_to_pay : .0;
+          const ir = consolidation.ir_to_pay;
+
+          if (!!toShow === false) {
+            toShow = {
+              year: consolidation.year,
+              month: consolidation.month,
+              market_type: consolidation.market_type,
+              asset: {
+                type: consolidation.asset_type,
+                normal_value: normal_value,
+                daytrade_value: daytrade_value,
+              },
+              irrf_normal_total: irrf_normal_total,
+              irrf_daytrade_total: irrf_daytrade_total,
+              ir: ir
+            };
+          } else {
+            toShow = {
+              year: consolidation.year,
+              month: consolidation.month,
+              market_type: consolidation.market_type,
+              asset: {
+                type: consolidation.asset_type,
+                normal_value: toShow.asset.normal_value + normal_value,
+                daytrade_value: toShow.asset.daytrade_value + daytrade_value,
+              },
+              irrf_normal_total: toShow.irrf_normal_total + irrf_normal_total,
+              irrf_daytrade_total: toShow.irrf_daytrade_total + irrf_daytrade_total,
+              ir: toShow.ir + ir
+            };
+
+            consolidationsToShow = consolidationsToShow.filter((consolidationToShow) => {
+              return (
+                consolidationToShow.year !== toShow.year ||
+                consolidationToShow.month !== toShow.month ||
+                consolidationToShow.market_type !== toShow.market_type ||
+                consolidationToShow.asset.type !== toShow.asset.type
+              );
+            });
+          }
+
+          consolidationsToShow.push(toShow);
+        });
 
       consolidationsToShow.sort(function(a, b){
         return (
@@ -148,8 +151,7 @@ export default {
       return consolidationsToShow
           .filter(toShow => {
             return (
-                toShow.asset.normal_value < 0 ||
-                toShow.asset.normal_value > 20_000 ||
+                toShow.asset.normal_value !== 0 ||
                 toShow.asset.daytrade_value !== 0
             );
           })

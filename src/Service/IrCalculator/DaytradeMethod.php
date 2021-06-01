@@ -47,4 +47,9 @@ class DaytradeMethod implements IrCalculatorMethod
     {
         return $this->consolidation->getBasisToIr() > .0;
     }
+
+    public function isExempt(): bool
+    {
+        return false;
+    }
 }

@@ -8,7 +8,7 @@ class NormalMethod implements IrCalculatorMethod
 {
     private const IRRF_ALIQUOT = .005;
     private const IR_ALIQUOT = .15;
-    private const NET_PROFIT_FREE = 20_000.0;
+    private const EXEMPTION_THRESHOLD = 20_000.0;
 
     private Consolidation $consolidation;
 
@@ -44,10 +44,16 @@ class NormalMethod implements IrCalculatorMethod
         return bcmul($this->consolidation->getBasisToIr(), self::IR_ALIQUOT, 6);
     }
 
+    public function isExempt(): bool
+    {
+        return
+            ($this->consolidation->getMarketType() === Consolidation::MARKET_TYPE_SPOT) &&
+            ($this->consolidation->getSalesTotal() <= self::EXEMPTION_THRESHOLD);
+    }
+
     private function shouldCalculate(): bool
     {
-        if (($this->consolidation->getMarketType() !== Consolidation::MARKET_TYPE_SPOT) ||
-            ($this->consolidation->getBasisToIr() > self::NET_PROFIT_FREE)) {
+        if (!$this->isExempt()) {
             return true;
         }
 

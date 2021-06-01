@@ -74,6 +74,7 @@ class ConsolidationService implements CalculationInterface
                                 ->setYear($year['year'])
                                 ->setMonth($month)
                                 ->setResult(.0)
+                                ->setSalesTotal(.0)
                                 ->setAccumulatedLoss($accumulatedLoss)
                                 ->setCompesatedLoss(.0)
                                 ->setBasisToIr(.0)
@@ -83,7 +84,8 @@ class ConsolidationService implements CalculationInterface
                                 ->setCompesatedIrrf(.0)
                                 ->setIrrfToPay(.0)
                                 ->setIr(.0)
-                                ->setIrToPay(.0);
+                                ->setIrToPay(.0)
+                                ->setIsExempt(false);
 
                             foreach ($summarizedPositions as $position) {
                                 $result = (float)$position['result'];
@@ -112,6 +114,7 @@ class ConsolidationService implements CalculationInterface
 
                                 $consolidation
                                     ->setResult($result)
+                                    ->setSalesTotal($position['salesTotal'])
                                     ->setAccumulatedLoss($accumulatedLoss)
                                     ->setCompesatedLoss($compesadatedLoss)
                                     ->setBasisToIr($basisToIr);
@@ -123,13 +126,15 @@ class ConsolidationService implements CalculationInterface
                                     $irrf = $calculator->calculateIrrf();
                                     $ir = $calculator->calculateIr();
                                     $irToPay = bcsub($ir, $irrf, 4);
+                                    $isExempt = $calculator->isExempt();
 
                                     $consolidation
                                         ->setAliquot($aliquot)
                                         ->setIrrf($irrf)
                                         ->setIrrfToPay($irrf)
                                         ->setIr($ir)
-                                        ->setIrToPay($irToPay);
+                                        ->setIrToPay($irToPay)
+                                        ->setIsExempt($isExempt);
                                 }
                             }
 
