@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit;
+namespace App\Tests\Unit\Entity;
 
 use App\Entity\Consolidation;
 use App\Entity\PreConsolidation;
