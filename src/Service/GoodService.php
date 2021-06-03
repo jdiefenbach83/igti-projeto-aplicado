@@ -39,43 +39,45 @@ class GoodService implements CalculationInterface
 
     private function calculateGood(): void
     {
-        $year = date("Y");
+        $years = $this->goodRepository->findYearsToExtract();
 
-        $prePositions = $this->goodRepository->findPositionsToExtractGoods($year);
+        foreach ($years as $year) {
+            $prePositions = $this->goodRepository->findPositionsToExtractGoods($year['year']);
 
-        foreach ($prePositions as $prePosition){
-            $assetId = $prePosition['asset_id'];
-            $sequence = $prePosition['sequence'];
-            $good = $this->goodRepository->findGood($assetId, $sequence);
+            foreach ($prePositions as $prePosition) {
+                $assetId = $prePosition['asset_id'];
+                $sequence = $prePosition['sequence'];
+                $good = $this->goodRepository->findGood($assetId, $sequence);
 
-            if (empty($good)) {
-                continue;
+                if (empty($good)) {
+                    continue;
+                }
+
+                $assetId = $good[0]['assetId'];
+                $asset = $this->assetRepository->findById($assetId);
+
+                $assetCode = $asset->getCode();
+                $companyName = $good[0]['companyName'];
+                $companyCNPJ = $good[0]['companyCNPJ'];
+                $quantity = number_format((float)$good[0]['quantity'], 0, ',', '.');
+                $brokerName = $good[0]['brokerName'];
+                $brokerCNPJ = $good[0]['brokerCNPJ'];
+                $price = number_format((float)$good[0]['price'], 2, ',', '.');
+                $currentSituation = bcmul($good[0]['quantity'], $good[0]['price'], 6);
+
+                $description = "Empresa: $companyName - Código da ação: $assetCode - Qtde: $quantity - Preço médio: R$ $price - Corretora: $brokerName - CNPJ: $brokerCNPJ";
+
+                $newGood = new Good();
+                $newGood
+                    ->setAsset($asset)
+                    ->setYear($year['year'])
+                    ->setCnpj($companyCNPJ)
+                    ->setDescription($description)
+                    ->setSituationYearBefore(.0)
+                    ->setSituationCurrentYear($currentSituation);
+
+                $this->goodRepository->save($newGood);
             }
-
-            $assetId = $good[0]['assetId'];
-            $asset = $this->assetRepository->findById($assetId);
-
-            $assetCode = $asset->getCode();
-            $companyName = $good[0]['companyName'];
-            $companyCNPJ = $good[0]['companyCNPJ'];
-            $quantity = number_format ((float)$good[0]['quantity'], 0, ',', '.');
-            $brokerName = $good[0]['brokerName'];
-            $brokerCNPJ = $good[0]['brokerCNPJ'];
-            $price = number_format ((float)$good[0]['price'], 2, ',', '.');
-            $currentSituation = bcmul($good[0]['quantity'], $good[0]['price'], 6);
-
-            $description = "Empresa: $companyName - Código da ação: $assetCode - Qtde: $quantity - Preço médio: $price - Corretora: $brokerName - CNPJ: $brokerCNPJ";
-
-            $newGood = new Good();
-            $newGood
-                ->setAsset($asset)
-                ->setYear($year)
-                ->setCnpj($companyCNPJ)
-                ->setDescription($description)
-                ->setSituationYearBefore(.0)
-                ->setSituationCurrentYear($currentSituation);
-
-            $this->goodRepository->save($newGood);
         }
     }
 

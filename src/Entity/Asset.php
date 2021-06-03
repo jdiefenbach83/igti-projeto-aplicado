@@ -10,11 +10,16 @@ class Asset implements EntityInterface, JsonSerializable
     use Timestampable;
 
     public const TYPE_STOCK = 'STOCK';
-    public const TYPE_FUTURE_CONTRACT = 'FUTURE_CONTRACT';
+    public const TYPE_INDEX = 'INDEX';
+    public const TYPE_DOLAR = 'DOLAR';
+
+    public const MARKET_TYPE_SPOT = 'SPOT';
+    public const MARKET_TYPE_FUTURE = 'FUTURE';
 
     private ?int $id;
     private string $code;
     private string $type;
+    private string $marketType;
     private ?Company $company;
     /**
      * @return int|null
@@ -66,11 +71,43 @@ class Asset implements EntityInterface, JsonSerializable
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getMarketType(): string
+    {
+        return $this->marketType;
+    }
+
+    /**
+     * @param string $marketType
+     * @return Asset
+     */
+    public function setMarketType(string $marketType): self
+    {
+        if (!in_array($marketType, self::getMarketTypes(), true)) {
+            throw new \InvalidArgumentException('Invalid market type');
+        }
+
+        $this->marketType = $marketType;
+
+        return $this;
+    }
+
     public static function getTypes(): array
     {
         return [
             self::TYPE_STOCK,
-            self::TYPE_FUTURE_CONTRACT,
+            self::TYPE_INDEX,
+            self::TYPE_DOLAR,
+        ];
+    }
+
+    public static function getMarketTypes(): array
+    {
+        return [
+            self::MARKET_TYPE_SPOT,
+            self::MARKET_TYPE_FUTURE,
         ];
     }
 
@@ -99,6 +136,7 @@ class Asset implements EntityInterface, JsonSerializable
             'id' => $this->id,
             'code' => $this->code,
             'type' => $this->type,
+            'market_type' => $this->marketType,
             'company_id' => is_null($this->company) ? null : $this->company->getId(),
             '_links' => [
                 [

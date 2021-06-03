@@ -18,6 +18,7 @@ class PreConsolidationRepository extends AbstratctRepository implements PreConso
     {
         $order = [
             'asset' => 'ASC',
+            'assetType' => 'ASC',
             'negotiationType' => 'ASC',
             'marketType' => 'ASC',
             'year' => 'ASC',
@@ -38,6 +39,7 @@ class PreConsolidationRepository extends AbstratctRepository implements PreConso
                 'EXTRACT(YEAR FROM p.date) as year',
                 'EXTRACT(MONTH FROM p.date) as month',
                 'SUM(p.result) as result',
+                "SUM(IFELSE(p.type='SELL', p.totalOperation, 0)) as sales_total",
             ])
             ->from(Position::class, 'p')
             ->innerJoin('p.asset', 'a', Join::WITH, 'p.asset = a.id')
@@ -45,7 +47,7 @@ class PreConsolidationRepository extends AbstratctRepository implements PreConso
             ->addGroupBy('p.negotiationType')
             ->addGroupBy('year')
             ->addGroupBy('month')
-            ->having('SUM(p.result) <> 0')
+            ->having('result <> 0')
             ->addOrderBy('a.id', 'ASC')
             ->addOrderBy('p.negotiationType', 'ASC')
             ->getQuery();

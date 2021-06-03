@@ -35,25 +35,43 @@ class PreConsolidationTest extends TestCase
         $asset = (new Asset())
             ->setCode('ABCD1')
             ->setType(Asset::TYPE_STOCK)
+            ->setMarketType(Asset::MARKET_TYPE_SPOT)
             ->setCompany($company);
 
         $negotiationType = $this->faker->randomElement(PreConsolidation::getNegotiationTypes());
 
         $result = $this->faker->randomFloat(4, 1, 100_000);
+        $salesTotal = $this->faker->randomFloat(4, 1, 100_000);
 
         $preConsolidation = new PreConsolidation();
         $preConsolidation
             ->setYear($year)
             ->setMonth($month)
             ->setAsset($asset)
+            ->setAssetType($asset->getType())
             ->setNegotiationType($negotiationType)
-            ->setResult($result);
+            ->setMarketType($asset->getMarketType())
+            ->setResult($result)
+            ->setSalesTotal($salesTotal);
 
         self::assertEquals($year, $preConsolidation->getYear());
         self::assertEquals($month, $preConsolidation->getMonth());
         self::assertEquals($asset, $preConsolidation->getAsset());
+        self::assertEquals($asset->getType(), $preConsolidation->getAssetType());
         self::assertEquals($negotiationType, $preConsolidation->getNegotiationType());
+        self::assertEquals($asset->getMarketType(), $preConsolidation->getMarketType());
         self::assertEquals($result, $preConsolidation->getResult());
+        self::assertEquals($salesTotal, $preConsolidation->getSalesTotal());
+    }
+
+    public function testAsset_shouldFailWhenSetAnIncorrectAssetType(): void
+    {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage('Invalid asset type');
+
+        $preConsolidation = new PreConsolidation();
+        $preConsolidation
+            ->setAssetType('TEST');
     }
 
     public function testAsset_shouldFailWhenSetAnIncorrectNegotiationType(): void

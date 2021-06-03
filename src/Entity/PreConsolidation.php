@@ -8,6 +8,10 @@ class PreConsolidation implements EntityInterface
 {
     use Timestampable;
 
+    public const ASSET_TYPE_STOCK = 'STOCK';
+    public const ASSET_TYPE_INDEX = 'INDEX';
+    public const ASSET_TYPE_DOLAR = 'DOLAR';
+
     public const NEGOTIATION_TYPE_NORMAL = 'NORMAL';
     public const NEGOTIATION_TYPE_DAYTRADE = 'DAYTRADE';
 
@@ -16,11 +20,22 @@ class PreConsolidation implements EntityInterface
 
     private ?int $id;
     private Asset $asset;
+    private string $assetType;
     private string $negotiationType;
     private string $marketType;
     private int $year;
     private int $month;
     private float $result;
+    private float $salesTotal;
+
+    public static function getAssetTypes(): array
+    {
+        return [
+            self::ASSET_TYPE_STOCK,
+            self::ASSET_TYPE_INDEX,
+            self::ASSET_TYPE_DOLAR,
+        ];
+    }
 
     public static function getNegotiationTypes(): array
     {
@@ -61,6 +76,29 @@ class PreConsolidation implements EntityInterface
     public function setAsset(Asset $asset): PreConsolidation
     {
         $this->asset = $asset;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssetType(): string
+    {
+        return $this->assetType;
+    }
+
+    /**
+     * @param string $assetType
+     * @return PreConsolidation
+     */
+    public function setAssetType(string $assetType): self
+    {
+        if (!in_array($assetType, self::getAssetTypes(), true)) {
+            throw new \InvalidArgumentException('Invalid asset type');
+        }
+
+        $this->assetType = $assetType;
 
         return $this;
     }
@@ -164,6 +202,25 @@ class PreConsolidation implements EntityInterface
     public function setResult(float $result): PreConsolidation
     {
         $this->result = $result;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getSalesTotal(): float
+    {
+        return $this->salesTotal;
+    }
+
+    /**
+     * @param float $salesTotal
+     * @return PreConsolidation
+     */
+    public function setSalesTotal(float $salesTotal): PreConsolidation
+    {
+        $this->salesTotal = $salesTotal;
 
         return $this;
     }

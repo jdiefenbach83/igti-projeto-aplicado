@@ -46,10 +46,53 @@
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
+              plain
+              small
+              color="green darken-2"
+              class="white--text mx-3"
+              v-bind="attrs"
+              v-on="on"
+          >
+            Imposto de Renda
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/consolidations">Renda variável</router-link>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/taxes">DARF</router-link>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/goods">Bens e direitos</router-link>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <router-link class="no-underline" to="/exempts">Rendimentos isentos</router-link>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
             plain
             small
             color="green darken-2"
-            class="white--text mx-3"
+            class="white--text"
             v-bind="attrs"
             v-on="on"
           >

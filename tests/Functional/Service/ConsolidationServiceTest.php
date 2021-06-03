@@ -42,11 +42,13 @@ class ConsolidationServiceTest extends KernelTestCase
                         'negotiationType' => PreConsolidation::NEGOTIATION_TYPE_NORMAL,
                         'result' => 29994.0,
                         'marketType' => PreConsolidation::MARKET_TYPE_SPOT,
+                        'assetType' => PreConsolidation::ASSET_TYPE_STOCK,
                     ]
                 ],
                 'consolidation' => [
                     'year' => 2020,
                     'month' => 9,
+                    'assetType' => PreConsolidation::ASSET_TYPE_STOCK,
                     'negotiationType' => Consolidation::NEGOTIATION_TYPE_NORMAL,
                     'marketType' => Consolidation::MARKET_TYPE_SPOT,
                     'result' => 29994.0,
@@ -76,6 +78,7 @@ class ConsolidationServiceTest extends KernelTestCase
                 ->setAsset($asset)
                 ->setYear($preConsolidation['year'])
                 ->setMonth($preConsolidation['month'])
+                ->setAssetType($preConsolidation['assetType'])
                 ->setNegotiationType($preConsolidation['negotiationType'])
                 ->setMarketType($preConsolidation['marketType'])
                 ->setResult($preConsolidation['result']);
@@ -105,8 +108,10 @@ class ConsolidationServiceTest extends KernelTestCase
             $shouldSkip =
                 ($consolidation->getYear() !== $preConsolidations['consolidation']['year']) ||
                 ($consolidation->getMonth() !== $preConsolidations['consolidation']['month']) ||
+                ($consolidation->getMarketType() !== $preConsolidations['consolidation']['marketType']) ||
                 ($consolidation->getNegotiationType() !== $preConsolidations['consolidation']['negotiationType']) ||
-                ($consolidation->getMarketType() !== $preConsolidations['consolidation']['marketType']);
+                ($consolidation->getAssetType() !== $preConsolidations['consolidation']['assetType'])
+            ;
 
             if($shouldSkip) {
                 continue;
@@ -114,6 +119,7 @@ class ConsolidationServiceTest extends KernelTestCase
 
             self::assertEquals($preConsolidations['consolidation']['year'], $consolidation->getYear());
             self::assertEquals($preConsolidations['consolidation']['month'], $consolidation->getMonth());
+            self::assertEquals($preConsolidations['consolidation']['assetType'], $consolidation->getAssetType());
             self::assertEquals($preConsolidations['consolidation']['negotiationType'], $consolidation->getNegotiationType());
             self::assertEquals($preConsolidations['consolidation']['marketType'], $consolidation->getMarketType());
             self::assertEquals($preConsolidations['consolidation']['result'], $consolidation->getResult());

@@ -44,26 +44,19 @@ class PreConsolidationService implements CalculationInterface
 
         foreach ($summarizedPositions as $position) {
             $asset = $this->assetRepository->findById($position['assetId']);
-            $marketType = $this->mapConsolitationToMarketType($asset->getType());
 
             $preConsolidation = new PreConsolidation();
             $preConsolidation
                 ->setAsset($asset)
+                ->setAssetType($asset->getType())
                 ->setNegotiationType($position['negotiationType'])
-                ->setMarketType($marketType)
+                ->setMarketType($asset->getMarketType())
                 ->setYear($position['year'])
                 ->setMonth($position['month'])
-                ->setResult($position['result']);
+                ->setResult($position['result'])
+                ->setSalesTotal($position['sales_total']);
 
             $this->preConsolidationRepository->save($preConsolidation);
         }
-    }
-
-    private function mapConsolitationToMarketType(string $consolidationType): ?string
-    {
-        $map[Asset::TYPE_STOCK] = PreConsolidation::MARKET_TYPE_SPOT;
-        $map[Asset::TYPE_FUTURE_CONTRACT] = PreConsolidation::MARKET_TYPE_FUTURE;
-
-        return $map[$consolidationType];
     }
 }

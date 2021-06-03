@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Helper\ResponseFactory;
 use App\Service\ConsolidationService;
+use App\Service\PreConsolidationService;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +22,7 @@ class ConsolidationController
     }
 
     public function getAll(): JsonResponse
-    {
+    {$this->service->process();
         $success = false;
         $return = null;
 

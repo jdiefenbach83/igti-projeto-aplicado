@@ -7,15 +7,15 @@ use App\Entity\Company;
 
 class AssetControllerTest extends BaseTest
 {
-    public function testGetAllAssets()
+    public function testGetAllAssets(): void
     {
         $this->client->request('GET', '/api/assets');
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertNotEmpty($this->client->getResponse()->getContent());
+        self::assertEquals(200, $this->client->getResponse()->getStatusCode());
+        self::assertNotEmpty($this->client->getResponse()->getContent());
     }
 
-    public function testGetAssetById_ShouldReturnSucess()
+    public function testGetAssetById_ShouldReturnSucess(): void
     {
         $status_code_expected = 200;
 
@@ -27,12 +27,12 @@ class AssetControllerTest extends BaseTest
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertEquals($response_body['content']['id'], $asset->getId());
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertEquals($response_body['content']['id'], $asset->getId());
     }
 
-    public function testGetAssetById_ShouldReturnNoContent()
+    public function testGetAssetById_ShouldReturnNoContent(): void
     {
         $status_code_expected = 204;
 
@@ -40,11 +40,11 @@ class AssetControllerTest extends BaseTest
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEmpty($response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEmpty($response_body);
     }
 
-    public function testAddAsset_ShouldReturnSuccess()
+    public function testAddAsset_ShouldReturnSuccess(): void
     {
         $status_code_expected = 201;
 
@@ -55,6 +55,7 @@ class AssetControllerTest extends BaseTest
         $new_asset = [
             'code' => $this->faker->text(10),
             'type' => $this->faker->randomElement(Asset::getTypes()),
+            'market_type' => $this->faker->randomElement(Asset::getMarketTypes()),
             'company_id' => $company->getId(),
         ];
 
@@ -69,9 +70,9 @@ class AssetControllerTest extends BaseTest
             ->getRepository(Asset::class)
             ->findOneBy(['id' => $response_body['content']['id']]);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertNotNull($asset);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertNotNull($asset);
     }
 
     public function getInvalidValuesToFail(): array
@@ -81,6 +82,8 @@ class AssetControllerTest extends BaseTest
             'Code - Invalid length' => ['code', 'ABCDEF123456',  'This value is too long. It should have 10 characters or less.'],
             'Type - Empty' => ['type', '',  'This value should not be blank.'],
             'Type - Invalid length' => ['type', 'ABCDEF', 'The value you selected is not a valid choice.'],
+            'MarketType - Empty' => ['market_type', '',  'This value should not be blank.'],
+            'MarketType - Invalid length' => ['market_type', 'ABCDEF', 'The value you selected is not a valid choice.'],
         ];
     }
 
@@ -88,9 +91,9 @@ class AssetControllerTest extends BaseTest
      * @dataProvider getInvalidValuesToFail
      * @param string $key
      * @param string $value
-     * @param $expected_message
+     * @param string $expected_message
      */
-    public function testAddAsset_ShouldReturnBadRequest(string $key, string $value, string $expected_message)
+    public function testAddAsset_ShouldReturnBadRequest(string $key, string $value, string $expected_message): void
     {
         $status_code_expected = 400;
 
@@ -101,6 +104,7 @@ class AssetControllerTest extends BaseTest
         $new_asset = [
             'code' => $this->faker->text(10),
             'type' => $this->faker->randomElement(Asset::getTypes()),
+            'market_type' => $this->faker->randomElement(Asset::getMarketTypes()),
             'company_id' => $company->getId(),
         ];
 
@@ -113,11 +117,11 @@ class AssetControllerTest extends BaseTest
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
     }
 
-    public function testUpdateAsset_ShouldReturnSuccess()
+    public function testUpdateAsset_ShouldReturnSuccess(): void
     {
         $status_code_expected = 200;
 
@@ -131,6 +135,7 @@ class AssetControllerTest extends BaseTest
 
         $asset_to_update->setCode($this->faker->text(10));
         $asset_to_update->setType($this->faker->randomElement(Asset::getTypes()));
+        $asset_to_update->setMarketType($this->faker->randomElement(Asset::getMarketTypes()));
         $asset_to_update->setCompany($company);
 
         $request_body = json_encode($asset_to_update);
@@ -144,14 +149,15 @@ class AssetControllerTest extends BaseTest
             ->getRepository(Asset::class)
             ->findOneBy(['id' => $response_body['content']['id']]);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertEquals($updated_asset->getCode(), $response_body['content']['code']);
-        $this->assertEquals($updated_asset->getType(), $response_body['content']['type']);
-        $this->assertEquals($updated_asset->getCompany()->getId(), $response_body['content']['company_id']);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertEquals($updated_asset->getCode(), $response_body['content']['code']);
+        self::assertEquals($updated_asset->getType(), $response_body['content']['type']);
+        self::assertEquals($updated_asset->getMarketType(), $response_body['content']['market_type']);
+        self::assertEquals($updated_asset->getCompany()->getId(), $response_body['content']['company_id']);
     }
 
-    public function testUpdateAsset_ShouldReturnNotFound()
+    public function testUpdateAsset_ShouldReturnNotFound(): void
     {
         $status_code_expected = 404;
 
@@ -161,17 +167,17 @@ class AssetControllerTest extends BaseTest
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertArrayNotHasKey('content', $response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertArrayNotHasKey('content', $response_body);
     }
 
     /**
      * @dataProvider getInvalidValuesToFail
      * @param string $key
      * @param string $value
-     * @param $expected_message
+     * @param string $expected_message
      */
-    public function testUpdateAsset_ShouldReturnBadRequest(string $key, string $value, string $expected_message)
+    public function testUpdateAsset_ShouldReturnBadRequest(string $key, string $value, string $expected_message): void
     {
         $status_code_expected = 400;
 
@@ -185,6 +191,7 @@ class AssetControllerTest extends BaseTest
 
         $asset_to_update->setCode($this->faker->text(10));
         $asset_to_update->setType($this->faker->randomElement(Asset::getTypes()));
+        $asset_to_update->setMarketType($this->faker->randomElement(Asset::getMarketTypes()));
         $asset_to_update->setCompany($company);
 
         $request_body = json_encode($asset_to_update);
@@ -196,11 +203,11 @@ class AssetControllerTest extends BaseTest
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
     }
 
-    public function testRemoveAsset_ShouldReturnSuccess()
+    public function testRemoveAsset_ShouldReturnSuccess(): void
     {
         $status_code_expected = 204;
 
@@ -215,11 +222,11 @@ class AssetControllerTest extends BaseTest
             ->getRepository(Asset::class)
             ->findOneBy(['id' => $asset->getId()]);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNull($removed_asset);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNull($removed_asset);
     }
 
-    public function testRemoveAsset_ShouldReturnNotFound()
+    public function testRemoveAsset_ShouldReturnNotFound(): void
     {
         $status_code_expected = 404;
 
@@ -229,7 +236,7 @@ class AssetControllerTest extends BaseTest
         $response = $this->client->getResponse();
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertArrayNotHasKey('content', $response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertArrayNotHasKey('content', $response_body);
     }
 }

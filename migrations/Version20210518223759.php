@@ -18,7 +18,7 @@ final class Version20210518223759 extends AbstractMigration
     {
         $this->validateDatabase();
 
-        $this->addSql('ALTER TABLE pre_consolidation ADD market_type ENUM(\'SPOT\', \'FUTURE\')');
+        $this->addSql('ALTER TABLE pre_consolidation ADD market_type ENUM(\'SPOT\', \'FUTURE\') AFTER negotiation_type');
     }
 
     public function down(Schema $schema) : void

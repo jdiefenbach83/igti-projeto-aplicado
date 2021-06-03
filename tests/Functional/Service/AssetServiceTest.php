@@ -28,14 +28,17 @@ class AssetServiceTest extends KernelTestCase
         yield 'Asset AAAA' => [
             'code' => 'AAAA',
             'type' => Asset::TYPE_STOCK,
+            'market_type' => Asset::MARKET_TYPE_SPOT,
         ];
         yield 'Asset BBBB' => [
             'code' => 'BBBB',
             'type' => Asset::TYPE_STOCK,
+            'market_type' => Asset::MARKET_TYPE_SPOT,
         ];
         yield 'Asset CCCC' => [
             'code' => 'CCCC',
-            'type' => Asset::TYPE_FUTURE_CONTRACT,
+            'type' => Asset::TYPE_DOLAR,
+            'market_type' => Asset::MARKET_TYPE_FUTURE,
         ];
     }
 
@@ -43,19 +46,22 @@ class AssetServiceTest extends KernelTestCase
      * @dataProvider getAssetsToAdd
      * @param string $assetCode
      * @param string $assetType
+     * @param string $assetMarketType
      */
-    public function testAssetService_shouldFindByCode(string $assetCode, string $assetType): void
+    public function testAssetService_shouldFindByCode(string $assetCode, string $assetType, string $assetMarketType): void
     {
         $assetDTO = new AssetDTO();
         $assetDTO
             ->setCode($assetCode)
-            ->setType($assetType);
+            ->setType($assetType)
+            ->setMarketType($assetMarketType);
 
         $this->assetService->add($assetDTO);
 
         $asset = $this->assetService->getByCode($assetCode);
 
         self::assertEquals($assetCode, $asset->getCode());
+        self::assertEquals($assetType, $asset->getType());
+        self::assertEquals($assetMarketType, $asset->getMarketType());
     }
 }
-

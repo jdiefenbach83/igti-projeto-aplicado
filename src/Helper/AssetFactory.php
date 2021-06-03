@@ -27,6 +27,7 @@ class AssetFactory
         return $this->makeEntity(
             $dto->getCode(),
             $dto->getType(),
+            $dto->getMarketType(),
             $dto->getCompanyId()
         );
     }
@@ -34,10 +35,11 @@ class AssetFactory
     /**
      * @param string $code
      * @param string $type
+     * @param string $marketType
      * @param int|null $companyId
      * @return Asset
      */
-    public function makeEntity(string $code, string $type, ?int $companyId = null): Asset
+    public function makeEntity(string $code, string $type, string $marketType, ?int $companyId = null): Asset
     {
         $company = null;
 
@@ -48,6 +50,7 @@ class AssetFactory
         return (new Asset())
             ->setCode($code)
             ->setType($type)
+            ->setMarketType($marketType)
             ->setCompany($company);
     }
 }
