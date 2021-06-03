@@ -2,6 +2,12 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
+login:
+  path: /api/login
+  controller: App\Controller\LoginController::login
+  methods:
+    - POST
+
 companys:
   path: /api/companies
   controller: App\Controller\CompanyController::getAll
