@@ -24,6 +24,7 @@
         "symfony/framework-bundle": "5.2.*",
         "symfony/maker-bundle": "^1.24",
         "symfony/phpunit-bridge": "^5.2",
+        "symfony/security-bundle": "5.2.*",
         "symfony/twig-bundle": "5.2.*",
         "symfony/validator": "5.2.*",
         "symfony/webpack-encore-bundle": "^1.8",
