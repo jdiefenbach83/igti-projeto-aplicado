@@ -42,14 +42,13 @@ class BrokerageNoteControllerTest extends BaseTest
         ];
     }
 
-    public function testAddBrokerageNote_ShouldReturnSuccess()
+    public function testAddBrokerageNote_ShouldReturnSuccess(): void
     {
         $status_code_expected = 201;
 
         $new_brokerage_note = $this->createBrokerageNote();
         $request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $request_body);
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $request_body);
         $response_body = json_decode($response->getContent(), true);
         $brokerage_note_id = $response_body['content']['id'];
 
@@ -57,27 +56,27 @@ class BrokerageNoteControllerTest extends BaseTest
             ->getRepository(BrokerageNote::class)
             ->find($brokerage_note_id);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertEquals($new_brokerage_note['date'], $response_body['content']['date']);
-        $this->assertEquals($new_brokerage_note['number'], $response_body['content']['number']);
-        $this->assertEquals($new_brokerage_note['total_moviments'], $response_body['content']['total_moviments']);
-        $this->assertEquals($new_brokerage_note['operational_fee'], $response_body['content']['operational_fee']);
-        $this->assertEquals($new_brokerage_note['registration_fee'], $response_body['content']['registration_fee']);
-        $this->assertEquals($new_brokerage_note['emolument_fee'], $response_body['content']['emolument_fee']);
-        $this->assertEquals($new_brokerage_note['iss_pis_cofins'], $response_body['content']['iss_pis_cofins']);
-        $this->assertEquals($new_brokerage_note['irrf_normal_tax'], $response_body['content']['irrf_normal_tax']);
-        $this->assertEquals($new_brokerage_note['irrf_daytrade_tax'], $response_body['content']['irrf_daytrade_tax']);
-        $this->assertNotNull($brokerage_note);
-        $this->assertEquals($new_brokerage_note['date'], $brokerage_note->getDate()->format('Y-m-d'));
-        $this->assertEquals($new_brokerage_note['number'], $brokerage_note->getNumber());
-        $this->assertEquals($new_brokerage_note['total_moviments'], $brokerage_note->getTotalMoviments());
-        $this->assertEquals($new_brokerage_note['operational_fee'], $brokerage_note->getOperationalFee());
-        $this->assertEquals($new_brokerage_note['registration_fee'], $brokerage_note->getRegistrationFee());
-        $this->assertEquals($new_brokerage_note['emolument_fee'], $brokerage_note->getEmolumentFee());
-        $this->assertEquals($new_brokerage_note['iss_pis_cofins'], $brokerage_note->getIssPisCofins());
-        $this->assertEquals($new_brokerage_note['irrf_normal_tax'], $brokerage_note->getIrrfNormalTax());
-        $this->assertEquals($new_brokerage_note['irrf_daytrade_tax'], $brokerage_note->getIrrfDaytradeTax());
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertEquals($new_brokerage_note['date'], $response_body['content']['date']);
+        self::assertEquals($new_brokerage_note['number'], $response_body['content']['number']);
+        self::assertEquals($new_brokerage_note['total_moviments'], $response_body['content']['total_moviments']);
+        self::assertEquals($new_brokerage_note['operational_fee'], $response_body['content']['operational_fee']);
+        self::assertEquals($new_brokerage_note['registration_fee'], $response_body['content']['registration_fee']);
+        self::assertEquals($new_brokerage_note['emolument_fee'], $response_body['content']['emolument_fee']);
+        self::assertEquals($new_brokerage_note['iss_pis_cofins'], $response_body['content']['iss_pis_cofins']);
+        self::assertEquals($new_brokerage_note['irrf_normal_tax'], $response_body['content']['irrf_normal_tax']);
+        self::assertEquals($new_brokerage_note['irrf_daytrade_tax'], $response_body['content']['irrf_daytrade_tax']);
+        self::assertNotNull($brokerage_note);
+        self::assertEquals($new_brokerage_note['date'], $brokerage_note->getDate()->format('Y-m-d'));
+        self::assertEquals($new_brokerage_note['number'], $brokerage_note->getNumber());
+        self::assertEquals($new_brokerage_note['total_moviments'], $brokerage_note->getTotalMoviments());
+        self::assertEquals($new_brokerage_note['operational_fee'], $brokerage_note->getOperationalFee());
+        self::assertEquals($new_brokerage_note['registration_fee'], $brokerage_note->getRegistrationFee());
+        self::assertEquals($new_brokerage_note['emolument_fee'], $brokerage_note->getEmolumentFee());
+        self::assertEquals($new_brokerage_note['iss_pis_cofins'], $brokerage_note->getIssPisCofins());
+        self::assertEquals($new_brokerage_note['irrf_normal_tax'], $brokerage_note->getIrrfNormalTax());
+        self::assertEquals($new_brokerage_note['irrf_daytrade_tax'], $brokerage_note->getIrrfDaytradeTax());
     }
 
     public function getInvalidValuesToCreateOrUpdateBrokerageNote(): iterable {
@@ -115,30 +114,27 @@ class BrokerageNoteControllerTest extends BaseTest
         $new_brokerage_note[$key] = $value;
 
         $request_body = json_encode($new_brokerage_note);
-
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $request_body);
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEquals($status_code_expected, $response->getStatusCode());
     }
 
-    public function testUpdateBrokerareNote_ShouldReturnSuccess()
+    public function testUpdateBrokerareNote_ShouldReturnSuccess(): void
     {
         $new_status_code_expected = 201;
         $update_status_code_expected = 200;
 
+        $brokerageNoteRepository = $this->entityManager
+            ->getRepository(BrokerageNote::class);
+
         $new_brokerage_note = $this->createBrokerageNote();
-        $new_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
-        $new_response = $this->client->getResponse();
-        $new_response_body = json_decode($new_response->getContent(), true);
+        $new_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $new_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $new_request_body);
+        $new_response_body = json_decode($new_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $new_brokerage_note_id = $new_response_body['content']['id'];
 
-        $brokerage_note_to_update_entity = $this->entityManager
-            ->getRepository(BrokerageNote::class)
-            ->find($new_brokerage_note_id);
+        $brokerage_note_to_update_entity = $brokerageNoteRepository->find($new_brokerage_note_id);
 
         $brokerage_note_to_update['broker_id'] = $brokerage_note_to_update_entity->getBroker()->getId();
         $brokerage_note_to_update['date'] = $this->faker->dateTime()->format('Y-m-d');
@@ -151,29 +147,26 @@ class BrokerageNoteControllerTest extends BaseTest
         $brokerage_note_to_update['irrf_normal_tax'] = $this->faker->randomFloat(4, 1, 100_000);
         $brokerage_note_to_update['irrf_daytrade_tax'] = $this->faker->randomFloat(4, 1, 100_000);
 
-        $request_body = json_encode($brokerage_note_to_update);
+        $request_body = json_encode($brokerage_note_to_update, JSON_THROW_ON_ERROR);
 
-        $this->client->request('PUT', "/api/brokerageNotes/$new_brokerage_note_id", [], [], [], $request_body);
+        $update_response = $this->executeRequestWithToken('PUT', "/api/brokerageNotes/$new_brokerage_note_id", [], $request_body);
+        $update_response_body = json_decode($update_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $update_response = $this->client->getResponse();
-        $update_response_body = json_decode($update_response->getContent(), true);
+        $this->entityManager->clear(BrokerageNote::class);
+        $updated_brokerage_note = $brokerageNoteRepository->find($new_brokerage_note_id);
 
-        $updated_brokerage_note = $this->entityManager
-            ->getRepository(BrokerageNote::class)
-            ->findOneBy(['id' => $update_response_body['content']['id']]);
-
-        $this->assertEquals($new_status_code_expected, $new_response->getStatusCode());
-        $this->assertEquals($update_status_code_expected, $update_response->getStatusCode());
-        $this->assertNotEmpty($update_response_body);
-        $this->assertEquals($updated_brokerage_note->getDate()->format('Y-m-d'), $update_response_body['content']['date']);
-        $this->assertEquals($updated_brokerage_note->getNumber(), $update_response_body['content']['number']);
-        $this->assertEquals($updated_brokerage_note->getTotalMoviments(), $update_response_body['content']['total_moviments']);
-        $this->assertEquals($updated_brokerage_note->getOperationalFee(), $update_response_body['content']['operational_fee']);
-        $this->assertEquals($updated_brokerage_note->getRegistrationFee(), $update_response_body['content']['registration_fee']);
-        $this->assertEquals($updated_brokerage_note->getEmolumentFee(), $update_response_body['content']['emolument_fee']);
-        $this->assertEquals($updated_brokerage_note->getIssPisCofins(), $update_response_body['content']['iss_pis_cofins']);
-        $this->assertEquals($updated_brokerage_note->getIrrfNormalTax(), $update_response_body['content']['irrf_normal_tax']);
-        $this->assertEquals($updated_brokerage_note->getIrrfDaytradeTax(), $update_response_body['content']['irrf_daytrade_tax']);
+        self::assertEquals($new_status_code_expected, $new_response->getStatusCode());
+        self::assertEquals($update_status_code_expected, $update_response->getStatusCode());
+        self::assertNotEmpty($update_response_body);
+        self::assertEquals($updated_brokerage_note->getDate()->format('Y-m-d'), $update_response_body['content']['date']);
+        self::assertEquals($updated_brokerage_note->getNumber(), $update_response_body['content']['number']);
+        self::assertEquals($updated_brokerage_note->getTotalMoviments(), $update_response_body['content']['total_moviments']);
+        self::assertEquals($updated_brokerage_note->getOperationalFee(), $update_response_body['content']['operational_fee']);
+        self::assertEquals($updated_brokerage_note->getRegistrationFee(), $update_response_body['content']['registration_fee']);
+        self::assertEquals($updated_brokerage_note->getEmolumentFee(), $update_response_body['content']['emolument_fee']);
+        self::assertEquals($updated_brokerage_note->getIssPisCofins(), $update_response_body['content']['iss_pis_cofins']);
+        self::assertEquals($updated_brokerage_note->getIrrfNormalTax(), $update_response_body['content']['irrf_normal_tax']);
+        self::assertEquals($updated_brokerage_note->getIrrfDaytradeTax(), $update_response_body['content']['irrf_daytrade_tax']);
     }
 
     /**
@@ -188,11 +181,9 @@ class BrokerageNoteControllerTest extends BaseTest
 
         $new_brokerage_note = $this->createBrokerageNote();
 
-        $new_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
-
-        $new_response = $this->client->getResponse();
-        $new_response_body = json_decode($new_response->getContent(), true);
+        $new_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $new_response = $this->executeRequestWithToken('POST', "/api/brokerageNotes", [], $new_request_body);
+        $new_response_body = json_decode($new_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $brokerage_note_to_update_entity = $this->entityManager
             ->getRepository(BrokerageNote::class)
@@ -200,157 +191,141 @@ class BrokerageNoteControllerTest extends BaseTest
 
         $brokerage_note_to_update[$key] = $value;
 
-        $request_body = json_encode($brokerage_note_to_update);
+        $request_body = json_encode($brokerage_note_to_update, JSON_THROW_ON_ERROR);
+        $update_response = $this->executeRequestWithToken('PUT', "/api/brokerageNotes/{$brokerage_note_to_update_entity->getId()}", [], $request_body);
+        $update_response_body = json_decode($update_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->client->request('PUT', "/api/brokerageNotes/{$brokerage_note_to_update_entity->getId()}", [], [], [], $request_body);
-
-        $update_response = $this->client->getResponse();
-        $update_response_body = json_decode($update_response->getContent(), true);
-
-        $this->assertEquals($new_status_code_expected, $new_response->getStatusCode());
-        $this->assertEquals($update_status_code_expected, $update_response->getStatusCode());
+        self::assertEquals($new_status_code_expected, $new_response->getStatusCode());
+        self::assertEquals($update_status_code_expected, $update_response->getStatusCode());
     }
 
-    public function testUpdateBroker_ShouldReturnNotFound()
+    public function testUpdateBroker_ShouldReturnNotFound(): void
     {
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('PUT', "/api/brokerageNotes/{$id}");
+        $response = $this->executeRequestWithToken('PUT', "/api/brokerageNotes/$id");
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
-
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertArrayNotHasKey('content', $response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertArrayNotHasKey('content', $response_body);
     }
 
-    public function testGetAllBrokerageNotes()
+    public function testGetAllBrokerageNotes(): void
     {
         $status_code_expected = 200;
 
-        $this->client->request('GET', '/api/brokerageNotes');
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('GET', '/api/brokerageNotes');
+        $this->client->getResponse();
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
     }
 
-    public function testGetBrokerageNoteById_ShouldReturnSucess()
+    public function testGetBrokerageNoteById_ShouldReturnSucess(): void
     {
         $new_status_code_expected = 201;
         $get_by_id_status_code_expected = 200;
 
         $new_brokerage_note = $this->createBrokerageNote();
 
-        $new_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
+        $new_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $new_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $new_request_body);
+        $new_response_body = json_decode($new_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $new_response = $this->client->getResponse();
-        $new_response_body = json_decode($new_response->getContent(), true);
+        $get_by_id_response = $this->executeRequestWithToken('GET', "/api/brokerageNotes/{$new_response_body['content']['id']}", [], $new_request_body);
+        $get_by_id_response_body = json_decode($get_by_id_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->client->request('GET', "/api/brokerageNotes/{$new_response_body['content']['id']}");
-        $get_by_id_response = $this->client->getResponse();
-        $get_by_id_response_body = json_decode($get_by_id_response->getContent(), true);
-
-        $this->assertEquals($new_status_code_expected, $new_response->getStatusCode());
-        $this->assertEquals($get_by_id_status_code_expected, $get_by_id_response->getStatusCode());
-        $this->assertNotEmpty($get_by_id_response_body);
-        $this->assertEquals($get_by_id_response_body['content']['id'], $new_response_body['content']['id']);
+        self::assertEquals($new_status_code_expected, $new_response->getStatusCode());
+        self::assertEquals($get_by_id_status_code_expected, $get_by_id_response->getStatusCode());
+        self::assertNotEmpty($get_by_id_response_body);
+        self::assertEquals($get_by_id_response_body['content']['id'], $new_response_body['content']['id']);
     }
 
-    public function testGetBrokerageNoteById_ShouldReturnNoContent()
+    public function testGetBrokerageNoteById_ShouldReturnNoContent(): void
     {
         $status_code_expected = 204;
 
-        $this->client->request('GET', '/api/brokerageNotes/-1');
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('GET', '/api/brokerageNotes/-1');
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEmpty($response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEmpty($response_body);
     }
 
-    public function testRemoveBrokerageNote_ShouldReturnSuccess()
+    public function testRemoveBrokerageNote_ShouldReturnSuccess(): void
     {
         $new_status_code_expected = 201;
         $remove_status_code_expected = 204;
 
         $new_brokerage_note = $this->createBrokerageNote();
 
-        $new_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
-
-        $new_response = $this->client->getResponse();
-        $new_response_body = json_decode($new_response->getContent(), true);
+        $new_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $new_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $new_request_body);
+        $new_response_body = json_decode($new_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $brokerage_note_id = $new_response_body['content']['id'];
 
-        $this->client->request('DELETE', "/api/brokerageNotes/$brokerage_note_id");
-        $remove_response = $this->client->getResponse();
+        $remove_response = $this->executeRequestWithToken('DELETE', "/api/brokerageNotes/$brokerage_note_id");
 
         $removed_brokerage_note = $this->entityManager
             ->getRepository(BrokerageNote::class)
             ->find($brokerage_note_id);
 
-        $this->assertEquals($new_status_code_expected, $new_response->getStatusCode());
-        $this->assertEquals($remove_status_code_expected, $remove_response->getStatusCode());
-        $this->assertNull($removed_brokerage_note);
+        self::assertEquals($new_status_code_expected, $new_response->getStatusCode());
+        self::assertEquals($remove_status_code_expected, $remove_response->getStatusCode());
+        self::assertNull($removed_brokerage_note);
     }
 
-    public function testRemoveBrokerageNote_ShouldReturnNotFound()
+    public function testRemoveBrokerageNote_ShouldReturnNotFound(): void
     {
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('DELETE', "/api/brokerageNotes/{$id}");
+        $response = $this->executeRequestWithToken('DELETE', "/api/brokerageNotes/$id");
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
-
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertArrayNotHasKey('content', $response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertArrayNotHasKey('content', $response_body);
     }
 
-    public function testAddOperationIntoBrokerageNote_ShouldReturnSuccess()
+    public function testAddOperationIntoBrokerageNote_ShouldReturnSuccess(): void
     {
         $status_code_expected = 201;
 
         $new_brokerage_note = $this->createBrokerageNote();
-        $brokerage_note_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $brokerage_note_request_body);
-        $brokerage_note_response = $this->client->getResponse();
-        $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true);
+        $brokerage_note_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $brokerage_note_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $brokerage_note_request_body);
+        $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $brokerage_note_id = $brokerage_note_response_body['content']['id'];
 
         $new_operation = $this->createOperation();
-        $operation_request_body = json_encode($new_operation);
-        $this->client->request('POST', "/api/brokerageNotes/$brokerage_note_id/operations", [], [], [], $operation_request_body);
-        $operation_response = $this->client->getResponse();
-        $operation_response_body = json_decode($operation_response->getContent(), true);
+        $operation_request_body = json_encode($new_operation, JSON_THROW_ON_ERROR);
+        $operation_response = $this->executeRequestWithToken('POST', "/api/brokerageNotes/$brokerage_note_id/operations", [], $operation_request_body);
+        $operation_response_body = json_decode($operation_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $brokerage_note = $this->entityManager
             ->getRepository(BrokerageNote::class)
             ->find($brokerage_note_id);
 
-        $this->assertEquals($status_code_expected, $brokerage_note_response->getStatusCode());
-        $this->assertNotEmpty($brokerage_note_response_body);
+        self::assertEquals($status_code_expected, $brokerage_note_response->getStatusCode());
+        self::assertNotEmpty($brokerage_note_response_body);
 
-        $this->assertEquals($status_code_expected, $operation_response->getStatusCode());
-        $this->assertNotEmpty($operation_response_body);
+        self::assertEquals($status_code_expected, $operation_response->getStatusCode());
+        self::assertNotEmpty($operation_response_body);
 
-        $this->assertEquals($new_operation['type'], $operation_response_body['content']['type']);
-        $this->assertEquals($new_operation['asset_id'], $operation_response_body['content']['asset_id']);
-        $this->assertEquals($new_operation['quantity'], $operation_response_body['content']['quantity']);
-        $this->assertEquals($new_operation['price'], $operation_response_body['content']['price']);
+        self::assertEquals($new_operation['type'], $operation_response_body['content']['type']);
+        self::assertEquals($new_operation['asset_id'], $operation_response_body['content']['asset_id']);
+        self::assertEquals($new_operation['quantity'], $operation_response_body['content']['quantity']);
+        self::assertEquals($new_operation['price'], $operation_response_body['content']['price']);
 
-        $this->assertNotNull($brokerage_note);
-        $this->assertEquals($new_operation['type'], $brokerage_note->getOperations()[0]->getType());
-        $this->assertEquals($new_operation['asset_id'], $brokerage_note->getOperations()[0]->getAsset()->getId());
-        $this->assertEquals($new_operation['quantity'], $brokerage_note->getOperations()[0]->getQuantity());
-        $this->assertEquals($new_operation['price'], $brokerage_note->getOperations()[0]->getPrice());
+        self::assertNotNull($brokerage_note);
+        self::assertEquals($new_operation['type'], $brokerage_note->getOperations()[0]->getType());
+        self::assertEquals($new_operation['asset_id'], $brokerage_note->getOperations()[0]->getAsset()->getId());
+        self::assertEquals($new_operation['quantity'], $brokerage_note->getOperations()[0]->getQuantity());
+        self::assertEquals($new_operation['price'], $brokerage_note->getOperations()[0]->getPrice());
 
-        $this->assertEquals($brokerage_note->getTotalOperations(), $brokerage_note->getOperations()[0]->getTotalForCalculations());
+        self::assertEquals($brokerage_note->getTotalOperations(), $brokerage_note->getOperations()[0]->getTotalForCalculations());
     }
 
     public function getInvalidValuesToCreateOrUpdateOperationsIntoBrokerageNote(): iterable {
@@ -374,71 +349,66 @@ class BrokerageNoteControllerTest extends BaseTest
         $status_code_expected = 400;
 
         $new_brokerage_note = $this->createBrokerageNote();
-        $brokerage_note_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $brokerage_note_request_body);
-        $brokerage_note_response = $this->client->getResponse();
-        $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true);
+        $brokerage_note_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $brokerage_note_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $brokerage_note_request_body);
+        $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $brokerage_note_id = $brokerage_note_response_body['content']['id'];
 
         $new_operation = $this->createOperation();
         $new_operation[$key] = $value;
-        $operation_request_body = json_encode($new_operation);
-        $this->client->request('POST', "/api/brokerageNotes/$brokerage_note_id/operations", [], [], [], $operation_request_body);
-        $operation_response = $this->client->getResponse();
-        $operation_response_body = json_decode($operation_response->getContent(), true);
+        $operation_request_body = json_encode($new_operation, JSON_THROW_ON_ERROR);
+        $operation_response = $this->executeRequestWithToken('POST', "/api/brokerageNotes/$brokerage_note_id/operations", [], $operation_request_body);
+        $operation_response_body = json_decode($operation_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertEquals($status_code_expected, $operation_response->getStatusCode());
+        self::assertEquals($status_code_expected, $operation_response->getStatusCode());
     }
 
-    public function testUpdateOperationIntoBrokerareNote_ShouldReturnSuccess()
+    public function testUpdateOperationIntoBrokerareNote_ShouldReturnSuccess(): void
     {
         $new_status_code_expected = 201;
         $update_status_code_expected = 200;
 
         $new_brokerage_note = $this->createBrokerageNote();
-        $new_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
-        $new_brokerage_note_response = $this->client->getResponse();
+        $new_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $new_brokerage_note_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $new_request_body);
         $new_brokegare_note_response_body = json_decode($new_brokerage_note_response->getContent(), true);
         $new_brokerage_note_id = $new_brokegare_note_response_body['content']['id'];
 
         $new_operation = $this->createOperation();
-        $new_operation_request_body = json_encode($new_operation);
-        $this->client->request('POST', "/api/brokerageNotes/$new_brokerage_note_id/operations", [], [], [], $new_operation_request_body);
-        $new_operation_response = $this->client->getResponse();
-        $new_operation_response_body = json_decode($new_operation_response->getContent(), true);
+        $new_operation_request_body = json_encode($new_operation, JSON_THROW_ON_ERROR);
+        $new_operation_response = $this->executeRequestWithToken('POST', "/api/brokerageNotes/$new_brokerage_note_id/operations", [], $new_operation_request_body);
+        $new_operation_response_body = json_decode($new_operation_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $new_operation_line = $new_operation_response_body['content']['line'];
 
         $update_operation = $this->createOperation();
-        $update_operation_request_body = json_encode($update_operation);
-        $this->client->request('PUT', "/api/brokerageNotes/$new_brokerage_note_id/operations/$new_operation_line", [], [], [], $update_operation_request_body);
-        $update_operation_response = $this->client->getResponse();
-        $update_operation_response_body = json_decode($update_operation_response->getContent(), true);
+        $update_operation_request_body = json_encode($update_operation, JSON_THROW_ON_ERROR);
+        $update_operation_response = $this->executeRequestWithToken('PUT', "/api/brokerageNotes/$new_brokerage_note_id/operations/$new_operation_line", [], $update_operation_request_body);
+        $update_operation_response_body = json_decode($update_operation_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $brokerage_note = $this->entityManager
             ->getRepository(BrokerageNote::class)
             ->find($new_brokerage_note_id);
 
-        $this->assertEquals($new_status_code_expected, $new_brokerage_note_response->getStatusCode());
-        $this->assertNotEmpty($new_brokegare_note_response_body);
+        self::assertEquals($new_status_code_expected, $new_brokerage_note_response->getStatusCode());
+        self::assertNotEmpty($new_brokegare_note_response_body);
 
-        $this->assertEquals($new_status_code_expected, $new_operation_response->getStatusCode());
-        $this->assertNotEmpty($new_operation_response_body);
+        self::assertEquals($new_status_code_expected, $new_operation_response->getStatusCode());
+        self::assertNotEmpty($new_operation_response_body);
 
-        $this->assertEquals($update_status_code_expected, $update_operation_response->getStatusCode());
-        $this->assertNotEmpty($update_operation_response_body);
+        self::assertEquals($update_status_code_expected, $update_operation_response->getStatusCode());
+        self::assertNotEmpty($update_operation_response_body);
 
-        $this->assertEquals($update_operation['type'], $update_operation_response_body['content']['type']);
-        $this->assertEquals($update_operation['asset_id'], $update_operation_response_body['content']['asset_id']);
-        $this->assertEquals($update_operation['quantity'], $update_operation_response_body['content']['quantity']);
-        $this->assertEquals($update_operation['price'], $update_operation_response_body['content']['price']);
+        self::assertEquals($update_operation['type'], $update_operation_response_body['content']['type']);
+        self::assertEquals($update_operation['asset_id'], $update_operation_response_body['content']['asset_id']);
+        self::assertEquals($update_operation['quantity'], $update_operation_response_body['content']['quantity']);
+        self::assertEquals($update_operation['price'], $update_operation_response_body['content']['price']);
 
-        $this->assertNotNull($brokerage_note);
+        self::assertNotNull($brokerage_note);
 
-        $this->assertEquals($update_operation['type'], $brokerage_note->getOperations()[0]->getType());
-        $this->assertEquals($update_operation['asset_id'], $brokerage_note->getOperations()[0]->getAsset()->getId());
-        $this->assertEquals($update_operation['quantity'], $brokerage_note->getOperations()[0]->getQuantity());
-        $this->assertEquals($update_operation['price'], $brokerage_note->getOperations()[0]->getPrice());
+        self::assertEquals($update_operation['type'], $brokerage_note->getOperations()[0]->getType());
+        self::assertEquals($update_operation['asset_id'], $brokerage_note->getOperations()[0]->getAsset()->getId());
+        self::assertEquals($update_operation['quantity'], $brokerage_note->getOperations()[0]->getQuantity());
+        self::assertEquals($update_operation['price'], $brokerage_note->getOperations()[0]->getPrice());
     }
 
     /**
@@ -452,87 +422,78 @@ class BrokerageNoteControllerTest extends BaseTest
         $update_status_code_expected = 400;
 
         $new_brokerage_note = $this->createBrokerageNote();
-        $new_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $new_request_body);
-        $new_brokerage_note_response = $this->client->getResponse();
+        $new_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $new_brokerage_note_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $new_request_body);
         $new_brokegare_note_response_body = json_decode($new_brokerage_note_response->getContent(), true);
         $new_brokerage_note_id = $new_brokegare_note_response_body['content']['id'];
 
         $new_operation = $this->createOperation();
-        $new_operation_request_body = json_encode($new_operation);
-        $this->client->request('POST', "/api/brokerageNotes/$new_brokerage_note_id/operations", [], [], [], $new_operation_request_body);
-        $new_operation_response = $this->client->getResponse();
-        $new_operation_response_body = json_decode($new_operation_response->getContent(), true);
+        $new_operation_request_body = json_encode($new_operation, JSON_THROW_ON_ERROR);
+        $new_operation_response = $this->executeRequestWithToken('POST', "/api/brokerageNotes/$new_brokerage_note_id/operations", [], $new_operation_request_body);
+        $new_operation_response_body = json_decode($new_operation_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $new_operation_line = $new_operation_response_body['content']['line'];
 
         $update_operation = $this->createOperation();
         $update_operation[$key] = $value;
-        $update_operation_request_body = json_encode($update_operation);
-        $this->client->request('PUT', "/api/brokerageNotes/$new_brokerage_note_id/operations/$new_operation_line", [], [], [], $update_operation_request_body);
-        $update_operation_response = $this->client->getResponse();
-        $update_operation_response_body = json_decode($update_operation_response->getContent(), true);
+        $update_operation_request_body = json_encode($update_operation, JSON_THROW_ON_ERROR);
+        $update_operation_response = $this->executeRequestWithToken('PUT', "/api/brokerageNotes/$new_brokerage_note_id/operations/$new_operation_line", [], $update_operation_request_body);
+        $update_operation_response_body = json_decode($update_operation_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertEquals($new_status_code_expected, $new_brokerage_note_response->getStatusCode());
-        $this->assertEquals($new_status_code_expected, $new_operation_response->getStatusCode());
-        $this->assertEquals($update_status_code_expected, $update_operation_response->getStatusCode());
+        self::assertEquals($new_status_code_expected, $new_brokerage_note_response->getStatusCode());
+        self::assertEquals($new_status_code_expected, $new_operation_response->getStatusCode());
+        self::assertEquals($update_status_code_expected, $update_operation_response->getStatusCode());
     }
 
-    public function testRemoveOperationFromBrokerageNote_ShouldReturnSuccess()
+    public function testRemoveOperationFromBrokerageNote_ShouldReturnSuccess(): void
     {
         $new_status_code_expected = 201;
         $remove_status_code_expected = 204;
 
         $new_brokerage_note = $this->createBrokerageNote();
-        $brokerage_note_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $brokerage_note_request_body);
-        $brokerage_note_response = $this->client->getResponse();
-        $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true);
+        $brokerage_note_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $brokerage_note_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $brokerage_note_request_body);
+        $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $brokerage_note_id = $brokerage_note_response_body['content']['id'];
 
         $new_operation = $this->createOperation();
-        $new_operation_request_body = json_encode($new_operation);
-        $this->client->request('POST', "/api/brokerageNotes/$brokerage_note_id/operations", [], [], [], $new_operation_request_body);
-        $new_operation_response = $this->client->getResponse();
-        $new_operation_response_body = json_decode($new_operation_response->getContent(), true);
+        $new_operation_request_body = json_encode($new_operation, JSON_THROW_ON_ERROR);
+        $new_operation_response = $this->executeRequestWithToken('POST', "/api/brokerageNotes/$brokerage_note_id/operations", [], $new_operation_request_body);
+        $new_operation_response_body = json_decode($new_operation_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $new_operation_line = $new_operation_response_body['content']['line'];
 
-        $this->client->request('DELETE', "/api/brokerageNotes/$brokerage_note_id/operations/$new_operation_line");
-        $remove_operation_response = $this->client->getResponse();
+        $remove_operation_response = $this->executeRequestWithToken('DELETE', "/api/brokerageNotes/$brokerage_note_id/operations/$new_operation_line");
 
         $removed_operation_from_brokerage_note = $this->entityManager
             ->getRepository(BrokerageNote::class)
             ->find($brokerage_note_id);
 
-        $this->assertEquals($new_status_code_expected, $brokerage_note_response->getStatusCode());
-        $this->assertEquals($new_status_code_expected, $new_operation_response->getStatusCode());
-        $this->assertEquals($remove_status_code_expected, $remove_operation_response->getStatusCode());
-        $this->assertEmpty($removed_operation_from_brokerage_note->getOperations());
+        self::assertEquals($new_status_code_expected, $brokerage_note_response->getStatusCode());
+        self::assertEquals($new_status_code_expected, $new_operation_response->getStatusCode());
+        self::assertEquals($remove_status_code_expected, $remove_operation_response->getStatusCode());
+        self::assertEmpty($removed_operation_from_brokerage_note->getOperations());
     }
 
-    public function testRemoveOperationFromBrokerageNote_ShouldReturnNotFound()
+    public function testRemoveOperationFromBrokerageNote_ShouldReturnNotFound(): void
     {
         $new_status_code_expected = 201;
         $status_code_expected = 404;
 
         $new_brokerage_note = $this->createBrokerageNote();
-        $brokerage_note_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $brokerage_note_request_body);
-        $brokerage_note_response = $this->client->getResponse();
+        $brokerage_note_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $brokerage_note_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $brokerage_note_request_body);
         $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true);
         $brokerage_note_id = $brokerage_note_response_body['content']['id'];
 
         $line = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('DELETE', "/api/brokerageNotes/$brokerage_note_id/operations/$line");
+        $response = $this->executeRequestWithToken('DELETE', "/api/brokerageNotes/$brokerage_note_id/operations/$line");
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
-
-        $this->assertEquals($new_status_code_expected, $brokerage_note_response->getStatusCode());
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertArrayNotHasKey('content', $response_body);
+        self::assertEquals($new_status_code_expected, $brokerage_note_response->getStatusCode());
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertArrayNotHasKey('content', $response_body);
     }
 
-    public function testAddBrokerageNote_ShouldCalculateCorretly()
+    public function testAddBrokerageNote_ShouldCalculateCorretly(): void
     {
         $status_code_expected = 201;
 
@@ -545,12 +506,9 @@ class BrokerageNoteControllerTest extends BaseTest
         $new_brokerage_note['irrf_normal_tax'] = $this->faker->randomFloat(4, 1, 100_000);
         $new_brokerage_note['irrf_daytrade_tax'] = $this->faker->randomFloat(4, 1, 100_000);
 
-        $request_body = json_encode($new_brokerage_note);
-
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $brokerage_note = $this->entityManager
             ->getRepository(BrokerageNote::class)
@@ -570,10 +528,10 @@ class BrokerageNoteControllerTest extends BaseTest
         $result = bcsub($result, $new_brokerage_note['irrf_normal_tax'], 4);
         $result = bcsub($result, $new_brokerage_note['irrf_daytrade_tax'], 4);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEquals($total_fees, $brokerage_note->getTotalFees());
-        $this->assertEquals($total_costs, $brokerage_note->getTotalCosts());
-        $this->assertEquals($net_total, $brokerage_note->getNetTotal());
-        $this->assertEquals($result, $brokerage_note->getResult());
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEquals($total_fees, $brokerage_note->getTotalFees());
+        self::assertEquals($total_costs, $brokerage_note->getTotalCosts());
+        self::assertEquals($net_total, $brokerage_note->getNetTotal());
+        self::assertEquals($result, $brokerage_note->getResult());
     }
 }

@@ -7,6 +7,7 @@ use Exception;
 use Firebase\JWT\JWT;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -29,7 +30,7 @@ class JwtAuthenticator extends AbstractGuardAuthenticator
 
     public function supports(Request $request): bool
     {
-        return $request->getPathInfo() !== '/login';
+        return $request->getPathInfo() !== '/api/login';
     }
 
     public function getCredentials(Request $request)
@@ -67,7 +68,7 @@ class JwtAuthenticator extends AbstractGuardAuthenticator
     {
         return new JsonResponse([
             'erro' => 'Falha na autenticação'
-        ]);
+        ], Response::HTTP_UNAUTHORIZED);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)

@@ -8,9 +8,11 @@ class ConsolidationControllerTest extends BaseTest
 {
     public function testConsolidation_shouldGetAllConsolidations(): void
     {
-        $this->client->request('GET', '/api/consolidations');
+        $expected_status_code = 200;
 
-        self::assertEquals(200, $this->client->getResponse()->getStatusCode());
-        self::assertNotEmpty($this->client->getResponse()->getContent());
+        $response = $this->executeRequestWithToken('GET', '/api/consolidations');
+
+        self::assertEquals($expected_status_code, $response->getStatusCode());
+        self::assertNotEmpty($response->getContent());
     }
 }

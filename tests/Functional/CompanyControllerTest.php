@@ -6,15 +6,17 @@ use App\Entity\Company;
 
 class CompanyControllerTest extends BaseTest
 {
-    public function testGetAllCompanies()
+    public function testGetAllCompanies(): void
     {
-        $this->client->request('GET', '/api/companies');
+        $expected_status_code = 200;
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertNotEmpty($this->client->getResponse()->getContent());
+        $response = $this->executeRequestWithToken('GET', '/api/companies');
+        
+        self::assertEquals($expected_status_code, $response->getStatusCode());
+        self::assertNotEmpty($response->getContent());
     }
 
-    public function testGetCompanyById_ShouldReturnSucess()
+    public function testGetCompanyById_ShouldReturnSucess(): void
     {
         $status_code_expected = 200;
 
@@ -22,28 +24,26 @@ class CompanyControllerTest extends BaseTest
             ->getRepository(Company::class)
             ->findOneBy([]);
 
-        $this->client->request('GET', "/api/companies/{$company->getId()}");
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('GET', "/api/companies/{$company->getId()}");
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertEquals($response_body['content']['id'], $company->getId());
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertEquals($response_body['content']['id'], $company->getId());
     }
 
-    public function testGetCompanyById_ShouldReturnNoContent()
+    public function testGetCompanyById_ShouldReturnNoContent(): void
     {
         $status_code_expected = 204;
 
-        $this->client->request('GET', '/api/companies/-1');
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('GET', '/api/companies/-1');
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEmpty($response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEmpty($response_body);
     }
 
-    public function testAddCompany_ShouldReturnSuccess()
+    public function testAddCompany_ShouldReturnSuccess(): void
     {
         $status_code_expected = 201;
         $new_company = [
@@ -53,20 +53,17 @@ class CompanyControllerTest extends BaseTest
             'site' => $this->faker->url(),
         ];
 
-        $request_body = json_encode($new_company);
-
-        $this->client->request('POST', '/api/companies', [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $request_body = json_encode($new_company, JSON_THROW_ON_ERROR);
+        $response = $this->executeRequestWithToken('POST', '/api/companies', [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $company = $this->entityManager
             ->getRepository(Company::class)
             ->findOneBy(['id' => $response_body['content']['id']]);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertNotNull($company);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertNotNull($company);
     }
 
     public function getInvalidValuesToFail(): array
@@ -85,7 +82,7 @@ class CompanyControllerTest extends BaseTest
      * @param string $value
      * @param $expected_message
      */
-    public function testAddCompany_ShouldReturnBadRequest(string $key, string $value, string $expected_message)
+    public function testAddCompany_ShouldReturnBadRequest(string $key, string $value, string $expected_message): void
     {
         $status_code_expected = 400;
         $new_company = [
@@ -95,18 +92,15 @@ class CompanyControllerTest extends BaseTest
 
         $new_company[$key] = $value;
 
-        $request_body = json_encode($new_company);
+        $request_body = json_encode($new_company, JSON_THROW_ON_ERROR);
+        $response = $this->executeRequestWithToken('POST', '/api/companies', [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->client->request('POST', '/api/companies', [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
-
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
     }
 
-    public function testUpdateCompany_ShouldReturnSuccess()
+    public function testUpdateCompany_ShouldReturnSuccess(): void
     {
         $status_code_expected = 200;
 
@@ -118,34 +112,30 @@ class CompanyControllerTest extends BaseTest
         $company_to_update->setCnpj($this->faker->numberBetween(1, 99999999999999));
 
         $request_body = json_encode($company_to_update);
-
-        $this->client->request('PUT', "/api/companies/{$company_to_update->getId()}", [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('PUT', "/api/companies/{$company_to_update->getId()}", [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $updated_company = $this->entityManager
             ->getRepository(Company::class)
             ->findOneBy(['id' => $response_body['content']['id']]);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertEquals($updated_company->getCnpj(), $response_body['content']['cnpj']);
-        $this->assertEquals($updated_company->getName(), $response_body['content']['name']);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertEquals($updated_company->getCnpj(), $response_body['content']['cnpj']);
+        self::assertEquals($updated_company->getName(), $response_body['content']['name']);
     }
 
-    public function testUpdateCompany_ShouldReturnNotFound()
+    public function testUpdateCompany_ShouldReturnNotFound(): void
     {
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('PUT', "/api/companies/{$id}");
 
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('PUT', "/api/companies/{$id}");
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertArrayNotHasKey('content', $response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertArrayNotHasKey('content', $response_body);
     }
 
     /**
@@ -154,7 +144,7 @@ class CompanyControllerTest extends BaseTest
      * @param string $value
      * @param $expected_message
      */
-    public function testUpdateCompany_ShouldReturnBadRequest(string $key, string $value, string $expected_message)
+    public function testUpdateCompany_ShouldReturnBadRequest(string $key, string $value, string $expected_message): void
     {
         $status_code_expected = 400;
 
@@ -168,17 +158,16 @@ class CompanyControllerTest extends BaseTest
         $request_body = json_encode($company_to_update);
         $modified_body = json_decode($request_body, true);
         $modified_body[$key] = $value;
-        $request_body = json_encode($modified_body);
+        $request_body = json_encode($modified_body, JSON_THROW_ON_ERROR);
 
-        $this->client->request('PUT', "/api/companies/{$company_to_update->getId()}", [], [], [], $request_body);
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('PUT', "/api/companies/{$company_to_update->getId()}", [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
     }
 
-    public function testRemoveCompany_ShouldReturnSuccess()
+    public function testRemoveCompany_ShouldReturnSuccess(): void
     {
         $status_code_expected = 204;
 
@@ -186,28 +175,25 @@ class CompanyControllerTest extends BaseTest
             ->getRepository(Company::class)
             ->findOneBy([]);
 
-        $this->client->request('DELETE', "/api/companies/{$company->getId()}");
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('DELETE', "/api/companies/{$company->getId()}");
 
         $removed_company = $this->entityManager
             ->getRepository(Company::class)
             ->findOneBy(['id' => $company->getId()]);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNull($removed_company);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNull($removed_company);
     }
 
-    public function testRemoveCompany_ShouldReturnNotFound()
+    public function testRemoveCompany_ShouldReturnNotFound(): void
     {
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('DELETE', "/api/companies/{$id}");
-
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('DELETE', "/api/companies/$id");
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertArrayNotHasKey('content', $response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertArrayNotHasKey('content', $response_body);
     }
 }

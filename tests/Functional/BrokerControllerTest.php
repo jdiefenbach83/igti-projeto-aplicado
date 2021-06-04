@@ -6,15 +6,17 @@ use App\Entity\Broker;
 
 class BrokerControllerTest extends BaseTest
 {
-    public function testGetAllBrokers()
+    public function testGetAllBrokers(): void
     {
-        $this->client->request('GET', '/api/brokers');
+        $expected_status_code = 200;
 
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-        $this->assertNotEmpty($this->client->getResponse()->getContent());
+        $response = $this->executeRequestWithToken('GET', '/api/brokers');
+
+        self::assertEquals($expected_status_code, $response->getStatusCode());
+        self::assertNotEmpty($response->getContent());
     }
 
-    public function testGetBrokerById_ShouldReturnSucess()
+    public function testGetBrokerById_ShouldReturnSucess(): void
     {
         $status_code_expected = 200;
 
@@ -22,28 +24,26 @@ class BrokerControllerTest extends BaseTest
             ->getRepository(Broker::class)
             ->findOneBy([]);
 
-        $this->client->request('GET', "/api/brokers/{$broker->getId()}");
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('GET', "/api/brokers/{$broker->getId()}");
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertEquals($response_body['content']['id'], $broker->getId());
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertEquals($response_body['content']['id'], $broker->getId());
     }
 
-    public function testGetBrokerById_ShouldReturnNoContent()
+    public function testGetBrokerById_ShouldReturnNoContent(): void
     {
         $status_code_expected = 204;
 
-        $this->client->request('GET', '/api/brokers/-1');
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('GET', "/api/brokers/-1");
         $response_body = json_decode($response->getContent(), true);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEmpty($response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEmpty($response_body);
     }
 
-    public function testAddBroker_ShouldReturnSuccess()
+    public function testAddBroker_ShouldReturnSuccess(): void
     {
         $status_code_expected = 201;
         $new_broker = [
@@ -53,20 +53,17 @@ class BrokerControllerTest extends BaseTest
             'site' => $this->faker->url(),
         ];
 
-        $request_body = json_encode($new_broker);
-
-        $this->client->request('POST', '/api/brokers', [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $request_body = json_encode($new_broker, JSON_THROW_ON_ERROR);
+        $response = $this->executeRequestWithToken('POST', '/api/brokers', [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $broker = $this->entityManager
             ->getRepository(Broker::class)
             ->findOneBy(['id' => $response_body['content']['id']]);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertNotNull($broker);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertNotNull($broker);
     }
 
     public function getInvalidValuesToFail(): array
@@ -87,9 +84,10 @@ class BrokerControllerTest extends BaseTest
      * @dataProvider getInvalidValuesToFail
      * @param string $key
      * @param string $value
-     * @param $expected_message
+     * @param string $expected_message
+     * @throws \JsonException
      */
-    public function testAddBroker_ShouldReturnBadRequest(string $key, string $value, string $expected_message)
+    public function testAddBroker_ShouldReturnBadRequest(string $key, string $value, string $expected_message): void
     {
         $status_code_expected = 400;
         $new_broker = [
@@ -101,18 +99,15 @@ class BrokerControllerTest extends BaseTest
 
         $new_broker[$key] = $value;
 
-        $request_body = json_encode($new_broker);
+        $request_body = json_encode($new_broker, JSON_THROW_ON_ERROR);
+        $response = $this->executeRequestWithToken('POST', '/api/brokers', [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->client->request('POST', '/api/brokers', [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
-
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
     }
 
-    public function testUpdateBroker_ShouldReturnSuccess()
+    public function testUpdateBroker_ShouldReturnSuccess(): void
     {
         $status_code_expected = 200;
 
@@ -126,36 +121,31 @@ class BrokerControllerTest extends BaseTest
         $broker_to_update->setSite($this->faker->url());
 
         $request_body = json_encode($broker_to_update);
-
-        $this->client->request('PUT', "/api/brokers/{$broker_to_update->getId()}", [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('PUT', "/api/brokers/{$broker_to_update->getId()}", [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $updated_broker = $this->entityManager
             ->getRepository(Broker::class)
             ->findOneBy(['id' => $response_body['content']['id']]);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNotEmpty($response_body);
-        $this->assertEquals($updated_broker->getCode(), $response_body['content']['code']);
-        $this->assertEquals($updated_broker->getName(), $response_body['content']['name']);
-        $this->assertEquals($updated_broker->getCnpj(), $response_body['content']['cnpj']);
-        $this->assertEquals($updated_broker->getSite(), $response_body['content']['site']);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNotEmpty($response_body);
+        self::assertEquals($updated_broker->getCode(), $response_body['content']['code']);
+        self::assertEquals($updated_broker->getName(), $response_body['content']['name']);
+        self::assertEquals($updated_broker->getCnpj(), $response_body['content']['cnpj']);
+        self::assertEquals($updated_broker->getSite(), $response_body['content']['site']);
     }
 
-    public function testUpdateBroker_ShouldReturnNotFound()
+    public function testUpdateBroker_ShouldReturnNotFound(): void
     {
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('PUT', "/api/brokers/{$id}");
+        $response = $this->executeRequestWithToken('PUT', "/api/brokers/{$id}");
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
-
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertArrayNotHasKey('content', $response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertArrayNotHasKey('content', $response_body);
     }
 
     /**
@@ -164,7 +154,7 @@ class BrokerControllerTest extends BaseTest
      * @param string $value
      * @param $expected_message
      */
-    public function testUpdateBroker_ShouldReturnBadRequest(string $key, string $value, string $expected_message)
+    public function testUpdateBroker_ShouldReturnBadRequest(string $key, string $value, string $expected_message): void
     {
         $status_code_expected = 400;
 
@@ -181,16 +171,14 @@ class BrokerControllerTest extends BaseTest
         $modified_body = json_decode($request_body, true);
         $modified_body[$key] = $value;
         $request_body = json_encode($modified_body);
+        $response = $this->executeRequestWithToken('PUT', "/api/brokers/{$broker_to_update->getId()}", [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->client->request('PUT', "/api/brokers/{$broker_to_update->getId()}", [], [], [], $request_body);
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
-
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
     }
 
-    public function testRemoveBroker_ShouldReturnSuccess()
+    public function testRemoveBroker_ShouldReturnSuccess(): void
     {
         $status_code_expected = 204;
 
@@ -198,28 +186,25 @@ class BrokerControllerTest extends BaseTest
             ->getRepository(Broker::class)
             ->findOneBy([]);
 
-        $this->client->request('DELETE', "/api/brokers/{$broker->getId()}");
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('DELETE', "/api/brokers/{$broker->getId()}");
 
         $removed_broker = $this->entityManager
             ->getRepository(Broker::class)
             ->findOneBy(['id' => $broker->getId()]);
 
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertNull($removed_broker);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertNull($removed_broker);
     }
 
-    public function testRemoveBroker_ShouldReturnNotFound()
+    public function testRemoveBroker_ShouldReturnNotFound(): void
     {
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('DELETE', "/api/brokers/{$id}");
+        $response = $this->executeRequestWithToken('DELETE', "/api/brokers/$id");
+        $response_body = json_decode($response->getContent(), true, 512);
 
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
-
-        $this->assertEquals($status_code_expected, $response->getStatusCode());
-        $this->assertArrayNotHasKey('content', $response_body);
+        self::assertEquals($status_code_expected, $response->getStatusCode());
+        self::assertArrayNotHasKey('content', $response_body);
     }
 }
