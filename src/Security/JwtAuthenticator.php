@@ -30,7 +30,28 @@ class JwtAuthenticator extends AbstractGuardAuthenticator
 
     public function supports(Request $request): bool
     {
-        return $request->getPathInfo() !== '/api/login';
+        return $this->isProtectedURI($request->getPathInfo());
+    }
+
+    private function isProtectedURI(string $uri): bool
+    {
+        $protectedUris = [
+            '/api/companies',
+            '/api/assets',
+            '/api/brokers',
+            '/api/brokerageNotes',
+            '/api/positions',
+            '/api/consolidations',
+            '/api/goods',
+        ];
+
+        foreach ($protectedUris as $protectedUri) {
+            if (strpos($uri, $protectedUri) !== false) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function getCredentials(Request $request)
