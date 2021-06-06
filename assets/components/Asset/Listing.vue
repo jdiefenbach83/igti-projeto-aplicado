@@ -40,6 +40,12 @@
       },
     },
     async created() {
+      const hasCompanies = this.$store.getters['company/hasCompanies'];
+
+      if (!hasCompanies) {
+        await this.$store.dispatch('company/getAll');
+      }
+
       const hasAssets = this.$store.getters['asset/hasAssets'];
 
       if (!hasAssets) {
