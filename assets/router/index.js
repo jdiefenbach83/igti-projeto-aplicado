@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from '../store/index';
+import Login from '@/views/Security/Login';
 import Home from '@/views/Home';
 import Asset from '@/views/Asset/Listing';
 import Broker from '@/views/Broker/Listing';
@@ -18,7 +20,7 @@ import ExemptListing from '@/views/Exempt/Listing';
 
 Vue.use(VueRouter);
 
-export default new VueRouter({
+const router = new VueRouter({
   mode: 'history',
   routes: [
     { name: 'AssetListing', path: '/assets', component: Asset },
@@ -35,7 +37,28 @@ export default new VueRouter({
     { name: 'TaxListing', path: '/taxes', component: TaxListing },
     { name: 'GoodListing', path: '/goods', component: GoodListing },
     { name: 'ExemptListing', path: '/exempts', component: ExemptListing },
+    { name: 'Login', path: '/login', component: Login },
     { path: '/home', component: Home },
     { path: '*', redirect: '/home' }
-  ]
+  ],
 });
+
+router.beforeEach((to, from, next) => {
+  const restoreLogin = async () => {
+    await store.dispatch('security/restoreLogin');
+  };
+
+  restoreLogin();
+
+  const isAuthenticated = store.getters['security/isAuthenticated'];
+  const publicPages = ['/login'];
+  const authRequired = !publicPages.includes(to.path);
+
+  if (authRequired && !isAuthenticated) {
+    next('/login');
+  } else {
+    next();
+  }
+});
+
+export default router;

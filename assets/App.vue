@@ -128,20 +128,8 @@
 </template>
 
 <script>
-import store from '@/store';
-
 export default {
   name: "App",
-  created() {
-    // 'Loading prereqs in vuex store
-    Promise.all([
-      store.dispatch('asset/getAll'),
-      store.dispatch('broker/getAll'),
-      store.dispatch('brokerageNote/getAll'),
-      store.dispatch('company/getAll'),
-    ]);
-    // 'End of loading prereqs in vuex store
-  }
 }
 </script>
 
