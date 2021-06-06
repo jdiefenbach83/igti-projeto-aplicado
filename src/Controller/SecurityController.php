@@ -11,7 +11,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class LoginController
+class SecurityController
 {
     private UserService $service;
     private DTOFactoryInterface $DTOFactory;
