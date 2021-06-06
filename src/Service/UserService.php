@@ -50,7 +50,7 @@ class UserService
             return false;
         }
 
-        $this->token = JWT::encode(['email' => $user->getEmail()], 'chave', 'HS256');
+        $this->token = JWT::encode(['email' => $user->getEmail()], 'key', 'HS256');
 
         return true;
     }
