@@ -1,24 +1,26 @@
 <template>
-    <div>
-        <v-data-table
-            :headers="headers"
-            :items="brokers"
-            :items-per-page="5"
-            item-key="id"
-            class="elevation-1"
-            :search="search"
-            :custom-filter="filterList"
-            sear
-        >
-            <template v-slot:top>
-                <v-text-field
-                    v-model="search"
-                    label="Pesquisa"
-                    class="mx-4"
-                ></v-text-field>
-            </template>
-        </v-data-table>
-    </div>
+  <div>
+    <v-data-table
+      :headers="headers"
+      :items="brokers"
+      :items-per-page="5"
+      item-key="id"
+      class="elevation-1"
+      :search="search"
+      :custom-filter="filterList"
+      :loading="isLoadingBrokers"
+      loading-text="Carregando..."
+      sear
+    >
+      <template v-slot:top>
+        <v-text-field
+          v-model="search"
+          label="Pesquisa"
+          class="mx-4"
+        ></v-text-field>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
@@ -37,7 +39,17 @@
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
       },
     },
+    async created() {
+      const hasBrokers = this.$store.getters['broker/hasBrokers'];
+
+      if (!hasBrokers) {
+        await this.$store.dispatch('broker/getAll');
+      }
+    },
     computed: {
+      isLoadingBrokers() {
+        return this.$store.getters['broker/isLoading'];
+      },
       brokers() {
         return this.$store.getters["broker/brokers"];
       },

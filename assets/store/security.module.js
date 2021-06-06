@@ -43,13 +43,6 @@ export default {
       state.accessToken = accessToken;
 
       localStorage.setItem('token', accessToken);
-
-      Promise.all([
-        store.dispatch('asset/getAll'),
-        store.dispatch('broker/getAll'),
-        store.dispatch('brokerageNote/getAll'),
-        store.dispatch('company/getAll'),
-      ]);
     },
     [AUTHENTICATING_ERROR](state, error) {
       state.isLoading = false;

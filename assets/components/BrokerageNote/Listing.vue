@@ -55,6 +55,7 @@
   import RemoveModal from "@/components/BrokerageNote/RemoveModal";
   import { formatBrazilianDate as brazilianDateFormatter } from '@/helper/DateFormatter';
   import { format as currencyFormatter } from '@/helper/CurrencyFormatter';
+  import store from "@/store";
 
   export default {
     name: 'BrokerageNoteListing',
@@ -86,6 +87,19 @@
 
         return 'green'
       },
+    },
+    async created() {
+      const hasBrokers = this.$store.getters['broker/hasBrokers'];
+
+      if (!hasBrokers) {
+        await this.$store.dispatch('broker/getAll');
+      }
+
+      const hasBrokerageNotes = this.$store.getters['brokerageNote/hasBrokerageNotes'];
+
+      if (!hasBrokerageNotes) {
+        await this.$store.dispatch('brokerageNote/getAll');
+      }
     },
     computed: {
       isLoadingBrokerageNotes() {

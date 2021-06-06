@@ -8,6 +8,8 @@
       class="elevation-1"
       :search="search"
       :custom-filter="filterList"
+      :loading="isLoadingCompanies"
+      loading-text="Carregando..."
       sear
     >
       <template v-slot:top>
@@ -37,7 +39,17 @@
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
       },
     },
+    async created() {
+      const hasCompanies = this.$store.getters['company/hasCompanies'];
+
+      if (!hasCompanies) {
+        await this.$store.dispatch('company/getAll');
+      }
+    },
     computed: {
+      isLoadingCompanies() {
+        return this.$store.getters['company/isLoading'];
+      },
       companies() {
         return this.$store.getters["company/companies"];
       },

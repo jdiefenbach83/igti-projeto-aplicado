@@ -90,8 +90,13 @@
       }
     },
     methods: {
-      loadOperations(brokerage_note_id) {
+      async loadOperations(brokerage_note_id) {
         const hasAssets = this.$store.getters["asset/hasAssets"];
+
+        if (!hasAssets) {
+          await this.$store.dispatch('asset/getAll');
+        }
+
         const hasBrokerageNotes = this.$store.getters["brokerageNote/hasBrokerageNotes"];
 
         if (!hasAssets) return;
