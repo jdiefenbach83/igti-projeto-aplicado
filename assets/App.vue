@@ -19,12 +19,13 @@
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-              plain
-              small
-              color="green darken-2"
-              class="white--text"
-              v-bind="attrs"
-              v-on="on"
+            plain
+            small
+            color="green darken-2"
+            class="white--text"
+            v-bind="attrs"
+            v-on="on"
+            v-show="isAuthenticated"
           >
             Operações
           </v-btn>
@@ -52,6 +53,7 @@
               class="white--text mx-3"
               v-bind="attrs"
               v-on="on"
+              v-show="isAuthenticated"
           >
             Imposto de Renda
           </v-btn>
@@ -95,6 +97,7 @@
             class="white--text"
             v-bind="attrs"
             v-on="on"
+            v-show="isAuthenticated"
           >
             Tabelas
           </v-btn>
@@ -130,6 +133,11 @@
 <script>
 export default {
   name: "App",
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters['security/isAuthenticated'];
+    },
+  }
 }
 </script>
 

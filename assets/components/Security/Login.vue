@@ -19,6 +19,7 @@
             type="password"
             :rules="[v => !!v || 'Senha inválida']"
             required
+            v-on:keyup.enter="login"
           ></v-text-field>
         </v-form>
       </v-card-text>
