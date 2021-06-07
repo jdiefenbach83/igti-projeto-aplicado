@@ -135,7 +135,13 @@ export default {
   name: "App",
   computed: {
     isAuthenticated() {
-      return this.$store.getters['security/isAuthenticated'];
+      const isAuthenticated = this.$store.getters['security/isAuthenticated'];
+
+      if (!isAuthenticated) {
+        this.$router.push({ name: 'Login'}).catch(err => {});
+      }
+
+      return isAuthenticated;
     },
   }
 }

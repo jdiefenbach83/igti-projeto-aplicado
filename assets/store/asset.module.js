@@ -48,15 +48,19 @@ export default {
     },
   },
   actions: {
-    async getAll({ commit }) {
+    async getAll({ commit, dispatch }) {
       commit(FETCHING_ASSETS);
       try {
         const response = await AssetService.getAll();
-        commit(FETCHING_ASSETS_SUCCESS, response.content);
+        commit(FETCHING_ASSETS_SUCCESS, response.data.content);
 
-        return response.content;
+        return response.data.content;
       } catch (error) {
         commit(FETCHING_ASSETS_ERROR, error);
+
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
 
         return null;
       }

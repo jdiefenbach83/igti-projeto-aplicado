@@ -1,9 +1,12 @@
 import SecurityService from '../services/SecurityService';
-import store from "@/store/index";
 
 const AUTHENTICATING = 'AUTHENTICATING';
 const AUTHENTICATING_SUCCESS = 'AUTHENTICATING_SUCCESS';
 const AUTHENTICATING_ERROR = 'AUTHENTICATING_ERROR';
+
+const LOGGING_OFF = 'LOGGING_OFF';
+const LOGOFF_SUCCESS = 'LOGOFF_SUCCESS';
+const LOGOFF_ERROR = 'LOGOFF_ERROR';
 
 export default {
   namespaced: true,
@@ -50,6 +53,26 @@ export default {
       state.isAuthenticated = false;
 
       localStorage.removeItem('token')
+    },
+    [LOGGING_OFF](state) {
+      state.isLoading = true;
+      state.error = null;
+      state.isAuthenticated = false;
+    },
+    [LOGOFF_SUCCESS](state) {
+      state.isLoading = false;
+      state.error = null;
+      state.isAuthenticated = false;
+      state.accessToken = null;
+
+      localStorage.removeItem('token')
+    },
+    [LOGOFF_ERROR](state, error) {
+      state.isLoading = false;
+      state.error = error;
+      state.isAuthenticated = false;
+
+      localStorage.removeItem('token')
     }
   },
   actions: {
@@ -83,5 +106,9 @@ export default {
         commit(AUTHENTICATING_SUCCESS, token);
       }
     },
+    logoff({ commit }) {
+      commit(LOGGING_OFF);
+      commit(LOGOFF_SUCCESS);
+    }
   }
 }
