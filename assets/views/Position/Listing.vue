@@ -3,17 +3,17 @@
     <div class='d-flex align-center'>
       <h1>Posições</h1>
       <v-spacer />
-        <v-btn
-          color='green darken-2'
-          class='mb-2 white--text'
-          small
-          @click="refreshPositions()"
-          :disabled="isLoadingPositions"
-        >
-          <v-icon dark>
-            mdi-refresh
-          </v-icon>
-        </v-btn>
+      <v-btn
+        color='green darken-2'
+        class='mb-2 white--text'
+        small
+        @click="refreshPositions()"
+        :disabled="isLoadingPositions"
+      >
+        <v-icon dark>
+          mdi-refresh
+        </v-icon>
+      </v-btn>
     </div>
     <hr class='mb-3'/>
     <position-listing />

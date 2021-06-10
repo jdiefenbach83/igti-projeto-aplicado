@@ -1,12 +1,17 @@
 const axios = require('axios');
 
-function httpClient() {
+const httpClient = () => {
+  const token = localStorage.getItem('token') ?? null;
+
+  const headers = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    Authorization: token,
+  };
+
   return axios.create({
     baseURL: '/api',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
+    headers,
   });
 }
 

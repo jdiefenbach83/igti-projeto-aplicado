@@ -48,15 +48,20 @@ export default {
     },
   },
   actions: {
-    async getAll({ commit }) {
+    async getAll({ commit, dispatch  }) {
       commit(FETCHING_BROKERS);
       try {
         const response = await BrokerService.getAll();
-        commit(FETCHING_BROKERS_SUCCESS, response.content);
 
-        return response.content;
+        commit(FETCHING_BROKERS_SUCCESS, response.data.content);
+
+        return response.data.content;
       } catch (error) {
         commit(FETCHING_BROKERS_ERROR, error);
+
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
 
         return null;
       }

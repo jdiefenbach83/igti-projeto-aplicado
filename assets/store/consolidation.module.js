@@ -48,15 +48,19 @@ export default {
     },
   },
   actions: {
-    async getAll({ commit }) {
+    async getAll({ commit, dispatch }) {
       commit(FETCHING_CONSOLIDATIONS);
       try {
         const response = await ConsolidationService.getAll();
-        commit(FETCHING_CONSOLIDATIONS_SUCCESS, response.content);
+        commit(FETCHING_CONSOLIDATIONS_SUCCESS, response.data.content);
 
-        return response.content;
+        return response.data.content;
       } catch (error) {
         commit(FETCHING_CONSOLIDATIONS_ERROR, error);
+
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
 
         return null;
       }

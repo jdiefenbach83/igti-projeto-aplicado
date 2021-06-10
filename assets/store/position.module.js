@@ -48,15 +48,19 @@ export default {
     },
   },
   actions: {
-    async getAll({ commit }) {
+    async getAll({ commit, dispatch }) {
       commit(FETCHING_POSITIONS);
       try {
         const response = await PositionService.getAll();
-        commit(FETCHING_POSITIONS_SUCCESS, response.content);
+        commit(FETCHING_POSITIONS_SUCCESS, response.data.content);
 
-        return response.content;
+        return response.data.content;
       } catch (error) {
         commit(FETCHING_POSITIONS_ERROR, error);
+
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
 
         return null;
       }

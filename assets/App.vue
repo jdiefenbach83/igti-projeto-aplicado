@@ -19,12 +19,13 @@
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-              plain
-              small
-              color="green darken-2"
-              class="white--text"
-              v-bind="attrs"
-              v-on="on"
+            plain
+            small
+            color="green darken-2"
+            class="white--text"
+            v-bind="attrs"
+            v-on="on"
+            v-show="isAuthenticated"
           >
             Operações
           </v-btn>
@@ -52,6 +53,7 @@
               class="white--text mx-3"
               v-bind="attrs"
               v-on="on"
+              v-show="isAuthenticated"
           >
             Imposto de Renda
           </v-btn>
@@ -95,6 +97,7 @@
             class="white--text"
             v-bind="attrs"
             v-on="on"
+            v-show="isAuthenticated"
           >
             Tabelas
           </v-btn>
@@ -121,26 +124,25 @@
 
     <v-main>
       <v-container>
-        <router-view></router-view>
+        <router-view />
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import store from '@/store';
-
 export default {
   name: "App",
-  created() {
-    // 'Loading prereqs in vuex store
-    Promise.all([
-      store.dispatch('asset/getAll'),
-      store.dispatch('broker/getAll'),
-      store.dispatch('brokerageNote/getAll'),
-      store.dispatch('company/getAll'),
-    ]);
-    // 'End of loading prereqs in vuex store
+  computed: {
+    isAuthenticated() {
+      const isAuthenticated = this.$store.getters['security/isAuthenticated'];
+
+      if (!isAuthenticated) {
+        this.$router.push({ name: 'Login'}).catch(err => {});
+      }
+
+      return isAuthenticated;
+    },
   }
 }
 </script>

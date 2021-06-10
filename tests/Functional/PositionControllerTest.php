@@ -46,21 +46,18 @@ class PositionControllerTest extends BaseTest
         $status_code_expected = 201;
 
         $new_brokerage_note = $this->createBrokerageNote();
-        $brokerage_note_request_body = json_encode($new_brokerage_note);
-        $this->client->request('POST', '/api/brokerageNotes', [], [], [], $brokerage_note_request_body);
-        $brokerage_note_response = $this->client->getResponse();
-        $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true);
+        $brokerage_note_request_body = json_encode($new_brokerage_note, JSON_THROW_ON_ERROR);
+        $brokerage_note_response = $this->executeRequestWithToken('POST', '/api/brokerageNotes', [], $brokerage_note_request_body);
+        $brokerage_note_response_body = json_decode($brokerage_note_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $brokerage_note_id = $brokerage_note_response_body['content']['id'];
 
         $new_operation = $this->createOperation();
-        $operation_request_body = json_encode($new_operation);
-        $this->client->request('POST', "/api/brokerageNotes/$brokerage_note_id/operations", [], [], [], $operation_request_body);
-        $operation_response = $this->client->getResponse();
-        $operation_response_body = json_decode($operation_response->getContent(), true);
+        $operation_request_body = json_encode($new_operation, JSON_THROW_ON_ERROR);
+        $operation_response = $this->executeRequestWithToken('POST', "/api/brokerageNotes/$brokerage_note_id/operations", [], $operation_request_body);
+        $operation_response_body = json_decode($operation_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->client->request('GET', "/api/positions");
-        $position_response = $this->client->getResponse();
-        $position_response_body = json_decode($position_response->getContent(), true);
+        $position_response = $this->executeRequestWithToken('GET', "/api/positions");
+        $position_response_body = json_decode($position_response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals($status_code_expected, $brokerage_note_response->getStatusCode());
         self::assertNotEmpty($brokerage_note_response_body);

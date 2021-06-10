@@ -174,66 +174,82 @@ export default {
     },
   },
   actions: {
-    async getAll({ commit }) {
+    async getAll({ commit, dispatch }) {
       commit(FETCHING_BROKERAGE_NOTES);
       try {
         const response = await BrokerageNoteService.getAll();
-        commit(FETCHING_BROKERAGE_NOTES_SUCCESS, response.content);
+        commit(FETCHING_BROKERAGE_NOTES_SUCCESS, response.data.content);
 
-        return response.content;
+        return response.data.content;
       } catch (error) {
         commit(FETCHING_BROKERAGE_NOTES_ERROR, error);
+
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
 
         return null;
       }
     },
-    async getById({ commit }, message) {
+    async getById({ commit, dispatch }, message) {
       commit(FETCHING_BROKERAGE_NOTE);
       try {
         const id = message.id;
 
         const response = await BrokerageNoteService.getById(id);
-        commit(FETCHING_BROKERAGE_NOTE_SUCCESS, response.content);
+        commit(FETCHING_BROKERAGE_NOTE_SUCCESS, response.data.content);
 
-        return response.content;
+        return response.data.content;
       } catch (error) {
         commit(FETCHING_BROKERAGE_NOTE_ERROR, error);
+
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
 
         return null;
       }
     },
-    async add({ commit }, message) {
+    async add({ commit, dispatch }, message) {
       commit(ADDING_BROKERAGE_NOTE);
       try {
         delete message.id;
 
         const response = await BrokerageNoteService.add(message);
-        commit(ADDING_BROKERAGE_NOTE_SUCCESS, response.content);
+        commit(ADDING_BROKERAGE_NOTE_SUCCESS, response.data.content);
 
-        return response.content;
+        return response.data.content;
       } catch (error) {
         commit(ADDING_BROKERAGE_NOTE_ERROR, error);
+
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
 
         return null;
       }
     },
-    async edit({ commit }, message) {
+    async edit({ commit, dispatch }, message) {
       commit(EDITING_BROKERAGE_NOTE);
       try {
         const id = message.id;
         delete message.id;
 
         const response = await BrokerageNoteService.edit(id, message);
-        commit(EDITING_BROKERAGE_NOTE_SUCCESS, response.content);
+        commit(EDITING_BROKERAGE_NOTE_SUCCESS, response.data.content);
 
         return response.data;
       } catch (error) {
         commit(EDITING_BROKERAGE_NOTE_ERROR, error);
 
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
+
         return null;
       }
     },
-    async remove({ commit }, message) {
+    async remove({ commit, dispatch }, message) {
       commit(REMOVING_BROKERAGE_NOTE);
       try {
         const response = await BrokerageNoteService.remove(message);
@@ -242,6 +258,10 @@ export default {
         return response.data;
       } catch (error) {
         commit(REMOVING_BROKERAGE_NOTE_ERROR, error);
+
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
 
         return null;
       }
@@ -261,6 +281,10 @@ export default {
       } catch (error) {
         commit(ADDING_OPERATION_ERROR, error);
 
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
+
         return null;
       }
     },
@@ -279,6 +303,10 @@ export default {
       } catch (error) {
         commit(EDITING_OPERATION_ERROR, error);
 
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
+
         return null;
       }
     },
@@ -295,6 +323,10 @@ export default {
         return response.data;
       } catch (error) {
         commit(REMOVING_OPERATION_ERROR, error);
+
+        if (error.response.status === 401) {
+          dispatch('security/logoff', null, { root: true });
+        }
 
         return null;
       }

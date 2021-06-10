@@ -8,6 +8,8 @@
       class="elevation-1"
       :search="search"
       :custom-filter="filterList"
+      :loading="isLoadingAssets"
+      loading-text="Carregando..."
       sear
     >
       <template v-slot:top>
@@ -37,7 +39,23 @@
           value.toString().toLocaleUpperCase().indexOf(search.toLocaleUpperCase()) !== -1
       },
     },
+    async created() {
+      const hasCompanies = this.$store.getters['company/hasCompanies'];
+
+      if (!hasCompanies) {
+        await this.$store.dispatch('company/getAll');
+      }
+
+      const hasAssets = this.$store.getters['asset/hasAssets'];
+
+      if (!hasAssets) {
+        await this.$store.dispatch('asset/getAll');
+      }
+    },
     computed: {
+      isLoadingAssets() {
+        return this.$store.getters['asset/isLoading'];
+      },
       assets() {
         const assets = this.$store.getters["asset/assets"];
 

@@ -7,6 +7,7 @@ use Faker\Factory;
 use Faker\Generator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class BaseTest extends WebTestCase
 {
@@ -32,5 +33,38 @@ abstract class BaseTest extends WebTestCase
         $this->entityManager = $kernel->getContainer()
             ->get('doctrine')
             ->getManager();
+    }
+
+    protected function executeRequest(string $method, string $uri, array $headers = [], string $content = null): Response
+    {
+        $this->client->request($method, $uri, [], [], $headers, $content);
+
+        return $this->client->getResponse();
+    }
+
+    protected function getApiToken(): string
+    {
+        $payload = json_encode([
+            'email' => 'admin@mail.co',
+            'password' => '123456'
+        ], JSON_THROW_ON_ERROR);
+
+        $response = $this->executeRequest('POST', '/api/login', [], $payload);
+
+        $responseBody = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertArrayHasKey('content', $responseBody);
+        self::assertArrayHasKey('access_token', $responseBody['content']);
+
+        return $responseBody['content']['access_token'];
+    }
+
+    protected function executeRequestWithToken(string $method, string $uri, array $headers = [], string $content = null): Response
+    {
+        $token = $this->getApiToken();
+
+        $headers['HTTP_Authorization'] = "Bearer $token";
+
+        return $this->executeRequest($method, $uri, $headers, $content);
     }
 }

@@ -1,9 +1,7 @@
 const gateway = require('@/api/httpClient');
 
 async function getAll() {
-  const { data } = await gateway.httpClient().get('/companies');
-
-  return data;
+  return gateway.httpClient().get('/companies');
 }
 
 module.exports = {

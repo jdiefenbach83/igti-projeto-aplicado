@@ -41,6 +41,7 @@ class ConsolidationServiceTest extends KernelTestCase
                         'month' => 9,
                         'negotiationType' => PreConsolidation::NEGOTIATION_TYPE_NORMAL,
                         'result' => 29994.0,
+                        'salesTotal' => 49994.0,
                         'marketType' => PreConsolidation::MARKET_TYPE_SPOT,
                         'assetType' => PreConsolidation::ASSET_TYPE_STOCK,
                     ]
@@ -52,6 +53,7 @@ class ConsolidationServiceTest extends KernelTestCase
                     'negotiationType' => Consolidation::NEGOTIATION_TYPE_NORMAL,
                     'marketType' => Consolidation::MARKET_TYPE_SPOT,
                     'result' => 29994.0,
+                    'salesTotal'=> 49994.0,
                     'accumulatedLoss' => .0,
                     'compesatedLoss'=> .0,
                     'basisToIr' => 29994.0,
@@ -81,7 +83,8 @@ class ConsolidationServiceTest extends KernelTestCase
                 ->setAssetType($preConsolidation['assetType'])
                 ->setNegotiationType($preConsolidation['negotiationType'])
                 ->setMarketType($preConsolidation['marketType'])
-                ->setResult($preConsolidation['result']);
+                ->setResult($preConsolidation['result'])
+                ->setSalesTotal($preConsolidation['salesTotal']);
 
             $this->preConsolidationRepository->save($newPreConsolidation);
         }
@@ -123,6 +126,7 @@ class ConsolidationServiceTest extends KernelTestCase
             self::assertEquals($preConsolidations['consolidation']['negotiationType'], $consolidation->getNegotiationType());
             self::assertEquals($preConsolidations['consolidation']['marketType'], $consolidation->getMarketType());
             self::assertEquals($preConsolidations['consolidation']['result'], $consolidation->getResult());
+            self::assertEquals($preConsolidations['consolidation']['salesTotal'], $consolidation->getSalesTotal());
             self::assertEquals($preConsolidations['consolidation']['accumulatedLoss'], $consolidation->getAccumulatedLoss());
             self::assertEquals($preConsolidations['consolidation']['compesatedLoss'], $consolidation->getCompesatedLoss());
             self::assertEquals($preConsolidations['consolidation']['basisToIr'], $consolidation->getBasisToIr());

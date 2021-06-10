@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import SecurityModule from './security.module';
 import AssetModule from './asset.module';
 import BrokerModule from './broker.module';
 import BrokerageNoteModule from './brokerageNote.module';
@@ -12,6 +13,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
+    security: SecurityModule,
     asset: AssetModule,
     broker: BrokerModule,
     brokerageNote: BrokerageNoteModule,

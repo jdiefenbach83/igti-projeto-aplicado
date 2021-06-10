@@ -9,10 +9,12 @@ class AssetControllerTest extends BaseTest
 {
     public function testGetAllAssets(): void
     {
-        $this->client->request('GET', '/api/assets');
+        $expected_status_code = 200;
 
-        self::assertEquals(200, $this->client->getResponse()->getStatusCode());
-        self::assertNotEmpty($this->client->getResponse()->getContent());
+        $response = $this->executeRequestWithToken('GET', '/api/assets');
+
+        self::assertEquals($expected_status_code, $response->getStatusCode());
+        self::assertNotEmpty($response->getContent());
     }
 
     public function testGetAssetById_ShouldReturnSucess(): void
@@ -23,9 +25,8 @@ class AssetControllerTest extends BaseTest
             ->getRepository(Asset::class)
             ->findOneBy([]);
 
-        $this->client->request('GET', "/api/assets/{$asset->getId()}");
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('GET', "/api/assets/{$asset->getId()}");
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals($status_code_expected, $response->getStatusCode());
         self::assertNotEmpty($response_body);
@@ -36,9 +37,8 @@ class AssetControllerTest extends BaseTest
     {
         $status_code_expected = 204;
 
-        $this->client->request('GET', '/api/assets/-1');
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('GET', '/api/assets/-1');
+        $response_body = json_decode($response->getContent(), true, 512);
 
         self::assertEquals($status_code_expected, $response->getStatusCode());
         self::assertEmpty($response_body);
@@ -59,12 +59,9 @@ class AssetControllerTest extends BaseTest
             'company_id' => $company->getId(),
         ];
 
-        $request_body = json_encode($new_asset);
-
-        $this->client->request('POST', '/api/assets', [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $request_body = json_encode($new_asset, JSON_THROW_ON_ERROR);
+        $response = $this->executeRequestWithToken('POST', '/api/assets', [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $asset = $this->entityManager
             ->getRepository(Asset::class)
@@ -110,12 +107,9 @@ class AssetControllerTest extends BaseTest
 
         $new_asset[$key] = $value;
 
-        $request_body = json_encode($new_asset);
-
-        $this->client->request('POST', '/api/assets', [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $request_body = json_encode($new_asset, JSON_THROW_ON_ERROR);
+        $response = $this->executeRequestWithToken('POST', '/api/assets', [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals($status_code_expected, $response->getStatusCode());
         self::assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
@@ -138,12 +132,9 @@ class AssetControllerTest extends BaseTest
         $asset_to_update->setMarketType($this->faker->randomElement(Asset::getMarketTypes()));
         $asset_to_update->setCompany($company);
 
-        $request_body = json_encode($asset_to_update);
-
-        $this->client->request('PUT', "/api/assets/{$asset_to_update->getId()}", [], [], [], $request_body);
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $request_body = json_encode($asset_to_update, JSON_THROW_ON_ERROR);
+        $response = $this->executeRequestWithToken('PUT', "/api/assets/{$asset_to_update->getId()}", [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $updated_asset = $this->entityManager
             ->getRepository(Asset::class)
@@ -162,10 +153,8 @@ class AssetControllerTest extends BaseTest
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('PUT', "/api/assets/{$id}");
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('PUT', "/api/assets/$id");
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals($status_code_expected, $response->getStatusCode());
         self::assertArrayNotHasKey('content', $response_body);
@@ -194,14 +183,13 @@ class AssetControllerTest extends BaseTest
         $asset_to_update->setMarketType($this->faker->randomElement(Asset::getMarketTypes()));
         $asset_to_update->setCompany($company);
 
-        $request_body = json_encode($asset_to_update);
-        $modified_body = json_decode($request_body, true);
+        $request_body = json_encode($asset_to_update, JSON_THROW_ON_ERROR);
+        $modified_body = json_decode($request_body, true, 512, JSON_THROW_ON_ERROR);
         $modified_body[$key] = $value;
-        $request_body = json_encode($modified_body);
+        $request_body = json_encode($modified_body, JSON_THROW_ON_ERROR);
 
-        $this->client->request('PUT', "/api/assets/{$asset_to_update->getId()}", [], [], [], $request_body);
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('PUT', "/api/assets/{$asset_to_update->getId()}", [], $request_body);
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals($status_code_expected, $response->getStatusCode());
         self::assertEquals($expected_message, $response_body['content']['validation_errors'][0]['message']);
@@ -215,8 +203,7 @@ class AssetControllerTest extends BaseTest
             ->getRepository(Asset::class)
             ->findOneBy([]);
 
-        $this->client->request('DELETE', "/api/assets/{$asset->getId()}");
-        $response = $this->client->getResponse();
+        $response = $this->executeRequestWithToken('DELETE', "/api/assets/{$asset->getId()}");
 
         $removed_asset = $this->entityManager
             ->getRepository(Asset::class)
@@ -231,10 +218,8 @@ class AssetControllerTest extends BaseTest
         $status_code_expected = 404;
 
         $id = $this->faker->numberBetween(1000000, 2000000);
-        $this->client->request('DELETE', "/api/assets/{$id}");
-
-        $response = $this->client->getResponse();
-        $response_body = json_decode($response->getContent(), true);
+        $response = $this->executeRequestWithToken('DELETE', "/api/assets/{$id}");
+        $response_body = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         self::assertEquals($status_code_expected, $response->getStatusCode());
         self::assertArrayNotHasKey('content', $response_body);
