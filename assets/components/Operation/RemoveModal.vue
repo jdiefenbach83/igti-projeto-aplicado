@@ -67,7 +67,7 @@
         const result = await this.$store.dispatch('brokerageNote/removeOperation', payload);
         this.dialog = false;
 
-        if (result !== undefined) {
+        if (result.success === false) {
           console.log(result);
         }
       },

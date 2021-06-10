@@ -89,7 +89,13 @@ export default {
       brokerage_note_id: null,
       operation_id: null,
     },
-    created() {
+    async created() {
+      const hasAssets = this.$store.getters['asset/hasAssets'];
+
+      if (!hasAssets) {
+        await this.$store.dispatch('asset/getAll');
+      }
+
       this.localBrokerageNoteId = parseInt(this.$props.brokerage_note_id);
       this.localOperationId = parseInt(this.$props.operation_id);
 
@@ -201,7 +207,7 @@ export default {
 
         this.showFlashMessage();
 
-        if (!!result) {
+        if (result.success === false) {
           console.log(result);
         }
       }
