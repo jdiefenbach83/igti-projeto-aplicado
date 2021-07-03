@@ -331,7 +331,7 @@ class PositionService
                         $averagePriceToIr = $positionPrice;
 
                     } else {
-                        $accumulatedQuantity = bcadd(($position->getQuantity() * $signal), $lastPositionAccumulatedQuantity, 6);
+                        $accumulatedQuantity = (int) bcadd(($position->getQuantity() * $signal), $lastPositionAccumulatedQuantity);
 
                         $accumulatedTotal = .0;
                         $accumulatedCosts = .0;
@@ -364,7 +364,11 @@ class PositionService
                             $result = bcmul($result, $position->getQuantity(), 6);
                         }
 
-                        $accumulatedResult = bcadd($lastPositionAccumulatedResult, $result, 4);
+                        if ($lastPositionAccumulatedQuantity === 0) {
+                            $accumulatedResult = .0;
+                        } else {
+                            $accumulatedResult = bcadd($lastPositionAccumulatedResult, $result, 4);
+                        }
                     }
 
                     $position->setPositionPrice($this->adjustDecimalValues($positionPrice));
