@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b3535ba9531bd5fbcccf4e0b9528f48",
+    "content-hash": "5c1b8ab29e56892f98e97a6b926f2bbb",
     "packages": [
         {
             "name": "beberlei/doctrineextensions",
@@ -6513,27 +6513,26 @@
         },
         {
             "name": "qossmic/deptrac-shim",
-            "version": "0.10.3",
+            "version": "0.19.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/qossmic/deptrac-shim.git",
-                "reference": "a233fe29858de332ddcbd0d0cd274ef5e0289e65"
+                "reference": "c261124d55dfcb886075a50d5b3e79830864857d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qossmic/deptrac-shim/zipball/a233fe29858de332ddcbd0d0cd274ef5e0289e65",
-                "reference": "a233fe29858de332ddcbd0d0cd274ef5e0289e65",
+                "url": "https://api.github.com/repos/qossmic/deptrac-shim/zipball/c261124d55dfcb886075a50d5b3e79830864857d",
+                "reference": "c261124d55dfcb886075a50d5b3e79830864857d",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-tokenizer": "*",
                 "ext-zlib": "*",
-                "php": "^7.2 || 8.0.*"
+                "php": "^7.4 || 8.0.* || 8.1.*"
             },
             "replace": {
-                "sensiolabs-de/astrunner": "^1.0",
-                "sensiolabs-de/deptrac": "self.version"
+                "qossmic/deptrac": "self.version"
             },
             "suggest": {
                 "ext-dom": "For using the JUnit output formatter"
@@ -6549,16 +6548,21 @@
             "authors": [
                 {
                     "name": "Simon Mönch",
-                    "email": "simon.moench@sensiolabs.de",
+                    "email": "simon.moench@qossmic.com",
+                    "role": "maintainer"
+                },
+                {
+                    "name": "Denis Brumann",
+                    "email": "denis.brumann@qossmic.com",
                     "role": "maintainer"
                 }
             ],
             "description": "deptrac phar distribution",
             "support": {
                 "issues": "https://github.com/qossmic/deptrac-shim/issues",
-                "source": "https://github.com/qossmic/deptrac-shim/tree/0.10.3"
+                "source": "https://github.com/qossmic/deptrac-shim/tree/0.19.3"
             },
-            "time": "2021-01-29T15:20:11+00:00"
+            "time": "2022-01-27T06:36:18+00:00"
         },
         {
             "name": "symfony/browser-kit",
@@ -6784,5 +6788,5 @@
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }
