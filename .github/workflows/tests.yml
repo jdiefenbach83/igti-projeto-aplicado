@@ -1,0 +1,59 @@
+name: Tests
+on: [push]
+jobs:
+  unit-integrated-tests:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.4']
+    steps:
+      # —— Setup Github actions —————————————————————————————————————————————
+      # https://github.com/actions/checkout (official)
+      - name: Git checkout placeholder-service
+        uses: actions/checkout@v2
+      # MySQL
+      - name: MySQL 
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          mysql root password: 'password'
+      # https://github.com/shivammathur/setup-php (community)
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: none
+          tools: composer:v2
+        #  extensions: mbstring
+        env:
+          update: true
+      - name: Check PHP Version
+        run: php -v
+      # —— Composer —————————————————————————————————————————————————————————
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install Composer dependencies
+        run: composer install
+      # —— Symfony ——————————————————————————————————————————————————————————
+      - name: Install symfony CLI
+        run: |
+          echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' | sudo tee /etc/apt/sources.list.d/symfony-cli.list
+          sudo apt update
+          sudo apt install symfony-cli
+      - name: Check the Symfony console
+        run: bin/console -V
+      ## —— Tests ———————————————————————————————————————————————————————————
+      - name: Run integrated and unit tests
+        run: |
+          cp .env.ci .env.test
+          cp .env.ci .env
+          make
