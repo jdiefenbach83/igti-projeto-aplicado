@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Company;
 use App\Helper\CompanyFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -371,6 +370,7 @@ class CompaniesFixtures extends Fixture
         $manager->persist($companyFactory->makeEntity('33.228.024/0001-51', 'WLM PART. E COMÉRCIO DE MÁQUINAS E VEÍCULOS S.A.'));
         $manager->persist($companyFactory->makeEntity('05.721.735/0001-28', 'WILSON SONS LTD.'));
         $manager->persist($companyFactory->makeEntity('08.807.432/0001-10', 'YDUQS PARTICIPACOES S.A.'));
+        $manager->persist($companyFactory->makeEntity('33.453.598/0001-23', 'RAIZEN ENERGIA S.A'));
 
         $manager->flush();
     }

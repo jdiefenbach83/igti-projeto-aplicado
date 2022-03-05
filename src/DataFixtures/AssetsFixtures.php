@@ -434,6 +434,7 @@ class AssetsFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($assetFactory->makeEntity('QUSW3', Asset::TYPE_STOCK, Asset::MARKET_TYPE_SPOT, ($this->companyRepository->findByCnpj('35.791.391/0001-94'))->getId()));
         $manager->persist($assetFactory->makeEntity('RADL3', Asset::TYPE_STOCK, Asset::MARKET_TYPE_SPOT, ($this->companyRepository->findByCnpj('61.585.865/0001-51'))->getId()));
         $manager->persist($assetFactory->makeEntity('RAIL3', Asset::TYPE_STOCK, Asset::MARKET_TYPE_SPOT, ($this->companyRepository->findByCnpj('02.387.241/0001-60'))->getId()));
+        $manager->persist($assetFactory->makeEntity('RAIZ4', Asset::TYPE_STOCK, Asset::MARKET_TYPE_SPOT, ($this->companyRepository->findByCnpj('33.453.598/0001-23'))->getId()));
         $manager->persist($assetFactory->makeEntity('RANI3', Asset::TYPE_STOCK, Asset::MARKET_TYPE_SPOT, ($this->companyRepository->findByCnpj('92.791.243/0001-03'))->getId()));
         $manager->persist($assetFactory->makeEntity('RAPT3', Asset::TYPE_STOCK, Asset::MARKET_TYPE_SPOT, ($this->companyRepository->findByCnpj('89.086.144/0001-16'))->getId()));
         $manager->persist($assetFactory->makeEntity('RAPT4', Asset::TYPE_STOCK, Asset::MARKET_TYPE_SPOT, ($this->companyRepository->findByCnpj('89.086.144/0001-16'))->getId()));
