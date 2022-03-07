@@ -3,9 +3,10 @@
 namespace App\Entity;
 
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use Timestampable;
 
@@ -38,7 +39,6 @@ class User implements UserInterface
     }
 
     /**
-     * @param string $name
      * @return User
      */
     public function setName(string $name): self
@@ -87,10 +87,10 @@ class User implements UserInterface
 
     public function eraseCredentials(): void
     {
-        ;
     }
 
-    public function getUserIdentifier(): string {
+    public function getUserIdentifier(): string
+    {
         return $this->email;
     }
 }

@@ -32,7 +32,8 @@ abstract class BaseTest extends WebTestCase
 
         $this->entityManager = $kernel->getContainer()
             ->get('doctrine')
-            ->getManager();
+            ->getManager()
+        ;
     }
 
     protected function executeRequest(string $method, string $uri, array $headers = [], string $content = null): Response
@@ -45,8 +46,8 @@ abstract class BaseTest extends WebTestCase
     protected function getApiToken(): string
     {
         $payload = json_encode([
-            'email' => 'admin@mail.co',
-            'password' => '123456'
+            'username' => 'admin@mail.co',
+            'password' => '123456',
         ], JSON_THROW_ON_ERROR);
 
         $response = $this->executeRequest('POST', '/api/login', [], $payload);
@@ -63,7 +64,7 @@ abstract class BaseTest extends WebTestCase
     {
         $token = $this->getApiToken();
 
-        $headers['HTTP_Authorization'] = "Bearer $token";
+        $headers['HTTP_Authorization'] = "Bearer {$token}";
 
         return $this->executeRequest($method, $uri, $headers, $content);
     }
