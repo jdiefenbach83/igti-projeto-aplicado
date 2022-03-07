@@ -2,11 +2,10 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
-login:
+api_login_check:
   path: /api/login
-  controller: App\Controller\SecurityController::login
   methods:
-    - POST
+   - POST
 
 companys:
   path: /api/companies
