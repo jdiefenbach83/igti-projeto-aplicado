@@ -6,7 +6,7 @@ const httpClient = () => {
   const headers = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    Authorization: token,
+    Authorization: `Bearer ${token}`,
   };
 
   return axios.create({

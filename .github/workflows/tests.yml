@@ -56,4 +56,5 @@ jobs:
         run: |
           cp .env.ci .env.test
           cp .env.ci .env
+          php bin/console lexik:jwt:generate-keypair --overwrite --env=test
           make
