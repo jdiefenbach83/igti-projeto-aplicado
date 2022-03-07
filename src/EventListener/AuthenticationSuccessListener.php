@@ -19,6 +19,8 @@ class AuthenticationSuccessListener
         $data['success'] = true;
         $data['content']['access_token'] = $data['token'];
 
+        unset($data['token']);
+
         $event->setData($data);
     }
 }
