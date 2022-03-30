@@ -50,18 +50,36 @@ export default {
       const exempts = consolidations
           .filter(consolidation => {
             return consolidation.asset_type === 'STOCK' && consolidation.is_exempt === true;
-          })
-          .reduce((accumulator, consolidation) => {
-            return accumulator + consolidation.basis_to_ir
-          }, 0);
+          });
 
-      return [{
-        code: '20 - Ganhos líquidos em operações no mercado à vista de ações negociadas em bolsas de valores nas alienações realizadas até R$ 20.000,00 em cada mês, para o conjunto de ações',
-        total: currencyFormatter(exempts)
-      }];
+      const exemptsByYears = [];
+      
+      exempts.forEach((exempt)=> {
+        const year = exempt.year;
+        
+        if (!exemptsByYears[year]) {
+          exemptsByYears[year] = { year, amount: 0 };
+        }
+        
+        exemptsByYears[year].amount += exempt.basis_to_ir
+      });
+    
+      return exemptsByYears.map((item) => {
+        return {
+          year: item.year,
+          code: '20 - Ganhos líquidos em operações no mercado à vista de ações negociadas em bolsas de valores nas alienações realizadas até R$ 20.000,00 em cada mês, para o conjunto de ações',
+          total: currencyFormatter(item.amount)
+        };
+      });
     },
     headers() {
       return [
+        {
+          text: 'Ano',
+          align: 'start',
+          sortable: true,
+          value: 'year',
+        },
         {
           text: 'Código',
           align: 'start',
